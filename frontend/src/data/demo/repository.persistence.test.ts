@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEMO_CLIENT_ID, DEMO_STATE_VERSION, createDemoSeed } from './seed';
+import { DEMO_CLIENT_ID, DEMO_STATE_VERSION, createDemoSeed } from '@/data/demo/seed';
 import {
   DEMO_PENDING_SERVICE_STORAGE_KEY,
   DEMO_SESSION_STORAGE_KEY,
   DEMO_STATE_STORAGE_KEY,
   createDemoRepository,
-} from './repository';
-import type { StorageLike } from './repository';
+} from '@/data/demo/repository';
+import type { StorageLike } from '@/data/demo/repository';
 
 function createStorage(initial: Record<string, string> = {}): StorageLike {
   const values = new Map(Object.entries(initial));

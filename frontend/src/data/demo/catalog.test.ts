@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SERVICE_CATEGORIES, SERVICES, getServiceById } from './catalog';
+import { SERVICE_CATEGORIES, SERVICES, getServiceById } from '@/data/demo/catalog';
 
 describe('catálogo de serviços', () => {
   it('organiza os nove serviços aprovados nas cinco categorias da experiência', () => {

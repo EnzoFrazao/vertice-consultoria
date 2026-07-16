@@ -1,6 +1,6 @@
-import { getServiceById } from './catalog';
-import { DEMO_STATE_VERSION, createDemoSeed } from './seed';
-import { CASE_STATUSES } from './types';
+import { getServiceById } from '@/data/demo/catalog';
+import { DEMO_STATE_VERSION, createDemoSeed } from '@/data/demo/seed';
+import { CASE_STATUSES } from '@/data/demo/types';
 import type {
   AuthSession,
   Case,
@@ -12,7 +12,7 @@ import type {
   Property,
   TimelineEvent,
   UserRole,
-} from './types';
+} from '@/data/demo/types';
 
 export const DEMO_STATE_STORAGE_KEY = 'rv.demo.state.v1';
 export const DEMO_SESSION_STORAGE_KEY = 'rv.demo.session.v1';

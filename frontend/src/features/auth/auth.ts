@@ -1,5 +1,5 @@
-import type { AuthSession, User } from '../../data/demo/types';
-import { DEMO_USERS } from '../../data/demo/seed';
+import type { AuthSession, User } from '@/data/demo/types';
+import { DEMO_USERS } from '@/data/demo/seed';
 
 export const DEMO_CREDENTIALS = [
   { email: 'cliente@demo.com', password: 'cliente123' },

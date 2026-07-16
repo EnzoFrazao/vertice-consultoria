@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEMO_ADMIN_ID, DEMO_CLIENT_ID, DEMO_USERS } from '../../data/demo/seed';
-import { authenticateDemoUser } from './auth';
+import { DEMO_ADMIN_ID, DEMO_CLIENT_ID, DEMO_USERS } from '@/data/demo/seed';
+import { authenticateDemoUser } from '@/features/auth/auth';
 
 const NOW = new Date('2026-07-11T12:00:00.000Z');
 

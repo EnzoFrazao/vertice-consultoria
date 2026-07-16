@@ -7,12 +7,12 @@ import {
   useLocation,
   useNavigate
 } from "react-router-dom";
-import LandingPage from "../App";
-import { getServiceById } from "../data/demo/catalog";
-import { AdminPortal } from "../features/admin/AdminPortal";
-import { LoginPage } from "../features/auth/LoginPage";
-import { ClientPortal } from "../features/client/ClientPortal";
-import { DemoAppProvider, useDemoApp } from "./DemoAppProvider";
+import LandingPage from "@/pages/landing/LandingPage";
+import { getServiceById } from "@/data/demo/catalog";
+import { AdminPortal } from "@/pages/admin/AdminPortal";
+import { LoginPage } from "@/pages/login/LoginPage";
+import { ClientPortal } from "@/pages/client/ClientPortal";
+import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
 
 export function RouteLifecycle() {
   const { hash, pathname } = useLocation();
@@ -43,7 +43,7 @@ export function RouteLifecycle() {
 }
 
 function DemoWarnings() {
-  const { warnings } = useDemoApp();
+  const { warnings } = usePortalData();
   if (warnings.length === 0) return null;
 
   return (
@@ -68,7 +68,7 @@ function ProtectedRoute({
   role: "client" | "admin";
   children: ReactElement;
 }) {
-  const { session } = useDemoApp();
+  const { session } = usePortalData();
 
   if (!session) return <Navigate to="/login" replace />;
   if (session.role !== role) {
@@ -79,7 +79,7 @@ function ProtectedRoute({
 }
 
 function PublicLandingRoute() {
-  const { setPendingServiceId } = useDemoApp();
+  const { setPendingServiceId } = usePortalData();
   const navigate = useNavigate();
 
   return (
@@ -98,7 +98,7 @@ function LoginRoute() {
     pendingServiceId,
     login,
     resetDemo
-  } = useDemoApp();
+  } = usePortalData();
   const navigate = useNavigate();
 
   const destination = session?.role === "admin"
@@ -172,9 +172,9 @@ export default function RootApp() {
 
   return (
     <BrowserRouter>
-      <DemoAppProvider>
+      <PortalDataProvider>
         <ApplicationRoutes />
-      </DemoAppProvider>
+      </PortalDataProvider>
     </BrowserRouter>
   );
 }

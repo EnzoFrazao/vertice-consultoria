@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { Link, MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { createDemoRepository, type StorageLike } from "../data/demo/repository";
-import { DEMO_CLIENT_ID } from "../data/demo/seed";
-import { DemoAppProvider } from "./DemoAppProvider";
-import RootApp, { ApplicationRoutes } from "./RootApp";
+import { createDemoRepository, type StorageLike } from "@/data/demo/repository";
+import { DEMO_CLIENT_ID } from "@/data/demo/seed";
+import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
+import RootApp, { ApplicationRoutes } from "@/app/RootApp";
 
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
@@ -32,10 +32,10 @@ function renderApplication(path: string, repository = createRepository()) {
     repository,
     ...render(
       <MemoryRouter initialEntries={[path]}>
-        <DemoAppProvider repository={repository}>
+        <PortalDataProvider repository={repository}>
           <ApplicationRoutes />
           <LocationProbe />
-        </DemoAppProvider>
+        </PortalDataProvider>
       </MemoryRouter>
     )
   };
@@ -53,10 +53,10 @@ function LifecycleNavigation() {
 function renderWithLifecycle(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <DemoAppProvider repository={createRepository()}>
+      <PortalDataProvider repository={createRepository()}>
         <LifecycleNavigation />
         <ApplicationRoutes />
-      </DemoAppProvider>
+      </PortalDataProvider>
     </MemoryRouter>
   );
 }

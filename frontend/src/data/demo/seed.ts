@@ -8,7 +8,7 @@ import type {
   Property,
   TimelineEvent,
   User,
-} from './types';
+} from '@/data/demo/types';
 
 export const DEMO_STATE_VERSION = 1;
 export const DEMO_CLIENT_ID = 'user-client-demo';

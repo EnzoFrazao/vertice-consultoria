@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { DEMO_ADMIN_ID, DEMO_CLIENT_ID } from './seed';
-import { createDemoRepository, derivePendingActions } from './repository';
-import type { StorageLike } from './repository';
+import { DEMO_ADMIN_ID, DEMO_CLIENT_ID } from '@/data/demo/seed';
+import { createDemoRepository, derivePendingActions } from '@/data/demo/repository';
+import type { StorageLike } from '@/data/demo/repository';
 
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
