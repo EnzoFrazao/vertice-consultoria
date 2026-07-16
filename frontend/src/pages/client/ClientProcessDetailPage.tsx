@@ -14,9 +14,9 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { CaseFolio, EmptyState, StatusBadge } from "@/shared/ui/portal";
 import { createWhatsAppUrl } from "@/shared/config/contact";
-import { getServiceById } from "@/data/demo/catalog";
-import { derivePendingActions } from "@/data/demo/repository";
-import type { TimelineEventType } from "@/data/demo/types";
+import { getServiceById } from "@/domain/catalog";
+import { derivePendingActions } from "@/domain/selectors";
+import type { TimelineEventType } from "@/domain/types";
 import {
   formatDate,
   formatPropertyAddress,

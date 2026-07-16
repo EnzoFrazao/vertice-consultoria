@@ -1,4 +1,4 @@
-import type { Service, ServiceCategory } from '@/data/demo/types';
+import type { Service, ServiceCategory } from "@/domain/types";
 
 const categories: Array<Omit<ServiceCategory, 'services'>> = [
   {

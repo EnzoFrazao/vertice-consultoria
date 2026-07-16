@@ -6,8 +6,8 @@ import {
   createDemoRepository,
   type DemoRepository,
   type StorageLike
-} from "@/data/demo/repository";
-import { DEMO_ADMIN_ID } from "@/data/demo/seed";
+} from "@/infrastructure/demo/repository";
+import { DEMO_ADMIN_ID } from "@/infrastructure/demo/seed";
 import { AdminPortal } from "@/pages/admin/AdminPortal";
 
 function createStorage(): StorageLike {

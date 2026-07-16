@@ -5,7 +5,7 @@ import {
   DEMO_CLIENT_ID,
   DEMO_STATE_VERSION,
   createDemoSeed,
-} from '@/data/demo/seed';
+} from "@/infrastructure/demo/seed";
 
 describe('estado inicial da demonstração', () => {
   it('inclui os usuários cliente e administrador e múltiplos processos', () => {

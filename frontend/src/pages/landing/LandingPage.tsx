@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ZoomParallax } from "@/pages/landing/components/ZoomParallax";
 import { LANDING_WHATSAPP_URL } from "@/shared/config/contact";
-import { SERVICE_CATEGORIES } from "@/data/demo/catalog";
-import { DEMO_PENDING_SERVICE_STORAGE_KEY } from "@/data/demo/repository";
+import { SERVICE_CATEGORIES } from "@/domain/catalog";
 
 const heroImageBase =
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop";
@@ -89,11 +88,6 @@ export type LandingPageProps = {
 
 function LandingPage({ onStartService }: LandingPageProps) {
   const handleServiceSelect = (serviceId: string) => {
-    try {
-      window.sessionStorage.setItem(DEMO_PENDING_SERVICE_STORAGE_KEY, serviceId);
-    } catch {
-      // A seleção continua válida na sessão React quando o storage não está disponível.
-    }
     onStartService?.(serviceId);
   };
 

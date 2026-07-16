@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { PageHeader } from "@/shared/ui/portal";
-import { getServiceById, serviceCategories, services } from "@/data/demo/catalog";
+import { getServiceById, serviceCategories, services } from "@/domain/catalog";
 
 type PropertyDraft = {
   type: string;

@@ -19,8 +19,9 @@ import {
   type PortalNotification
 } from "@/shared/ui/portal";
 import { createWhatsAppUrl } from "@/shared/config/contact";
-import { getServiceById } from "@/data/demo/catalog";
-import type { Case, DemoState } from "@/data/demo/types";
+import { getServiceById } from "@/domain/catalog";
+import { buildAdminPauta, type PautaGroup } from "@/domain/selectors";
+import type { Case } from "@/domain/types";
 import { AdminClientsPage } from "@/pages/admin/AdminClientsPage";
 import { AdminDocumentsPage } from "@/pages/admin/AdminDocumentsPage";
 import { AdminProcessDetailPage, AdminProcessesPage } from "@/pages/admin/AdminProcessPages";
@@ -45,87 +46,11 @@ function propertyLabel(item: Case) {
   return `${item.property.type} · ${item.property.address}, ${item.property.number}${complement} · ${item.property.city}/${item.property.state}`;
 }
 
-type PautaGroup = "decide" | "client" | "progress";
-
-interface PautaItem {
-  id: string;
-  group: PautaGroup;
-  caseId: string;
-  documentId?: string;
-  label: string;
-  detail: string;
-  rank: number;
-  updatedAt: string;
-}
-
 const pautaGroups: Array<{ id: PautaGroup; label: string; description: string }> = [
   { id: "decide", label: "Decidir agora", description: "Triagens e documentos prontos para despacho." },
   { id: "client", label: "Depende do cliente", description: "Aguardando informação ou documento." },
   { id: "progress", label: "Em andamento", description: "Processos que seguem sem decisão imediata." }
 ];
-
-export function buildAdminPauta(state: DemoState) {
-  const groups: Record<PautaGroup, PautaItem[]> = { decide: [], client: [], progress: [] };
-  const casesWithDecision = new Set<string>();
-
-  for (const item of state.cases) {
-    if (item.status === "Concluído") continue;
-    const documents = item.documents.filter((document) =>
-      ["Em análise", "Enviado"].includes(document.status)
-    );
-
-    for (const document of documents) {
-      casesWithDecision.add(item.id);
-      groups.decide.push({
-        id: `document-${document.id}`,
-        group: "decide",
-        caseId: item.id,
-        documentId: document.id,
-        label: document.status === "Em análise" ? `Decidir ${document.label}` : `Iniciar ${document.label}`,
-        detail: document.status,
-        rank: document.status === "Em análise" ? 0 : 1,
-        updatedAt: document.updatedAt
-      });
-    }
-
-    if (item.status === "Novo" && documents.length === 0) {
-      casesWithDecision.add(item.id);
-      groups.decide.push({
-        id: `case-${item.id}`,
-        group: "decide",
-        caseId: item.id,
-        label: "Fazer primeira triagem",
-        detail: "Novo processo",
-        rank: 2,
-        updatedAt: item.updatedAt
-      });
-    }
-  }
-
-  for (const item of state.cases) {
-    if (item.status === "Concluído" || casesWithDecision.has(item.id)) continue;
-    const needsClient =
-      item.status === "Aguardando cliente" ||
-      item.documents.some(
-        (document) => document.required && ["Pendente", "Rejeitado"].includes(document.status)
-      );
-    const group: PautaGroup = needsClient ? "client" : "progress";
-    groups[group].push({
-      id: `case-${item.id}`,
-      group,
-      caseId: item.id,
-      label: needsClient ? "Aguardar retorno documental" : "Acompanhar andamento",
-      detail: item.status,
-      rank: needsClient ? 3 : 4,
-      updatedAt: item.updatedAt
-    });
-  }
-
-  for (const group of Object.values(groups)) {
-    group.sort((left, right) => left.rank - right.rank || right.updatedAt.localeCompare(left.updatedAt));
-  }
-  return groups;
-}
 
 function AdminDashboard() {
   const {

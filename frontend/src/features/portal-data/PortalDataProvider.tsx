@@ -11,14 +11,13 @@ import {
   createDemoRepository,
   type DemoRepository,
   type RepositoryWarning
-} from "@/data/demo/repository";
-import type { AuthSession, DemoState, User } from "@/data/demo/types";
+} from "@/infrastructure/demo/repository";
+import type { AuthSession, DemoState, User } from "@/domain/types";
 import { authenticateDemoUser } from "@/features/auth/auth";
 
 type ProfileUpdates = Pick<User, "phone" | "address">;
 
 export interface PortalDataContextValue {
-  repository: DemoRepository;
   state: DemoState;
   session: AuthSession | null;
   currentUser: User | null;
@@ -123,7 +122,6 @@ export function PortalDataProvider({
     : null;
 
   const value = useMemo<PortalDataContextValue>(() => ({
-    repository,
     state,
     session,
     currentUser,

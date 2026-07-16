@@ -3,15 +3,20 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
 import {
+  DEMO_STATE_STORAGE_KEY,
   createDemoRepository,
   type DemoRepository,
   type StorageLike
-} from "@/data/demo/repository";
-import { DEMO_ADMIN_ID, DEMO_CLIENT_ID } from "@/data/demo/seed";
+} from "@/infrastructure/demo/repository";
+import {
+  DEMO_ADMIN_ID,
+  DEMO_CLIENT_ID,
+  createDemoSeed
+} from "@/infrastructure/demo/seed";
 import { ClientPortal } from "@/pages/client/ClientPortal";
 
-function createMemoryStorage(): StorageLike {
-  const values = new Map<string, string>();
+function createMemoryStorage(initial: Record<string, string> = {}): StorageLike {
+  const values = new Map(Object.entries(initial));
   return {
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => void values.set(key, value),
@@ -19,9 +24,11 @@ function createMemoryStorage(): StorageLike {
   };
 }
 
-function createIsolatedRepository() {
+function createIsolatedRepository(initialState = createDemoSeed()) {
   return createDemoRepository({
-    localStorage: createMemoryStorage(),
+    localStorage: createMemoryStorage({
+      [DEMO_STATE_STORAGE_KEY]: JSON.stringify(initialState)
+    }),
     sessionStorage: createMemoryStorage()
   });
 }
@@ -73,8 +80,8 @@ describe("ClientPortal", () => {
   });
 
   it("explicita quando nada depende do cliente", () => {
-    const repository = createIsolatedRepository();
-    repository.getState().cases
+    const state = createDemoSeed();
+    state.cases
       .filter((item) => item.clientId === DEMO_CLIENT_ID)
       .forEach((item) => {
         item.status = "Análise técnica";
@@ -83,6 +90,7 @@ describe("ClientPortal", () => {
           delete document.rejectionReason;
         });
       });
+    const repository = createIsolatedRepository(state);
 
     renderClient("/cliente", repository);
 
@@ -93,13 +101,14 @@ describe("ClientPortal", () => {
   });
 
   it("abre uma resposta real quando o processo aguarda o cliente sem documento", () => {
-    const repository = createIsolatedRepository();
-    const item = repository.getState().cases.find((candidate) => candidate.id === "case-0001")!;
+    const state = createDemoSeed();
+    const item = state.cases.find((candidate) => candidate.id === "case-0001")!;
     item.status = "Aguardando cliente";
     item.documents.forEach((document) => {
       document.status = "Aprovado";
       delete document.rejectionReason;
     });
+    const repository = createIsolatedRepository(state);
 
     renderClient("/cliente", repository);
 
@@ -187,10 +196,13 @@ describe("ClientPortal", () => {
   });
 
   it("mostra um início e um índice vazios com caminho para o primeiro imóvel", () => {
-    const repository = createIsolatedRepository();
-    repository.getState().cases = repository
-      .getState()
-      .cases.filter((item) => item.clientId !== DEMO_CLIENT_ID);
+    const state = createDemoSeed();
+    state.cases = state.cases.filter((item) => item.clientId !== DEMO_CLIENT_ID);
+    state.notifications = state.notifications.filter(
+      (notification) =>
+        !notification.caseId || state.cases.some((item) => item.id === notification.caseId)
+    );
+    const repository = createIsolatedRepository(state);
 
     const dashboard = renderClient("/cliente", repository);
     expect(screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })).toBeInTheDocument();

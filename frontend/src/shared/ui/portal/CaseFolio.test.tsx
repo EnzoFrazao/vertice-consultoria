@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { CaseStatus } from "@/data/demo/types";
+import type { CaseStatus } from "@/domain/types";
 import { CaseFolio } from "@/shared/ui/portal/CaseFolio";
 
 const baseProps = {

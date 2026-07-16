@@ -4,7 +4,7 @@ import type {
   PendingAction,
   Property,
   TimelineEventType
-} from "@/data/demo/types";
+} from "@/domain/types";
 
 export function formatDate(value: string, includeTime = false) {
   return new Intl.DateTimeFormat("pt-BR", {

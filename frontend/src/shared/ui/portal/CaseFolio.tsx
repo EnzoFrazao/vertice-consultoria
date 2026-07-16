@@ -1,6 +1,6 @@
 import { AlertTriangle, Check } from "lucide-react";
 import type { ReactNode } from "react";
-import type { CaseStatus } from "@/data/demo/types";
+import type { CaseStatus } from "@/domain/types";
 
 const macroPhases = [
   "Entrada",

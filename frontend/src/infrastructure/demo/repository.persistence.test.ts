@@ -1,13 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { DEMO_CLIENT_ID, DEMO_STATE_VERSION, createDemoSeed } from '@/data/demo/seed';
+import { DEMO_CLIENT_ID, DEMO_STATE_VERSION, createDemoSeed } from "@/infrastructure/demo/seed";
 import {
   DEMO_PENDING_SERVICE_STORAGE_KEY,
   DEMO_SESSION_STORAGE_KEY,
   DEMO_STATE_STORAGE_KEY,
   createDemoRepository,
-} from '@/data/demo/repository';
-import type { StorageLike } from '@/data/demo/repository';
+} from "@/infrastructure/demo/repository";
+import type { StorageLike } from "@/infrastructure/demo/repository";
 
 function createStorage(initial: Record<string, string> = {}): StorageLike {
   const values = new Map(Object.entries(initial));
@@ -121,5 +121,25 @@ describe('persistência do repositório demonstrativo', () => {
     expect(resetState.users.find((user) => user.id === DEMO_CLIENT_ID)?.phone).not.toBe('alterado');
     expect(repository.getSession()).toBeNull();
     expect(repository.getPendingServiceId()).toBeNull();
+  });
+
+  it('notifica assinantes com o seed restaurado ao resetar a demonstração', () => {
+    const repository = createDemoRepository({
+      localStorage: createStorage(),
+      sessionStorage: createStorage(),
+      now: () => NOW,
+    });
+    repository.updateUserProfile(DEMO_CLIENT_ID, {
+      phone: 'alterado',
+      address: 'alterado',
+    });
+    const listener = vi.fn();
+    repository.subscribe(listener);
+
+    const resetState = repository.resetDemo();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith(resetState);
+    expect(resetState).toEqual(createDemoSeed());
   });
 });

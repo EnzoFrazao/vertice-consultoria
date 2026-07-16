@@ -10,8 +10,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
-import { getServiceById } from "@/data/demo/catalog";
-import type { Case, CaseDocument, User } from "@/data/demo/types";
+import { getServiceById } from "@/domain/catalog";
+import {
+  buildAdminDocumentQueue,
+  type AdminDocumentQueueEntry
+} from "@/domain/selectors";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech focus-visible:ring-offset-2";
@@ -21,11 +24,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeStyle: "short"
 });
 
-interface QueueEntry {
-  item: Case;
-  document: CaseDocument;
-  client?: User;
-}
+type QueueEntry = AdminDocumentQueueEntry;
 
 type FocusRequest = {
   documentId?: string;
@@ -67,20 +66,8 @@ export function AdminDocumentsPage() {
   const openedHashRef = useRef("");
 
   const entries = useMemo<QueueEntry[]>(
-    () =>
-      state.cases
-        .filter((item) => item.status !== "Concluído")
-        .flatMap((item) =>
-          item.documents
-            .filter((document) => ["Enviado", "Em análise"].includes(document.status))
-            .map((document) => ({
-              item,
-              document,
-              client: state.users.find((user) => user.id === item.clientId)
-            }))
-        )
-        .sort((a, b) => b.document.updatedAt.localeCompare(a.document.updatedAt)),
-    [state.cases, state.users]
+    () => buildAdminDocumentQueue(state),
+    [state]
   );
 
   const rejectingEntry = entries.find(

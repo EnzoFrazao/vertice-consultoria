@@ -261,7 +261,7 @@ describe("real estate guided landing", () => {
     });
   });
 
-  it("stores and hands off the selected catalog service", () => {
+  it("hands off the selected service without writing browser storage directly", () => {
     const onStartService = vi.fn();
     render(<LandingPage onStartService={onStartService} />);
 
@@ -270,9 +270,7 @@ describe("real estate guided landing", () => {
     fireEvent.click(screen.getByRole("button", { name: /iniciar solicitação de análise de valor/i }));
 
     expect(onStartService).toHaveBeenCalledWith("analise-valor-mercado");
-    expect(window.sessionStorage.getItem("rv.demo.pending-service")).toBe(
-      "analise-valor-mercado"
-    );
+    expect(window.sessionStorage.getItem("rv.demo.pending-service")).toBeNull();
     expect(screen.queryByTestId("guided-flow-wizard")).not.toBeInTheDocument();
   });
 

@@ -16,8 +16,8 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { CaseFolio, EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
 import { createWhatsAppUrl } from "@/shared/config/contact";
-import { getServiceById, services } from "@/data/demo/catalog";
-import { CASE_STATUSES, type Case, type CaseStatus, type User } from "@/data/demo/types";
+import { getServiceById, services } from "@/domain/catalog";
+import { CASE_STATUSES, type Case, type CaseStatus, type User } from "@/domain/types";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech focus-visible:ring-offset-2";

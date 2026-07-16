@@ -20,7 +20,9 @@ export const DOCUMENT_STATUSES = [
 
 export type DocumentStatus = (typeof DOCUMENT_STATUSES)[number];
 
-export type UserRole = 'client' | 'admin';
+export const USER_ROLES = ['client', 'admin'] as const;
+
+export type UserRole = (typeof USER_ROLES)[number];
 
 export interface User {
   id: string;
@@ -90,15 +92,18 @@ export interface CaseDocument {
   updatedAt: string;
 }
 
-export type TimelineEventType =
-  | 'case-created'
-  | 'document-added'
-  | 'document-resubmitted'
-  | 'document-review-started'
-  | 'document-approved'
-  | 'document-rejected'
-  | 'status-changed'
-  | 'whatsapp-started';
+export const TIMELINE_EVENT_TYPES = [
+  'case-created',
+  'document-added',
+  'document-resubmitted',
+  'document-review-started',
+  'document-approved',
+  'document-rejected',
+  'status-changed',
+  'whatsapp-started',
+] as const;
+
+export type TimelineEventType = (typeof TIMELINE_EVENT_TYPES)[number];
 
 export interface TimelineEvent {
   id: string;
@@ -111,12 +116,15 @@ export interface TimelineEvent {
   createdAt: string;
 }
 
-export type NotificationType =
-  | 'new-case'
-  | 'document-submitted'
-  | 'document-approved'
-  | 'document-rejected'
-  | 'status-changed';
+export const NOTIFICATION_TYPES = [
+  'new-case',
+  'document-submitted',
+  'document-approved',
+  'document-rejected',
+  'status-changed',
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
 export interface Notification {
   id: string;
@@ -177,4 +185,3 @@ export interface DemoState {
   mockDocumentAssets: MockDocumentAsset[];
   updatedAt: string;
 }
-

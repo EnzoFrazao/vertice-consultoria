@@ -1,8 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { DEMO_ADMIN_ID, DEMO_CLIENT_ID } from '@/data/demo/seed';
-import { createDemoRepository, derivePendingActions } from '@/data/demo/repository';
-import type { StorageLike } from '@/data/demo/repository';
+import { derivePendingActions } from "@/domain/selectors";
+import { DEMO_ADMIN_ID, DEMO_CLIENT_ID } from "@/infrastructure/demo/seed";
+import {
+  DEMO_STATE_STORAGE_KEY,
+  createDemoRepository,
+  type StorageLike,
+} from "@/infrastructure/demo/repository";
 
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
@@ -36,6 +40,77 @@ const property = {
 };
 
 describe('ações do repositório demonstrativo', () => {
+  it('isola o estado interno de snapshots obtidos por getState', () => {
+    const localStorage = createStorage();
+    const repository = createDemoRepository({
+      localStorage,
+      sessionStorage: createStorage(),
+      now: () => NOW,
+    });
+    const snapshot = repository.getState();
+
+    snapshot.users[0].phone = 'snapshot adulterado';
+    snapshot.cases[0].property.city = 'Cidade adulterada';
+
+    expect(repository.getState().users[0].phone).toBe('(85) 99999-1001');
+    expect(repository.getState().cases[0].property.city).toBe('Fortaleza');
+    expect(
+      JSON.parse(localStorage.getItem(DEMO_STATE_STORAGE_KEY) ?? '{}').users[0].phone,
+    ).toBe('(85) 99999-1001');
+  });
+
+  it('isola o estado interno de objetos retornados por ações', () => {
+    const localStorage = createStorage();
+    const repository = createDemoRepository({
+      localStorage,
+      sessionStorage: createStorage(),
+      now: () => NOW,
+    });
+    const created = repository.createCase({
+      clientId: DEMO_CLIENT_ID,
+      serviceId: 'usucapiao',
+      objective: 'Objetivo original.',
+      property,
+    });
+
+    created.objective = 'retorno adulterado';
+    created.property.city = 'Cidade adulterada';
+
+    const storedCase = repository
+      .getState()
+      .cases.find((item) => item.id === created.id);
+    expect(storedCase?.objective).toBe('Objetivo original.');
+    expect(storedCase?.property.city).toBe('Fortaleza');
+    expect(
+      JSON.parse(localStorage.getItem(DEMO_STATE_STORAGE_KEY) ?? '{}').cases.at(-1)
+        .objective,
+    ).toBe('Objetivo original.');
+  });
+
+  it('entrega snapshots isolados aos assinantes', () => {
+    const localStorage = createStorage();
+    const repository = createDemoRepository({
+      localStorage,
+      sessionStorage: createStorage(),
+      now: () => NOW,
+    });
+    repository.subscribe((snapshot) => {
+      snapshot.users[0].phone = 'listener adulterou';
+      snapshot.cases[0].objective = 'listener adulterou';
+    });
+
+    repository.updateUserProfile(DEMO_CLIENT_ID, {
+      phone: '(85) 97777-0000',
+      address: 'Rua Atualizada, 1',
+    });
+
+    expect(repository.getState().users[0].phone).toBe('(85) 97777-0000');
+    expect(repository.getState().cases[0].objective).not.toBe('listener adulterou');
+    expect(
+      JSON.parse(localStorage.getItem(DEMO_STATE_STORAGE_KEY) ?? '{}').users[0].phone,
+    ).toBe('(85) 97777-0000');
+  });
+
   it('cria processo com protocolo, documentos pendentes, histórico e avisos administrativos', () => {
     const repository = createRepository();
 

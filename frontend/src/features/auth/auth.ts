@@ -1,5 +1,4 @@
-import type { AuthSession, User } from '@/data/demo/types';
-import { DEMO_USERS } from '@/data/demo/seed';
+import type { AuthSession, User } from "@/domain/types";
 
 export const DEMO_CREDENTIALS = [
   { email: 'cliente@demo.com', password: 'cliente123' },
@@ -9,7 +8,7 @@ export const DEMO_CREDENTIALS = [
 export function authenticateDemoUser(
   email: string,
   password: string,
-  users: ReadonlyArray<User> = DEMO_USERS,
+  users: ReadonlyArray<User>,
   now: () => Date = () => new Date(),
 ): AuthSession | null {
   const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');

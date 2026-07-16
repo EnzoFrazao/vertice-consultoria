@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { CaseFolio, EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
 import { createWhatsAppUrl } from "@/shared/config/contact";
-import { getServiceById } from "@/data/demo/catalog";
-import { derivePendingActions } from "@/data/demo/repository";
+import { getServiceById } from "@/domain/catalog";
+import { derivePendingActions } from "@/domain/selectors";
 import { formatDate, formatPropertyLabel, getPendingActionHref } from "@/pages/client/clientUtils";
 
 const primaryActionClass =

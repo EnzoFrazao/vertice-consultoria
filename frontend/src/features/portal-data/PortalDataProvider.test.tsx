@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { createDemoRepository, type StorageLike } from "@/data/demo/repository";
+import { createDemoRepository, type StorageLike } from "@/infrastructure/demo/repository";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
 
 function createStorage(): StorageLike {
@@ -20,6 +20,9 @@ function Probe() {
       <p data-testid="user-name">{app.currentUser?.name ?? "sem usuário"}</p>
       <p data-testid="pending-service">{app.pendingServiceId ?? "sem serviço"}</p>
       <p data-testid="user-phone">{app.currentUser?.phone ?? "sem telefone"}</p>
+      <p data-testid="repository-exposed">
+        {"repository" in app ? "exposto" : "encapsulado"}
+      </p>
       <button type="button" onClick={() => app.login("cliente@demo.com", "cliente123")}>
         Login cliente
       </button>
@@ -61,6 +64,7 @@ describe("PortalDataProvider", () => {
     );
 
     expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
+    expect(screen.getByTestId("repository-exposed")).toHaveTextContent("encapsulado");
     fireEvent.click(screen.getByRole("button", { name: "Login inválido" }));
     expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
 

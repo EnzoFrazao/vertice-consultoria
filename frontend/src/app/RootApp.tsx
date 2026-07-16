@@ -8,7 +8,7 @@ import {
   useNavigate
 } from "react-router-dom";
 import LandingPage from "@/pages/landing/LandingPage";
-import { getServiceById } from "@/data/demo/catalog";
+import { getServiceById } from "@/domain/catalog";
 import { AdminPortal } from "@/pages/admin/AdminPortal";
 import { LoginPage } from "@/pages/login/LoginPage";
 import { ClientPortal } from "@/pages/client/ClientPortal";
