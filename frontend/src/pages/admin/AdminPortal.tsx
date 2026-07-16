@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
-  FileCheck2,
-  FolderKanban,
-  LayoutDashboard,
-  MessageCircle,
-  Users
+  MessageCircle
 } from "lucide-react";
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
@@ -27,10 +23,10 @@ import { AdminDocumentsPage } from "@/pages/admin/AdminDocumentsPage";
 import { AdminProcessDetailPage, AdminProcessesPage } from "@/pages/admin/AdminProcessPages";
 
 const ADMIN_NAVIGATION: PortalNavigationItem[] = [
-  { label: "Início", href: "/admin", icon: LayoutDashboard },
-  { label: "Processos", href: "/admin/processos", icon: FolderKanban },
-  { label: "Documentos", href: "/admin/documentos", icon: FileCheck2 },
-  { label: "Clientes", href: "/admin/clientes", icon: Users }
+  { label: "Início", href: "/admin" },
+  { label: "Processos", href: "/admin/processos" },
+  { label: "Documentos", href: "/admin/documentos" },
+  { label: "Clientes", href: "/admin/clientes" }
 ];
 
 function formatDate(value: string) {

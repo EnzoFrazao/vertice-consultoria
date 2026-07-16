@@ -1,9 +1,3 @@
-import {
-  CircleUserRound,
-  FilePlus2,
-  FolderOpen,
-  LayoutDashboard
-} from "lucide-react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { PortalShell, type PortalNotification } from "@/shared/ui/portal";
@@ -15,10 +9,10 @@ import { NewRequestPage } from "@/pages/client/NewRequestPage";
 import { formatDate } from "@/pages/client/clientUtils";
 
 const clientNavigation = [
-  { label: "Início", href: "/cliente", icon: LayoutDashboard },
-  { label: "Meus processos", href: "/cliente/processos", icon: FolderOpen },
-  { label: "Nova solicitação", href: "/cliente/nova-solicitacao", icon: FilePlus2 },
-  { label: "Perfil", href: "/cliente/perfil", icon: CircleUserRound }
+  { label: "Início", href: "/cliente" },
+  { label: "Meus processos", href: "/cliente/processos" },
+  { label: "Nova solicitação", href: "/cliente/nova-solicitacao" },
+  { label: "Perfil", href: "/cliente/perfil" }
 ];
 
 export function ClientPortal() {
@@ -75,4 +69,3 @@ export function ClientPortal() {
     </PortalShell>
   );
 }
-

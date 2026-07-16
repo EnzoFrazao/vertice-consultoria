@@ -5,11 +5,9 @@ export {
 export {
   EmptyState,
   PageHeader,
-  StatCard,
   StatusBadge,
   type EmptyStateProps,
   type PageHeaderProps,
-  type StatCardProps,
   type StatusBadgeProps,
   type StatusBadgeTone
 } from "@/shared/ui/portal/PortalPrimitives";

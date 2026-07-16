@@ -1,5 +1,5 @@
 import { act, fireEvent, render as testingRender, screen, within } from "@testing-library/react";
-import { Bell, FolderKanban, LayoutDashboard } from "lucide-react";
+import { Bell } from "lucide-react";
 import type { ReactElement } from "react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -7,14 +7,13 @@ import {
   EmptyState,
   PageHeader,
   PortalShell,
-  StatCard,
   StatusBadge,
   type PortalNotification
 } from "@/shared/ui/portal";
 
 const navigation = [
-  { label: "Visão geral", href: "/cliente", icon: LayoutDashboard },
-  { label: "Meus processos", href: "/cliente/processos", icon: FolderKanban }
+  { label: "Visão geral", href: "/cliente" },
+  { label: "Meus processos", href: "/cliente/processos" }
 ];
 
 const notifications: PortalNotification[] = [
@@ -433,23 +432,17 @@ describe("portal presentation components", () => {
     expect(screen.getByText("Não concluído")).not.toHaveClass("bg-tealTech/10");
   });
 
-  it("renders reusable empty and metric cards", () => {
+  it("renders a reusable empty state", () => {
     render(
-      <>
-        <EmptyState
-          icon={Bell}
-          title="Tudo em dia"
-          description="Nenhuma pendência exige sua atenção."
-          action={<button type="button">Ver processos</button>}
-        />
-        <StatCard label="Em andamento" value="3" hint="Um atualizado hoje" />
-      </>
+      <EmptyState
+        icon={Bell}
+        title="Tudo em dia"
+        description="Nenhuma pendência exige sua atenção."
+        action={<button type="button">Ver processos</button>}
+      />
     );
 
     expect(screen.getByRole("heading", { name: "Tudo em dia" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Ver processos" })).toBeInTheDocument();
-    expect(screen.getByText("Em andamento")).toBeInTheDocument();
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText("Um atualizado hoje")).toBeInTheDocument();
   });
 });

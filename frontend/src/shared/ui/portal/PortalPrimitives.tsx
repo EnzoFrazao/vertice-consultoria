@@ -130,37 +130,3 @@ export function EmptyState({ icon: Icon, title, description, action, className }
     </section>
   );
 }
-
-export interface StatCardProps {
-  label: string;
-  value: ReactNode;
-  hint?: string;
-  icon?: LucideIcon;
-  className?: string;
-}
-
-export function StatCard({ label, value, hint, icon: Icon, className }: StatCardProps) {
-  return (
-    <article
-      className={joinClasses(
-        "min-w-0 rounded-2xl border border-espresso/10 bg-ivory p-5 shadow-[0_12px_36px_rgba(32,19,13,0.06)]",
-        className
-      )}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-cacao/[0.55]">{label}</p>
-          <p className="mt-3 break-words font-display text-3xl font-semibold leading-none text-espresso">
-            {value}
-          </p>
-        </div>
-        {Icon ? (
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-champagne text-bronze">
-            <Icon aria-hidden="true" className="h-5 w-5" />
-          </span>
-        ) : null}
-      </div>
-      {hint ? <p className="mt-4 text-sm leading-5 text-cacao/60">{hint}</p> : null}
-    </article>
-  );
-}
