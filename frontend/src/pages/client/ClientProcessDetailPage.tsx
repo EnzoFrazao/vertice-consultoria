@@ -19,8 +19,10 @@ import { derivePendingActions } from "@/domain/selectors";
 import type { TimelineEventType } from "@/domain/types";
 import {
   formatDate,
-  formatPropertyAddress,
-  formatPropertyLabel,
+  formatPropertyAddressComplete,
+  formatPropertyLabelComplete
+} from "@/shared/lib/formatters";
+import {
   getDocumentActionLabel,
   getPendingActionHref,
   getTimelineIconLabel
@@ -123,7 +125,7 @@ export function ClientProcessDetailPage() {
       <CaseFolio
         protocol={item.protocol}
         serviceName={service?.name ?? "Processo imobiliário"}
-        propertyLabel={formatPropertyLabel(item.property)}
+        propertyLabel={formatPropertyLabelComplete(item.property)}
         objective={item.objective}
         status={item.status}
         priority={
@@ -258,7 +260,7 @@ export function ClientProcessDetailPage() {
               <h2 id="property-heading" className="mt-1 font-display text-2xl font-semibold text-espresso">O bem deste fólio</h2>
               <div className="mt-4 flex items-start gap-3">
                 <House aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-bronze" />
-                <p className="text-sm leading-6 text-cacao/75">{formatPropertyAddress(item.property)}</p>
+                <p className="text-sm leading-6 text-cacao/75">{formatPropertyAddressComplete(item.property)}</p>
               </div>
               {item.property.registrationNumber ? (
                 <p className="mt-3 text-sm text-cacao/75"><strong>Matrícula:</strong> {item.property.registrationNumber}</p>

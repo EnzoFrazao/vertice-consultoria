@@ -1,6 +1,6 @@
 import type { Service, ServiceCategory } from "@/domain/types";
 
-const categories: Array<Omit<ServiceCategory, 'services'>> = [
+const categories: ReadonlyArray<Omit<ServiceCategory, 'services'>> = [
   {
     id: 'orientacao-geral',
     name: 'Orientação geral',
@@ -28,7 +28,7 @@ const categories: Array<Omit<ServiceCategory, 'services'>> = [
   },
 ];
 
-export const services: Service[] = [
+const serviceDefinitions: readonly Service[] = [
   {
     id: 'regularizacao-imoveis',
     categoryId: 'orientacao-geral',
@@ -85,14 +85,21 @@ export const services: Service[] = [
   },
 ];
 
-export const serviceCategories: ServiceCategory[] = categories.map((category) => ({
-  ...category,
-  services: services.filter((service) => service.categoryId === category.id),
-}));
+export const SERVICES: readonly Service[] = Object.freeze(
+  serviceDefinitions.map((service) => Object.freeze(service)),
+);
 
-export const SERVICE_CATEGORIES = serviceCategories;
-export const SERVICES = services;
+export const SERVICE_CATEGORIES: readonly ServiceCategory[] = Object.freeze(
+  categories.map((category) =>
+    Object.freeze({
+      ...category,
+      services: Object.freeze(
+        SERVICES.filter((service) => service.categoryId === category.id),
+      ),
+    }),
+  ),
+);
 
 export function getServiceById(serviceId: string) {
-  return services.find((service) => service.id === serviceId);
+  return SERVICES.find((service) => service.id === serviceId);
 }

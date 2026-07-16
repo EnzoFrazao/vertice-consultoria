@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { PageHeader } from "@/shared/ui/portal";
-import { getServiceById, serviceCategories, services } from "@/domain/catalog";
+import { getServiceById, SERVICE_CATEGORIES, SERVICES } from "@/domain/catalog";
 
 type PropertyDraft = {
   type: string;
@@ -61,7 +61,7 @@ export function NewRequestPage() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [step, setStep] = useState(1);
   const previousStepRef = useRef(step);
-  const [serviceId, setServiceId] = useState(() => pendingServiceId ?? services[0]?.id ?? "");
+  const [serviceId, setServiceId] = useState(() => pendingServiceId ?? SERVICES[0]?.id ?? "");
   const [objective, setObjective] = useState("");
   const [phone, setPhone] = useState(() => currentUser?.phone ?? "");
   const [address, setAddress] = useState(() => currentUser?.address ?? "");
@@ -192,7 +192,7 @@ export function NewRequestPage() {
               <div>
                 <label htmlFor="request-service" className={labelClass}>Serviço</label>
                 <select id="request-service" value={serviceId} onChange={(event) => setServiceId(event.target.value)} className={fieldClass}>
-                  {serviceCategories.map((category) => (
+                  {SERVICE_CATEGORIES.map((category) => (
                     <optgroup key={category.id} label={category.name}>
                       {category.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
                     </optgroup>

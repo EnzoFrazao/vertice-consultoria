@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
 import { getServiceById } from "@/domain/catalog";
-import { formatDate, formatPropertyLabel } from "@/pages/client/clientUtils";
+import { formatDate, formatPropertyLabelComplete } from "@/shared/lib/formatters";
 
 const primaryActionClass =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-tealTech px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0b625c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech focus-visible:ring-offset-2";
@@ -72,7 +72,7 @@ export function ClientProcessesPage() {
                         {service?.name ?? "Serviço imobiliário"}
                       </span>
                       <span className="mt-1 block text-sm leading-5 text-cacao/70">
-                        {formatPropertyLabel(item.property)}
+                        {formatPropertyLabelComplete(item.property)}
                       </span>
                     </span>
                     <span className="min-w-0">

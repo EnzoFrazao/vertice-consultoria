@@ -57,17 +57,17 @@ export interface Property {
 }
 
 export interface Service {
-  id: string;
-  categoryId: string;
-  name: string;
-  description: string;
+  readonly id: string;
+  readonly categoryId: string;
+  readonly name: string;
+  readonly description: string;
 }
 
 export interface ServiceCategory {
-  id: string;
-  name: string;
-  description: string;
-  services: Service[];
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly services: readonly Service[];
 }
 
 export interface DocumentVersion {

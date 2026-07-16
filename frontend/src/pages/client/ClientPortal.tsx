@@ -6,7 +6,7 @@ import { ClientProcessDetailPage } from "@/pages/client/ClientProcessDetailPage"
 import { ClientProcessesPage } from "@/pages/client/ClientProcessesPage";
 import { ClientProfilePage } from "@/pages/client/ClientProfilePage";
 import { NewRequestPage } from "@/pages/client/NewRequestPage";
-import { formatDate } from "@/pages/client/clientUtils";
+import { formatDate } from "@/shared/lib/formatters";
 
 const clientNavigation = [
   { label: "Início", href: "/cliente" },

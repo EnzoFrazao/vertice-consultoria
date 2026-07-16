@@ -5,7 +5,8 @@ import { CaseFolio, EmptyState, PageHeader, StatusBadge } from "@/shared/ui/port
 import { createWhatsAppUrl } from "@/shared/config/contact";
 import { getServiceById } from "@/domain/catalog";
 import { derivePendingActions } from "@/domain/selectors";
-import { formatDate, formatPropertyLabel, getPendingActionHref } from "@/pages/client/clientUtils";
+import { formatDate, formatPropertyLabelComplete } from "@/shared/lib/formatters";
+import { getPendingActionHref } from "@/pages/client/clientUtils";
 
 const primaryActionClass =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-tealTech px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#0b625c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech focus-visible:ring-offset-2";
@@ -133,7 +134,7 @@ export function ClientDashboard() {
         <CaseFolio
           protocol={activeCase.protocol}
           serviceName={activeService?.name ?? "Serviço imobiliário"}
-          propertyLabel={formatPropertyLabel(activeCase.property)}
+          propertyLabel={formatPropertyLabelComplete(activeCase.property)}
           objective={activeCase.objective}
           status={activeCase.status}
           priority={

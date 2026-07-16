@@ -10,9 +10,7 @@ import { Link } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
 import { getServiceById } from "@/domain/catalog";
-
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech focus-visible:ring-offset-2";
+import { adminFocusRing as focusRing } from "@/pages/admin/adminStyles";
 
 export function AdminClientsPage() {
   const { state } = usePortalData();
