@@ -23,7 +23,10 @@ describe("landing page entry", () => {
 
     const categories = [
       ["Orientação geral", ["Regularização de imóveis"]],
-      ["Regularização e registro", ["Escritura", "Averbação", "Retificação de área", "Regularização em prefeitura/cartório"]],
+      [
+        "Regularização e registro",
+        ["Escritura", "Averbação", "Retificação de área", "Regularização em prefeitura/cartório"]
+      ],
       ["Posse e sucessão", ["Usucapião", "Inventário imobiliário"]],
       ["Terrenos", ["Desmembramento de terreno"]],
       ["Avaliação", ["Análise de Valor de Mercado"]]

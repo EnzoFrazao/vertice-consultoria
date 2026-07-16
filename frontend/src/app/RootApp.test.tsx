@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { Link, MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
+import { Link, MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { createDemoRepository, type StorageLike } from "@/infrastructure/demo/repository";
 import { DEMO_CLIENT_ID } from "@/infrastructure/demo/seed";
@@ -99,8 +99,7 @@ describe("route lifecycle", () => {
         value: originalScrollIntoView
       });
     } else {
-      delete (Element.prototype as { scrollIntoView?: Element["scrollIntoView"] })
-        .scrollIntoView;
+      delete (Element.prototype as { scrollIntoView?: Element["scrollIntoView"] }).scrollIntoView;
     }
   });
 
@@ -130,22 +129,14 @@ describe("route lifecycle", () => {
       fireEvent.click(screen.getByRole("button", { name: "Escritura" }));
       fireEvent.click(screen.getByRole("button", { name: /iniciar solicitação de escritura/i }));
       expect(
-        await screen.findByRole(
-          "heading",
-          { name: /acesse sua jornada/i },
-          LAZY_ROUTE_WAIT_OPTIONS
-        )
+        await screen.findByRole("heading", { name: /acesse sua jornada/i }, LAZY_ROUTE_WAIT_OPTIONS)
       ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
       fireEvent.click(screen.getByRole("button", { name: /usar conta cliente/i }));
       fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
       expect(
-        await screen.findByRole(
-          "heading",
-          { name: "Nova solicitação" },
-          LAZY_ROUTE_WAIT_OPTIONS
-        )
+        await screen.findByRole("heading", { name: "Nova solicitação" }, LAZY_ROUTE_WAIT_OPTIONS)
       ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
@@ -176,11 +167,7 @@ describe("application routing and access", () => {
     renderApplication("/login");
 
     expect(
-      await screen.findByRole(
-        "heading",
-        { name: /acesse sua jornada/i },
-        LAZY_ROUTE_WAIT_OPTIONS
-      )
+      await screen.findByRole("heading", { name: /acesse sua jornada/i }, LAZY_ROUTE_WAIT_OPTIONS)
     ).toBeInTheDocument();
   });
 
@@ -197,11 +184,7 @@ describe("application routing and access", () => {
     expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
 
     fireEvent.click(
-      await screen.findByRole(
-        "link",
-        { name: "Voltar para o site" },
-        LAZY_ROUTE_WAIT_OPTIONS
-      )
+      await screen.findByRole("link", { name: "Voltar para o site" }, LAZY_ROUTE_WAIT_OPTIONS)
     );
     expect(screen.getByTestId("current-location")).toHaveTextContent("/");
   });
@@ -211,11 +194,7 @@ describe("application routing and access", () => {
 
     expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
     expect(
-      await screen.findByRole(
-        "heading",
-        { name: /acesse sua jornada/i },
-        LAZY_ROUTE_WAIT_OPTIONS
-      )
+      await screen.findByRole("heading", { name: /acesse sua jornada/i }, LAZY_ROUTE_WAIT_OPTIONS)
     ).toBeInTheDocument();
   });
 
@@ -225,17 +204,11 @@ describe("application routing and access", () => {
     renderApplication("/login", repository);
 
     fireEvent.click(
-      await screen.findByRole(
-        "button",
-        { name: /usar conta cliente/i },
-        LAZY_ROUTE_WAIT_OPTIONS
-      )
+      await screen.findByRole("button", { name: /usar conta cliente/i }, LAZY_ROUTE_WAIT_OPTIONS)
     );
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
-    expect(screen.getByTestId("current-location")).toHaveTextContent(
-      "/cliente/nova-solicitacao"
-    );
+    expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente/nova-solicitacao");
   });
 
   it("routes the administrator home and leaves a client service selection untouched", async () => {

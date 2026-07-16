@@ -84,7 +84,10 @@ export function ClientProcessDetailPage() {
         title="Processo não encontrado"
         description="Este processo não existe ou não pertence à sua conta."
         action={
-          <Link className="min-h-11 rounded-lg px-3 py-3 font-bold text-tealTech underline underline-offset-4" to="/cliente/processos">
+          <Link
+            className="min-h-11 rounded-lg px-3 py-3 font-bold text-tealTech underline underline-offset-4"
+            to="/cliente/processos"
+          >
             Voltar aos meus processos
           </Link>
         }
@@ -135,12 +138,21 @@ export function ClientProcessDetailPage() {
             aria-labelledby="detail-now-heading"
             className="border-t-4 border-t-tealTech p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-tealTech"
           >
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Próxima decisão</p>
-            <h2 id="detail-now-heading" className="mt-1 font-display text-2xl font-semibold text-espresso">Agora</h2>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+              Próxima decisão
+            </p>
+            <h2
+              id="detail-now-heading"
+              className="mt-1 font-display text-2xl font-semibold text-espresso"
+            >
+              Agora
+            </h2>
             {dominantAction && !isCompleted ? (
               <p className="mt-3 text-base font-semibold text-espresso">{dominantAction.title}</p>
             ) : (
-              <p className="mt-3 text-base font-semibold text-espresso">Nada precisa de você agora</p>
+              <p className="mt-3 text-base font-semibold text-espresso">
+                Nada precisa de você agora
+              </p>
             )}
             <p className="mt-1 text-sm leading-6 text-cacao/70">
               {dominantAction && !isCompleted
@@ -179,24 +191,36 @@ export function ClientProcessDetailPage() {
             <aside className="flex items-start gap-3 border-l-4 border-tealTech bg-tealTech/[0.07] px-4 py-4 text-sm leading-6 text-espresso">
               <ShieldCheck aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-tealTech" />
               <p>
-                <strong>Processo concluído e disponível somente para consulta.</strong> Documentos e movimentos continuam preservados neste fólio.
+                <strong>Processo concluído e disponível somente para consulta.</strong> Documentos e
+                movimentos continuam preservados neste fólio.
               </p>
             </aside>
           ) : null}
 
           <section aria-labelledby="documents-heading">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Livro documental</p>
-              <h2 id="documents-heading" className="mt-1 font-display text-2xl font-semibold text-espresso">Documentos</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+                Livro documental
+              </p>
+              <h2
+                id="documents-heading"
+                className="mt-1 font-display text-2xl font-semibold text-espresso"
+              >
+                Documentos
+              </h2>
               <p className="mt-2 text-sm leading-6 text-cacao/70">
-                Cada linha registra obrigatoriedade, situação e versões. Os arquivos desta demonstração são apenas exemplos visuais.
+                Cada linha registra obrigatoriedade, situação e versões. Os arquivos desta
+                demonstração são apenas exemplos visuais.
               </p>
             </div>
 
             <div className="mt-6 divide-y divide-espresso/15 border-y border-espresso/15">
               {item.documents.map((document, index) => {
-                const asset = state.mockDocumentAssets.find((candidate) => candidate.kind === document.kind);
-                const canSubmit = !isCompleted && ["Pendente", "Rejeitado"].includes(document.status) && asset;
+                const asset = state.mockDocumentAssets.find(
+                  (candidate) => candidate.kind === document.kind
+                );
+                const canSubmit =
+                  !isCompleted && ["Pendente", "Rejeitado"].includes(document.status) && asset;
                 const latestVersion = document.versions[document.versions.length - 1];
                 const titleId = `documento-${document.id}`;
 
@@ -208,13 +232,21 @@ export function ClientProcessDetailPage() {
                     className="group scroll-mt-28 bg-transparent open:bg-champagne/20"
                   >
                     <summary className="grid min-h-20 cursor-pointer list-none gap-3 px-2 py-4 marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-tealTech sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-center sm:px-3">
-                      <span aria-hidden="true" className="font-display text-lg text-bronze">{String(index + 1).padStart(2, "0")}</span>
+                      <span aria-hidden="true" className="font-display text-lg text-bronze">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h3 id={titleId} tabIndex={-1} className="font-semibold text-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech">
+                          <h3
+                            id={titleId}
+                            tabIndex={-1}
+                            className="font-semibold text-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech"
+                          >
                             {document.label}
                           </h3>
-                          <span className="text-xs text-cacao/65">{document.required ? "Obrigatório" : "Opcional"}</span>
+                          <span className="text-xs text-cacao/65">
+                            {document.required ? "Obrigatório" : "Opcional"}
+                          </span>
                         </div>
                         <span className="mt-1 block break-all text-xs leading-5 text-cacao/70">
                           {latestVersion
@@ -254,16 +286,30 @@ export function ClientProcessDetailPage() {
             </div>
           </section>
 
-          <section aria-labelledby="property-heading" className="grid gap-6 border-y border-espresso/15 py-7 lg:grid-cols-[minmax(0,1fr)_17rem]">
+          <section
+            aria-labelledby="property-heading"
+            className="grid gap-6 border-y border-espresso/15 py-7 lg:grid-cols-[minmax(0,1fr)_17rem]"
+          >
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Imóvel em contexto</p>
-              <h2 id="property-heading" className="mt-1 font-display text-2xl font-semibold text-espresso">O bem deste fólio</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+                Imóvel em contexto
+              </p>
+              <h2
+                id="property-heading"
+                className="mt-1 font-display text-2xl font-semibold text-espresso"
+              >
+                O bem deste fólio
+              </h2>
               <div className="mt-4 flex items-start gap-3">
                 <House aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-bronze" />
-                <p className="text-sm leading-6 text-cacao/75">{formatPropertyAddressComplete(item.property)}</p>
+                <p className="text-sm leading-6 text-cacao/75">
+                  {formatPropertyAddressComplete(item.property)}
+                </p>
               </div>
               {item.property.registrationNumber ? (
-                <p className="mt-3 text-sm text-cacao/75"><strong>Matrícula:</strong> {item.property.registrationNumber}</p>
+                <p className="mt-3 text-sm text-cacao/75">
+                  <strong>Matrícula:</strong> {item.property.registrationNumber}
+                </p>
               ) : null}
             </div>
             <aside
@@ -273,7 +319,9 @@ export function ClientProcessDetailPage() {
             >
               <MessageCircle aria-hidden="true" className="h-5 w-5 text-tealTech" />
               <h3 className="mt-3 font-semibold text-espresso">Conversa contextual</h3>
-              <p className="mt-1 text-xs leading-5 text-cacao/70">Serviço e protocolo já seguem na mensagem.</p>
+              <p className="mt-1 text-xs leading-5 text-cacao/70">
+                Serviço e protocolo já seguem na mensagem.
+              </p>
               <a
                 href={whatsappHref}
                 target="_blank"
@@ -292,19 +340,28 @@ export function ClientProcessDetailPage() {
             className="group"
           >
             <summary className="min-h-14 cursor-pointer list-none py-2 marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Diário do fólio</p>
-              <h2 className="mt-1 font-display text-2xl font-semibold text-espresso">Histórico do processo</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+                Diário do fólio
+              </p>
+              <h2 className="mt-1 font-display text-2xl font-semibold text-espresso">
+                Histórico do processo
+              </h2>
             </summary>
             <ol className="mt-5 border-l border-espresso/15 pl-5">
               {[...item.timeline]
                 .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
                 .map((event) => (
                   <li key={event.id} className="relative pb-6 last:pb-0">
-                    <span aria-hidden="true" className="absolute -left-[1.62rem] top-1 grid h-5 w-5 place-items-center rounded-full border border-tealTech/30 bg-ivory text-tealTech">
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-[1.62rem] top-1 grid h-5 w-5 place-items-center rounded-full border border-tealTech/30 bg-ivory text-tealTech"
+                    >
                       <TimelineIcon type={event.type} />
                     </span>
                     <h3 className="text-sm font-semibold text-espresso">{event.title}</h3>
-                    {event.description ? <p className="mt-1 text-sm leading-5 text-cacao/70">{event.description}</p> : null}
+                    {event.description ? (
+                      <p className="mt-1 text-sm leading-5 text-cacao/70">{event.description}</p>
+                    ) : null}
                     <p className="mt-1.5 text-xs text-cacao/65">
                       <span className="sr-only">{getTimelineIconLabel(event.type)}. </span>
                       {formatDate(event.createdAt, true)}

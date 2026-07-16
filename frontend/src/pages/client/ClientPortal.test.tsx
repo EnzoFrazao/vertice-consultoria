@@ -8,11 +8,7 @@ import {
   type DemoRepository,
   type StorageLike
 } from "@/infrastructure/demo/repository";
-import {
-  DEMO_ADMIN_ID,
-  DEMO_CLIENT_ID,
-  createDemoSeed
-} from "@/infrastructure/demo/seed";
+import { DEMO_ADMIN_ID, DEMO_CLIENT_ID, createDemoSeed } from "@/infrastructure/demo/seed";
 import { ClientPortal } from "@/pages/client/ClientPortal";
 
 function createMemoryStorage(initial: Record<string, string> = {}): StorageLike {
@@ -60,23 +56,32 @@ describe("ClientPortal", () => {
     renderClient();
 
     const activeFolio = screen.getByRole("article", { name: "Fólio RV-2026-0001" });
-    const coverHeading = within(activeFolio).getByRole("heading", { name: "Regularização de imóveis" });
+    const coverHeading = within(activeFolio).getByRole("heading", {
+      name: "Regularização de imóveis"
+    });
     expect(coverHeading).toBeInTheDocument();
     expect(within(activeFolio).getByText(/Casa · Rua das Acácias, 245/i)).toBeInTheDocument();
     const nowHeading = within(activeFolio).getByRole("heading", { name: "Agora" });
     expect(screen.getAllByRole("heading", { name: "Agora" })).toHaveLength(1);
     const progressHeading = within(activeFolio).getByRole("heading", { name: "Andamento" });
-    expect(coverHeading.compareDocumentPosition(nowHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(nowHeading.compareDocumentPosition(progressHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(
+      coverHeading.compareDocumentPosition(nowHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(
+      nowHeading.compareDocumentPosition(progressHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
     expect(screen.getByText("mais 2 ações")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /RV-2026-0001/i })).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("link", { name: /RV-2026-0001/i })).toHaveAttribute(
+      "aria-current",
+      "true"
+    );
     expect(screen.getByRole("navigation", { name: /navegação do portal/i })).toHaveTextContent(
       "Meus processos"
     );
     expect(within(activeFolio).getByText("Fase 2 de 5")).toBeInTheDocument();
-    expect(within(activeFolio).getByRole("list", { name: "Andamento do processo" })).toHaveTextContent(
-      "EntradaDocumentaçãoAnálise técnicaÓrgãosConclusão"
-    );
+    expect(
+      within(activeFolio).getByRole("list", { name: "Andamento do processo" })
+    ).toHaveTextContent("EntradaDocumentaçãoAnálise técnicaÓrgãosConclusão");
   });
 
   it("explicita quando nada depende do cliente", () => {
@@ -117,7 +122,10 @@ describe("ClientPortal", () => {
     expect(response).toHaveAttribute("href", expect.stringContaining("wa.me"));
     fireEvent.click(response);
     expect(
-      repository.getState().cases.find((candidate) => candidate.id === "case-0001")?.timeline.at(-1)?.type
+      repository
+        .getState()
+        .cases.find((candidate) => candidate.id === "case-0001")
+        ?.timeline.at(-1)?.type
     ).toBe("whatsapp-started");
   });
 
@@ -132,10 +140,7 @@ describe("ClientPortal", () => {
     fireEvent.click(action);
 
     const documentHeading = await screen.findByRole("heading", { name: "Matrícula do imóvel" });
-    expect(documentHeading).toHaveAttribute(
-      "id",
-      "documento-case-0001-doc-matricula-imovel"
-    );
+    expect(documentHeading).toHaveAttribute("id", "documento-case-0001-doc-matricula-imovel");
     await waitFor(() => expect(documentHeading).toHaveFocus());
   });
 
@@ -144,8 +149,17 @@ describe("ClientPortal", () => {
 
     const actions = screen.getAllByRole("link", { name: /Adicionar Matrícula do imóvel/i });
     expect(actions).toHaveLength(2);
-    expect(actions.some((action) => action.classList.contains("hidden") && action.classList.contains("sm:inline-flex"))).toBe(true);
-    expect(actions.some((action) => action.classList.contains("sm:hidden") && action.classList.contains("fixed"))).toBe(true);
+    expect(
+      actions.some(
+        (action) =>
+          action.classList.contains("hidden") && action.classList.contains("sm:inline-flex")
+      )
+    ).toBe(true);
+    expect(
+      actions.some(
+        (action) => action.classList.contains("sm:hidden") && action.classList.contains("fixed")
+      )
+    ).toBe(true);
   });
 
   it("lista somente os processos do cliente e abre seus detalhes", () => {
@@ -163,7 +177,10 @@ describe("ClientPortal", () => {
     const historyHeading = screen.getByRole("heading", { name: "Histórico do processo" });
     expect(historyHeading).toBeInTheDocument();
     expect(historyHeading.closest("details")).not.toHaveAttribute("open");
-    expect(screen.getByRole("heading", { name: "Agora" }).closest("section")).toHaveAttribute("tabindex", "-1");
+    expect(screen.getByRole("heading", { name: "Agora" }).closest("section")).toHaveAttribute(
+      "tabindex",
+      "-1"
+    );
     expect(screen.queryByText(/assinatura digital/i)).not.toBeInTheDocument();
   });
 
@@ -183,9 +200,13 @@ describe("ClientPortal", () => {
     expect(within(pendingDocument).getByText("Pendente")).toBeInTheDocument();
     fireEvent.click(within(pendingDocument).getByRole("button", { name: "Adicionar exemplo" }));
     expect(within(pendingDocument).getByText("Enviado")).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent("Matrícula do imóvel enviado para análise");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Matrícula do imóvel enviado para análise"
+    );
     await waitFor(() =>
-      expect(within(pendingDocument).getByRole("heading", { name: "Matrícula do imóvel" })).toHaveFocus()
+      expect(
+        within(pendingDocument).getByRole("heading", { name: "Matrícula do imóvel" })
+      ).toHaveFocus()
     );
 
     const rejectedDocument = screen.getByTestId("document-comprovante-residencia");
@@ -205,7 +226,9 @@ describe("ClientPortal", () => {
     const repository = createIsolatedRepository(state);
 
     const dashboard = renderClient("/cliente", repository);
-    expect(screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /criar primeira solicitação/i })).toHaveAttribute(
       "href",
       "/cliente/nova-solicitacao"
@@ -213,7 +236,9 @@ describe("ClientPortal", () => {
     dashboard.unmount();
 
     renderClient("/cliente/processos", repository);
-    expect(screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /iniciar solicitação/i })).toHaveAttribute(
       "href",
       "/cliente/nova-solicitacao"
@@ -243,8 +268,12 @@ describe("ClientPortal", () => {
     repository.updateCaseStatus("case-0001", "Concluído", DEMO_ADMIN_ID);
     renderClient("/cliente/processos/case-0001", repository);
 
-    expect(screen.getByText(/processo concluído e disponível somente para consulta/i)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /adicionar exemplo|nova versão/i })).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/processo concluído e disponível somente para consulta/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /adicionar exemplo|nova versão/i })
+    ).not.toBeInTheDocument();
   });
 
   it("cria uma solicitação em quatro passos sem exigir todos os documentos", () => {
@@ -267,7 +296,9 @@ describe("ClientPortal", () => {
 
     expect(screen.getByText("Etapa 3 de 4")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Tipo do imóvel"), { target: { value: "Casa" } });
-    fireEvent.change(screen.getByLabelText("Endereço do imóvel"), { target: { value: "Rua do Cajueiro" } });
+    fireEvent.change(screen.getByLabelText("Endereço do imóvel"), {
+      target: { value: "Rua do Cajueiro" }
+    });
     fireEvent.change(screen.getByLabelText("Número"), { target: { value: "88" } });
     fireEvent.change(screen.getByLabelText("Bairro"), { target: { value: "Aldeota" } });
     fireEvent.change(screen.getByLabelText("Cidade"), { target: { value: "Fortaleza" } });
@@ -286,7 +317,12 @@ describe("ClientPortal", () => {
     expect(screen.getByText("RV-2026-0004")).toBeInTheDocument();
     expect(screen.getAllByText("Documentos pendentes").length).toBeGreaterThan(0);
     expect(repository.getPendingServiceId()).toBeNull();
-    expect(repository.getState().cases.at(-1)?.documents.filter((item) => item.status === "Enviado")).toHaveLength(2);
+    expect(
+      repository
+        .getState()
+        .cases.at(-1)
+        ?.documents.filter((item) => item.status === "Enviado")
+    ).toHaveLength(2);
   });
 
   it("moves focus to the current step heading when returning to the first step", () => {
@@ -309,11 +345,15 @@ describe("ClientPortal", () => {
     expect(screen.getByLabelText("E-mail")).toBeDisabled();
     expect(screen.getByLabelText("CPF")).toBeDisabled();
     fireEvent.change(screen.getByLabelText("Telefone"), { target: { value: "(85) 98888-7777" } });
-    fireEvent.change(screen.getByLabelText("Endereço"), { target: { value: "Rua Nova, 45 · Fortaleza, CE" } });
+    fireEvent.change(screen.getByLabelText("Endereço"), {
+      target: { value: "Rua Nova, 45 · Fortaleza, CE" }
+    });
     fireEvent.click(screen.getByRole("button", { name: "Salvar alterações" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("Perfil atualizado");
-    expect(repository.getState().users.find((item) => item.id === DEMO_CLIENT_ID)?.phone).toBe("(85) 98888-7777");
+    expect(repository.getState().users.find((item) => item.id === DEMO_CLIENT_ID)?.phone).toBe(
+      "(85) 98888-7777"
+    );
   });
 
   it("permite ler notificações e encerrar a sessão", () => {
@@ -321,8 +361,13 @@ describe("ClientPortal", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /notificações, 1 não lida/i }));
     expect(screen.getByText("Processo em análise técnica")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /marcar processo em análise técnica como lida/i }));
-    expect(repository.getState().notifications.find((item) => item.id === "notification-client-0001")?.readAt).toBeTruthy();
+    fireEvent.click(
+      screen.getByRole("button", { name: /marcar processo em análise técnica como lida/i })
+    );
+    expect(
+      repository.getState().notifications.find((item) => item.id === "notification-client-0001")
+        ?.readAt
+    ).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Sair da conta" }));
     expect(screen.getByRole("heading", { name: "Entrar na conta" })).toBeInTheDocument();

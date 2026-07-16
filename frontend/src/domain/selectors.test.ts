@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  buildAdminDocumentQueue,
-  buildAdminPauta,
-  derivePendingActions
-} from "@/domain/selectors";
+import { buildAdminDocumentQueue, buildAdminPauta, derivePendingActions } from "@/domain/selectors";
 import type {
   Case,
   CaseDocument,
@@ -101,19 +97,8 @@ function createDomainFixture(): DemoState {
             older
           ),
           createDocument("case-0001-doc-iptu", "IPTU", "Enviado", older),
-          createDocument(
-            "case-0001-doc-fotos-imovel",
-            "Fotos do imóvel",
-            "Enviado",
-            older,
-            false
-          ),
-          createDocument(
-            "case-0001-doc-matricula-imovel",
-            "Matrícula do imóvel",
-            "Pendente",
-            older
-          )
+          createDocument("case-0001-doc-fotos-imovel", "Fotos do imóvel", "Enviado", older, false),
+          createDocument("case-0001-doc-matricula-imovel", "Matrícula do imóvel", "Pendente", older)
         ]
       }),
       createCase({
@@ -138,12 +123,7 @@ function createDomainFixture(): DemoState {
         status: "Documentos em análise",
         updatedAt: newer,
         documents: [
-          createDocument(
-            "case-0003-doc-rg-cpf",
-            "RG/CPF",
-            "Em análise",
-            newer
-          ),
+          createDocument("case-0003-doc-rg-cpf", "RG/CPF", "Em análise", newer),
           createDocument(
             "case-0003-doc-matricula-imovel",
             "Matrícula do imóvel",

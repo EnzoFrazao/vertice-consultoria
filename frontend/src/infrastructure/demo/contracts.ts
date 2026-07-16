@@ -8,6 +8,4 @@ export interface CreateCaseInput {
   submittedAssetIds?: string[];
 }
 
-export type DocumentReview =
-  | { decision: "approve" }
-  | { decision: "reject"; reason: string };
+export type DocumentReview = { decision: "approve" } | { decision: "reject"; reason: string };

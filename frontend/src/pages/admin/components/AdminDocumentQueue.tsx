@@ -8,9 +8,7 @@ import { adminFocusRing as focusRing } from "@/pages/admin/adminStyles";
 
 interface AdminDocumentQueueProps {
   entries: AdminDocumentQueueEntry[];
-  getRejectionTriggerRef: (
-    documentId: string
-  ) => (node: HTMLButtonElement | null) => void;
+  getRejectionTriggerRef: (documentId: string) => (node: HTMLButtonElement | null) => void;
   startReview: (entry: AdminDocumentQueueEntry) => void;
   approve: (entry: AdminDocumentQueueEntry) => void;
   beginRejection: (documentId: string) => void;
@@ -59,14 +57,13 @@ export function AdminDocumentQueue({
                 </span>
               ))}
             </div>
-      
+
             {entries.map((entry) => {
               const { item, document: caseDocument, client } = entry;
               const service = getServiceById(item.serviceId);
-              const latestVersion =
-                caseDocument.versions[caseDocument.versions.length - 1];
+              const latestVersion = caseDocument.versions[caseDocument.versions.length - 1];
               const actionName = `${caseDocument.label} do protocolo ${item.protocol}`;
-      
+
               return (
                 <article
                   key={caseDocument.id}
@@ -80,10 +77,7 @@ export function AdminDocumentQueue({
                       Documento
                     </span>
                     <div className="flex min-w-0 items-center gap-3">
-                      <FileCheck2
-                        aria-hidden="true"
-                        className="h-5 w-5 flex-none text-tealTech"
-                      />
+                      <FileCheck2 aria-hidden="true" className="h-5 w-5 flex-none text-tealTech" />
                       <div className="min-w-0">
                         <h2 className="truncate font-semibold text-espresso">
                           {caseDocument.label}
@@ -94,7 +88,7 @@ export function AdminDocumentQueue({
                       </div>
                     </div>
                   </div>
-      
+
                   <div role="cell">
                     <span className="block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Versão
@@ -103,7 +97,7 @@ export function AdminDocumentQueue({
                       v{caseDocument.versions.length}
                     </span>
                   </div>
-      
+
                   <div role="cell">
                     <span className="block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Tamanho
@@ -112,7 +106,7 @@ export function AdminDocumentQueue({
                       {latestVersion?.sizeLabel ?? "—"}
                     </span>
                   </div>
-      
+
                   <div role="cell">
                     <span className="block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Processo
@@ -124,29 +118,24 @@ export function AdminDocumentQueue({
                       {item.protocol}
                     </Link>
                   </div>
-      
+
                   <div role="cell" className="min-w-0">
                     <span className="block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Cliente
                     </span>
                     <span className="mt-1 flex min-h-11 min-w-0 items-center gap-2 text-sm font-semibold text-espresso 2xl:mt-0">
-                      <UserRound
-                        aria-hidden="true"
-                        className="h-4 w-4 flex-none text-tealTech"
-                      />
-                      <span className="truncate">
-                        {client?.name ?? "Cliente não encontrado"}
-                      </span>
+                      <UserRound aria-hidden="true" className="h-4 w-4 flex-none text-tealTech" />
+                      <span className="truncate">{client?.name ?? "Cliente não encontrado"}</span>
                     </span>
                   </div>
-      
+
                   <div role="cell">
                     <span className="mb-2 block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Estado
                     </span>
                     <StatusBadge status={caseDocument.status} />
                   </div>
-      
+
                   <div role="cell">
                     <span className="block text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75 2xl:hidden">
                       Atualização
@@ -158,7 +147,7 @@ export function AdminDocumentQueue({
                       {formatShortDateTime(caseDocument.updatedAt)}
                     </time>
                   </div>
-      
+
                   <div
                     role="cell"
                     className="flex flex-wrap gap-2 sm:col-span-2 2xl:col-span-1 2xl:justify-end"

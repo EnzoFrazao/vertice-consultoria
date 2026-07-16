@@ -39,53 +39,30 @@ export function ZoomParallax({
   const container = useRef<HTMLDivElement>(null);
   const heroReveal = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [heroIsInteractive, setHeroIsInteractive] = useState(Boolean(shouldReduceMotion));
+  const [hasReachedHero, setHasReachedHero] = useState(false);
+  const heroIsInteractive = Boolean(shouldReduceMotion) || hasReachedHero;
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start start", "end end"]
   });
 
-  const mainScale = useTransform(
-    scrollYProgress,
-    [0, 0.46, 0.58],
-    [1, 2.72, 2.46]
-  );
+  const mainScale = useTransform(scrollYProgress, [0, 0.46, 0.58], [1, 2.72, 2.46]);
   const scale5 = useTransform(scrollYProgress, [0, 0.38], [1, 2.25]);
   const scale6 = useTransform(scrollYProgress, [0, 0.38], [1, 2.42]);
   const scale8 = useTransform(scrollYProgress, [0, 0.38], [1, 2.58]);
   const scale9 = useTransform(scrollYProgress, [0, 0.38], [1, 2.72]);
   const promptOpacity = useTransform(scrollYProgress, [0, 0.09, 0.17], [1, 1, 0]);
   const introImageY = useTransform(scrollYProgress, [0, 0.16], [90, 0]);
-  const mainImageOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.49, 0.54],
-    [1, 1, 0]
-  );
-  const sideImagesOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.34],
-    [1, 0.82, 0]
-  );
+  const mainImageOpacity = useTransform(scrollYProgress, [0, 0.49, 0.54], [1, 1, 0]);
+  const sideImagesOpacity = useTransform(scrollYProgress, [0, 0.18, 0.34], [1, 0.82, 0]);
   const transitionCoverOpacity = useTransform(
     scrollYProgress,
     [0.52, 0.555, 0.665, 0.675],
     [0, 1, 1, 0]
   );
-  const transitionCoverScale = useTransform(
-    scrollYProgress,
-    [0.52, 0.58],
-    [1.1, 1.08]
-  );
-  const transitionCoverY = useTransform(
-    scrollYProgress,
-    [0.52, 0.58],
-    [-20, -28]
-  );
-  const heroOpacity = useTransform(
-    scrollYProgress,
-    [0.665, 0.675, 1],
-    [0, 1, 1]
-  );
+  const transitionCoverScale = useTransform(scrollYProgress, [0.52, 0.58], [1.1, 1.08]);
+  const transitionCoverY = useTransform(scrollYProgress, [0.52, 0.58], [-20, -28]);
+  const heroOpacity = useTransform(scrollYProgress, [0.665, 0.675, 1], [0, 1, 1]);
   const heroPointerEvents = useTransform(scrollYProgress, (value) =>
     value > 0.675 ? "auto" : "none"
   );
@@ -93,12 +70,8 @@ export function ZoomParallax({
   const transitionImage = images[0];
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (!shouldReduceMotion) setHeroIsInteractive(value > 0.675);
+    if (!shouldReduceMotion) setHasReachedHero(value > 0.675);
   });
-
-  useEffect(() => {
-    if (shouldReduceMotion) setHeroIsInteractive(true);
-  }, [shouldReduceMotion]);
 
   useEffect(() => {
     const element = heroReveal.current;
@@ -135,12 +108,7 @@ export function ZoomParallax({
             <motion.div
               key={`${src}-${index}`}
               style={{
-                scale:
-                  shouldReduceMotion && isMainImage
-                    ? 3.6
-                    : shouldReduceMotion
-                      ? 1
-                      : scale,
+                scale: shouldReduceMotion && isMainImage ? 3.6 : shouldReduceMotion ? 1 : scale,
                 y: shouldReduceMotion ? 0 : introImageY,
                 opacity:
                   shouldReduceMotion && !isMainImage

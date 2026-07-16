@@ -61,12 +61,18 @@ export function AdminProcessesPage() {
         description="Localize solicitações por protocolo, cliente, serviço ou situação atual."
       />
 
-      <section aria-label="Filtros de processos" className="rounded-2xl border border-espresso/10 bg-ivory p-4 shadow-[0_12px_36px_rgba(32,19,13,0.05)] sm:p-5">
+      <section
+        aria-label="Filtros de processos"
+        className="rounded-2xl border border-espresso/10 bg-ivory p-4 shadow-[0_12px_36px_rgba(32,19,13,0.05)] sm:p-5"
+      >
         <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-[minmax(16rem,1.5fr)_repeat(3,minmax(10rem,1fr))]">
           <label className="block text-sm font-semibold text-espresso">
             Buscar processos
             <span className="relative mt-2 block">
-              <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-cacao/60" />
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-cacao/60"
+              />
               <input
                 type="search"
                 value={search}
@@ -85,7 +91,9 @@ export function AdminProcessesPage() {
             >
               <option value="">Todos os status</option>
               {CASE_STATUSES.map((status) => (
-                <option key={status} value={status}>{status}</option>
+                <option key={status} value={status}>
+                  {status}
+                </option>
               ))}
             </select>
           </label>
@@ -98,7 +106,9 @@ export function AdminProcessesPage() {
             >
               <option value="">Todos os serviços</option>
               {SERVICES.map((service) => (
-                <option key={service.id} value={service.id}>{service.name}</option>
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
               ))}
             </select>
           </label>
@@ -111,7 +121,9 @@ export function AdminProcessesPage() {
             >
               <option value="">Todos os clientes</option>
               {clients.map((client) => (
-                <option key={client.id} value={client.id}>{client.name}</option>
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
               ))}
             </select>
           </label>
@@ -145,7 +157,10 @@ export function AdminProcessesPage() {
           description="Ajuste os filtros ou limpe a busca para visualizar outras solicitações."
         />
       ) : (
-        <section aria-label="Lista de processos" className="overflow-hidden border-y border-espresso/15 bg-ivory">
+        <section
+          aria-label="Lista de processos"
+          className="overflow-hidden border-y border-espresso/15 bg-ivory"
+        >
           <div
             aria-hidden="true"
             className="hidden min-h-11 grid-cols-[minmax(10rem,0.8fr)_minmax(13rem,1.35fr)_minmax(10rem,0.8fr)_8.5rem_7rem] items-center gap-4 border-b border-espresso/15 bg-champagne/30 px-5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-cacao/65 lg:grid"
@@ -170,14 +185,23 @@ export function AdminProcessesPage() {
                 aria-label={`${item.protocol}, ${service?.name ?? "serviço"}, ${client?.name ?? "cliente"}`}
               >
                 <span className="min-w-0">
-                  <span className="block font-display text-lg font-semibold text-espresso group-hover:text-tealTech">{item.protocol}</span>
+                  <span className="block font-display text-lg font-semibold text-espresso group-hover:text-tealTech">
+                    {item.protocol}
+                  </span>
                   <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.12em] text-cacao/60">
-                    {pendingDocuments === 0 ? "Documentação em dia" : `${pendingDocuments} ${pendingDocuments === 1 ? "pendência" : "pendências"}`}
+                    {pendingDocuments === 0
+                      ? "Documentação em dia"
+                      : `${pendingDocuments} ${pendingDocuments === 1 ? "pendência" : "pendências"}`}
                   </span>
                 </span>
                 <span className="min-w-0 border-l-2 border-bronze/50 pl-3">
-                  <span className="block truncate text-sm font-semibold text-espresso">{item.property.address}, {item.property.number}</span>
-                  <span className="mt-1 block truncate text-xs text-cacao/70">{service?.name ?? "Serviço imobiliário"} · {item.property.city}/{item.property.state}</span>
+                  <span className="block truncate text-sm font-semibold text-espresso">
+                    {item.property.address}, {item.property.number}
+                  </span>
+                  <span className="mt-1 block truncate text-xs text-cacao/70">
+                    {service?.name ?? "Serviço imobiliário"} · {item.property.city}/
+                    {item.property.state}
+                  </span>
                 </span>
                 <span className="flex min-w-0 items-center gap-2 text-sm text-cacao/75">
                   <UserRound aria-hidden="true" className="h-4 w-4 shrink-0 text-tealTech" />
@@ -185,7 +209,9 @@ export function AdminProcessesPage() {
                 </span>
                 <StatusBadge status={item.status} />
                 <span className="text-sm text-cacao/65 lg:text-right">
-                  <span className="mr-2 font-bold uppercase tracking-wide text-cacao/50 lg:hidden">Atualizado</span>
+                  <span className="mr-2 font-bold uppercase tracking-wide text-cacao/50 lg:hidden">
+                    Atualizado
+                  </span>
                   {formatDate(item.updatedAt)}
                 </span>
               </Link>

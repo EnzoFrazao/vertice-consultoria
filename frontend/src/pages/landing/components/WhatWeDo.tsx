@@ -22,19 +22,30 @@ export function WhatWeDo() {
         className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.06fr_0.94fr] lg:items-end"
       >
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#08736b]">O que fazemos</p>
-          <h2 id="o-que-fazemos-title" className="mt-4 font-display text-4xl font-semibold leading-tight text-espresso sm:text-5xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#08736b]">
+            O que fazemos
+          </p>
+          <h2
+            id="o-que-fazemos-title"
+            className="mt-4 font-display text-4xl font-semibold leading-tight text-espresso sm:text-5xl"
+          >
             Transformamos dúvidas imobiliárias em próximos passos mais claros.
           </h2>
         </div>
         <div>
           <p className="max-w-2xl text-lg leading-8 text-cacao/75">
-            Apoiamos quem precisa regularizar um imóvel ou compreender seu valor de mercado, reunindo as informações essenciais antes da análise especializada.
+            Apoiamos quem precisa regularizar um imóvel ou compreender seu valor de mercado,
+            reunindo as informações essenciais antes da análise especializada.
           </p>
           <div className="mt-7 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {principles.map((principle, index) => (
-              <div key={principle} className="flex items-center gap-3 border-t border-bronze/30 pt-3 text-sm font-semibold text-espresso">
-                <span className="font-display text-lg text-bronze">{String(index + 1).padStart(2, "0")}</span>
+              <div
+                key={principle}
+                className="flex items-center gap-3 border-t border-bronze/30 pt-3 text-sm font-semibold text-espresso"
+              >
+                <span className="font-display text-lg text-bronze">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <span>{principle}</span>
               </div>
             ))}

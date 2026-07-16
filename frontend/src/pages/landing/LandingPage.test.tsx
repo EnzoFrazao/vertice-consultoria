@@ -1,4 +1,10 @@
-import { fireEvent, render as renderTestingLibrary, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render as renderTestingLibrary,
+  screen,
+  waitFor,
+  within
+} from "@testing-library/react";
 import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -33,7 +39,7 @@ function installMatchMedia(matches: (query: string) => boolean) {
         value: originalMatchMedia
       });
     } else {
-      delete (window as Window & { matchMedia?: typeof window.matchMedia }).matchMedia;
+      Reflect.deleteProperty(window, "matchMedia");
     }
   };
 }
@@ -61,13 +67,12 @@ describe("real estate guided landing", () => {
 
     expect(screen.getAllByText(/Regulariza/i).length).toBeGreaterThan(0);
     expect(
-      screen.getByText(
-        /Escolha a necessidade que mais se aproxima do seu momento/i
-      )
+      screen.getByText(/Escolha a necessidade que mais se aproxima do seu momento/i)
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /regularizar meu/i, hidden: true })
-    ).toHaveAttribute("href", "#servicos");
+    expect(screen.getByRole("link", { name: /regularizar meu/i, hidden: true })).toHaveAttribute(
+      "href",
+      "#servicos"
+    );
     expect(
       screen.getByRole("link", { name: /^avaliar valor de mercado$/i, hidden: true })
     ).toHaveAttribute("href", "#servicos");
@@ -100,17 +105,11 @@ describe("real estate guided landing", () => {
       "srcset",
       expect.stringContaining("w=2600&q=84 2600w")
     );
-    expect(screen.getByTestId("hero-parallax-image")).toHaveAttribute(
-      "sizes",
-      "100vw"
-    );
+    expect(screen.getByTestId("hero-parallax-image")).toHaveAttribute("sizes", "100vw");
     const premiumImages = screen.getAllByAltText(/premium/i);
     expect(premiumImages).toHaveLength(2);
     premiumImages.forEach((image) => {
-      expect(image).toHaveAttribute(
-        "src",
-        expect.stringContaining(premiumHomePhotoId)
-      );
+      expect(image).toHaveAttribute("src", expect.stringContaining(premiumHomePhotoId));
       expect(image).toHaveAttribute("sizes", "100vw");
     });
     expect(screen.getByTestId("hero-background-image")).toHaveAttribute(
@@ -126,39 +125,22 @@ describe("real estate guided landing", () => {
     const transitionCover = screen.getByTestId("zoom-transition-cover");
 
     expect(zoomSection).toHaveClass("h-[210vh]", "md:h-[225vh]");
-    expect(transitionCover).toHaveAttribute(
-      "src",
-      expect.stringContaining(premiumHomePhotoId)
-    );
-    expect(transitionCover).toHaveAttribute(
-      "srcset",
-      expect.stringContaining("w=2600&q=84 2600w")
-    );
+    expect(transitionCover).toHaveAttribute("src", expect.stringContaining(premiumHomePhotoId));
+    expect(transitionCover).toHaveAttribute("srcset", expect.stringContaining("w=2600&q=84 2600w"));
     expect(transitionCover).toHaveAttribute("sizes", "100vw");
-    expect(transitionCover).toHaveAttribute(
-      "alt",
-      expect.stringMatching(/transi/i)
-    );
+    expect(transitionCover).toHaveAttribute("alt", expect.stringMatching(/transi/i));
   });
 
   it("starts the zoom with a spread editorial collage around the main image", () => {
     render(<LandingPage />);
 
-    expect(screen.getByTestId("zoom-image-frame-0")).toHaveClass(
-      "md:h-[34vh]",
-      "md:w-[40vw]"
-    );
-    expect(screen.getByTestId("zoom-image-frame-1")).toHaveClass(
-      "md:-left-[36vw]"
-    );
+    expect(screen.getByTestId("zoom-image-frame-0")).toHaveClass("md:h-[34vh]", "md:w-[40vw]");
+    expect(screen.getByTestId("zoom-image-frame-1")).toHaveClass("md:-left-[36vw]");
     expect(screen.getByTestId("zoom-image-frame-3")).toHaveClass(
       "md:-top-[28vh]",
       "md:left-[33vw]"
     );
-    expect(screen.getByTestId("zoom-image-frame-5")).toHaveClass(
-      "md:top-[31vh]",
-      "md:left-[31vw]"
-    );
+    expect(screen.getByTestId("zoom-image-frame-5")).toHaveClass("md:top-[31vh]", "md:left-[31vw]");
   });
 
   it("uses a large elegant display treatment for the zoom prompt", () => {
@@ -173,15 +155,9 @@ describe("real estate guided landing", () => {
   it("keeps the transition cover and hero image color treatment consistent", () => {
     render(<LandingPage />);
 
-    expect(screen.getByTestId("zoom-transition-cover")).toHaveClass(
-      "opacity-100"
-    );
-    expect(screen.getByTestId("hero-background-image")).toHaveClass(
-      "opacity-100"
-    );
-    expect(
-      screen.queryByTestId("zoom-transition-color-overlay")
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("zoom-transition-cover")).toHaveClass("opacity-100");
+    expect(screen.getByTestId("hero-background-image")).toHaveClass("opacity-100");
+    expect(screen.queryByTestId("zoom-transition-color-overlay")).not.toBeInTheDocument();
     expect(screen.queryByTestId("hero-color-overlay")).not.toBeInTheDocument();
   });
 
@@ -194,9 +170,7 @@ describe("real estate guided landing", () => {
         hidden: true
       })
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("Regularização fundiária · Análise de valor")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Regularização fundiária · Análise de valor")).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         name: "Regularize, avalie e decida sobre seu imóvel com clareza.",
@@ -216,9 +190,7 @@ describe("real estate guided landing", () => {
 
     const marks = screen.getAllByRole("img", { name: "Vértice Consultoria", hidden: true });
     expect(marks.length).toBeGreaterThanOrEqual(2);
-    marks.forEach((mark) =>
-      expect(mark).toHaveAttribute("src", "/brand/vertice-consultoria.png")
-    );
+    marks.forEach((mark) => expect(mark).toHaveAttribute("src", "/brand/vertice-consultoria.png"));
   });
 
   it("adds a concise editorial section explaining what the service does", () => {
@@ -234,13 +206,11 @@ describe("real estate guided landing", () => {
         "Apoiamos quem precisa regularizar um imóvel ou compreender seu valor de mercado, reunindo as informações essenciais antes da análise especializada."
       )
     ).toBeInTheDocument();
-    [
-      "Documentação organizada",
-      "Critérios de mercado",
-      "Orientação objetiva"
-    ].forEach((principle) => {
-      expect(screen.getByText(principle)).toBeInTheDocument();
-    });
+    ["Documentação organizada", "Critérios de mercado", "Orientação objetiva"].forEach(
+      (principle) => {
+        expect(screen.getByText(principle)).toBeInTheDocument();
+      }
+    );
   });
 
   it("marks scroll reveal animations as repeatable when sections re-enter", () => {
@@ -254,10 +224,7 @@ describe("real estate guided landing", () => {
       "how-step-1",
       "how-step-2"
     ].forEach((testId) => {
-      expect(screen.getByTestId(testId)).toHaveAttribute(
-        "data-animation-replay",
-        "true"
-      );
+      expect(screen.getByTestId(testId)).toHaveAttribute("data-animation-replay", "true");
     });
   });
 
@@ -267,7 +234,9 @@ describe("real estate guided landing", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Avaliação" }));
     fireEvent.click(screen.getByRole("button", { name: "Análise de Valor de Mercado" }));
-    fireEvent.click(screen.getByRole("button", { name: /iniciar solicitação de análise de valor/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /iniciar solicitação de análise de valor/i })
+    );
 
     expect(onStartService).toHaveBeenCalledWith("analise-valor-mercado");
     expect(window.sessionStorage.getItem("rv.demo.pending-service")).toBeNull();
@@ -278,11 +247,17 @@ describe("real estate guided landing", () => {
     render(<LandingPage />);
 
     const selector = screen.getByTestId("service-selector");
-    expect(within(selector).getByRole("navigation", { name: "Categorias de serviços" })).toBeInTheDocument();
+    expect(
+      within(selector).getByRole("navigation", { name: "Categorias de serviços" })
+    ).toBeInTheDocument();
     fireEvent.click(within(selector).getByRole("button", { name: "Orientação geral" }));
-    expect(within(selector).getByRole("button", { name: "Regularização de imóveis" })).toBeInTheDocument();
+    expect(
+      within(selector).getByRole("button", { name: "Regularização de imóveis" })
+    ).toBeInTheDocument();
     fireEvent.click(within(selector).getByRole("button", { name: "Posse e sucessão" }));
-    expect(within(selector).getByRole("button", { name: "Inventário imobiliário" })).toBeInTheDocument();
+    expect(
+      within(selector).getByRole("button", { name: "Inventário imobiliário" })
+    ).toBeInTheDocument();
     expect(within(selector).getByRole("region", { name: "Serviço em foco" })).toBeInTheDocument();
   });
 
@@ -340,17 +315,9 @@ describe("real estate guided landing", () => {
 
     expect(
       Array.from(
-        document.querySelectorAll(
-          "#zoom-parallax, #o-que-fazemos, #servicos, #seguranca, #contato"
-        )
+        document.querySelectorAll("#zoom-parallax, #o-que-fazemos, #servicos, #seguranca, #contato")
       ).map((section) => section.id)
-    ).toEqual([
-      "zoom-parallax",
-      "o-que-fazemos",
-      "servicos",
-      "seguranca",
-      "contato"
-    ]);
+    ).toEqual(["zoom-parallax", "o-que-fazemos", "servicos", "seguranca", "contato"]);
   });
 
   it("starts with the zoom parallax intro and reveals the hero inside it", () => {
@@ -362,14 +329,8 @@ describe("real estate guided landing", () => {
     const hero = screen.getByTestId("site-hero");
 
     expect(zoomImages).toHaveLength(7);
-    expect(zoomImages[0]).toHaveAttribute(
-      "src",
-      expect.stringContaining(premiumHomePhotoId)
-    );
-    expect(zoomImages[0]).toHaveAttribute(
-      "alt",
-      expect.stringMatching(/premium/i)
-    );
+    expect(zoomImages[0]).toHaveAttribute("src", expect.stringContaining(premiumHomePhotoId));
+    expect(zoomImages[0]).toHaveAttribute("alt", expect.stringMatching(/premium/i));
     expect(screen.getByText(/role para baixo/i)).toBeInTheDocument();
     expect(screen.getByText(/regularize, avalie/i)).toBeInTheDocument();
     expect(zoomReveal).toContainElement(hero);
@@ -377,9 +338,7 @@ describe("real estate guided landing", () => {
     expect(zoomReveal).toHaveAttribute("aria-hidden", "true");
     expect(zoomReveal).toHaveAttribute("inert");
     expect(screen.queryByText(/transforme papelada/i)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(/documentos, chaves e crit/i)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/documentos, chaves e crit/i)).not.toBeInTheDocument();
   });
 
   it("leaves route scrolling and browser restoration to the application lifecycle", () => {
@@ -394,9 +353,7 @@ describe("real estate guided landing", () => {
 
     expect(screen.getByText(/envie as informa/i)).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Informações, contexto e orientação reunidos em três etapas compreensíveis."
-      )
+      screen.getByText("Informações, contexto e orientação reunidos em três etapas compreensíveis.")
     ).toBeInTheDocument();
     expect(screen.getByText(/receba orientação para decidir/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/whatsapp/i)).toHaveAttribute("href");
@@ -424,19 +381,12 @@ describe("real estate guided landing", () => {
     expect(footer).toHaveTextContent(
       "Clareza para regularizar, avaliar e decidir sobre seu imóvel."
     );
-    expect(
-      footer.querySelector('a[href="#servicos"]')
-    ).toBeInTheDocument();
-    expect(footer.querySelector('a[href="/login"]')).toHaveTextContent(
-      "Acessar minha conta"
-    );
-    expect(
-      footer.querySelector('a[href="#seguranca"]')
-    ).toBeInTheDocument();
+    expect(footer.querySelector('a[href="#servicos"]')).toBeInTheDocument();
+    expect(footer.querySelector('a[href="/login"]')).toHaveTextContent("Acessar minha conta");
+    expect(footer.querySelector('a[href="#seguranca"]')).toBeInTheDocument();
     expect(
       within(footer).getByRole("link", {
-        name: "Falar pelo WhatsApp",
-        exact: true
+        name: "Falar pelo WhatsApp"
       })
     ).toHaveAttribute(
       "href",
@@ -449,16 +399,11 @@ describe("real estate guided landing", () => {
 
     expect(screen.getByTestId("journey-panel")).toBeInTheDocument();
     expect(screen.queryByTestId("trust-panel")).not.toBeInTheDocument();
-    [
-      "LGPD em primeiro plano",
-      "Envio seguro",
-      "Critério técnico",
-      "Menos burocracia"
-    ].forEach((heading) => {
-      expect(
-        screen.queryByRole("heading", { name: heading, exact: true })
-      ).not.toBeInTheDocument();
-    });
+    ["LGPD em primeiro plano", "Envio seguro", "Critério técnico", "Menos burocracia"].forEach(
+      (heading) => {
+        expect(screen.queryByRole("heading", { name: heading })).not.toBeInTheDocument();
+      }
+    );
     expect(
       screen.queryByRole("heading", {
         name: "Escolha o caminho certo para o seu imóvel."

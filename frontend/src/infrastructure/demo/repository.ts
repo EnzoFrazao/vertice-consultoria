@@ -19,10 +19,7 @@ import {
   getBrowserStorage,
   type StorageLike
 } from "@/infrastructure/demo/storage";
-import {
-  isAuthSession,
-  isDemoState
-} from "@/infrastructure/demo/validation";
+import { isAuthSession, isDemoState } from "@/infrastructure/demo/validation";
 
 export type { CreateCaseInput, DocumentReview } from "@/infrastructure/demo/contracts";
 export type { StorageLike } from "@/infrastructure/demo/storage";
@@ -47,9 +44,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
   const localMemory = createMemoryStorage();
   const sessionMemory = createMemoryStorage();
   let activeLocalStorage =
-    options.localStorage === undefined
-      ? getBrowserStorage("localStorage")
-      : options.localStorage;
+    options.localStorage === undefined ? getBrowserStorage("localStorage") : options.localStorage;
   let activeSessionStorage =
     options.sessionStorage === undefined
       ? getBrowserStorage("sessionStorage")
@@ -86,7 +81,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     });
   }
 
-  function useLocalStorage<T>(operation: (storage: StorageLike) => T): T {
+  function withLocalStorage<T>(operation: (storage: StorageLike) => T): T {
     try {
       return operation(activeLocalStorage as StorageLike);
     } catch {
@@ -100,7 +95,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     }
   }
 
-  function useSessionStorage<T>(operation: (storage: StorageLike) => T): T {
+  function withSessionStorage<T>(operation: (storage: StorageLike) => T): T {
     try {
       return operation(activeSessionStorage as StorageLike);
     } catch {
@@ -115,15 +110,13 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
   }
 
   function persistState(nextState: DemoState) {
-    useLocalStorage((storage) =>
+    withLocalStorage((storage) =>
       storage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify(nextState))
     );
   }
 
   let state: DemoState;
-  const storedState = useLocalStorage((storage) =>
-    storage.getItem(DEMO_STATE_STORAGE_KEY)
-  );
+  const storedState = withLocalStorage((storage) => storage.getItem(DEMO_STATE_STORAGE_KEY));
 
   if (storedState === null) {
     state = createDemoSeed();
@@ -137,8 +130,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
       state = createDemoSeed();
       addWarning({
         code: "state-reset",
-        message:
-          "Os dados locais eram incompatíveis e a demonstração foi restaurada."
+        message: "Os dados locais eram incompatíveis e a demonstração foi restaurada."
       });
       persistState(state);
     }
@@ -177,9 +169,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
   }
 
   function getDocument(item: Case, documentId: string) {
-    const document = item.documents.find(
-      (candidate) => candidate.id === documentId
-    );
+    const document = item.documents.find((candidate) => candidate.id === documentId);
     if (!document) throw new Error("Documento não encontrado.");
     return document;
   }
@@ -204,9 +194,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     };
   }
 
-  function createNotification(
-    input: Omit<Notification, "id" | "createdAt">
-  ): Notification {
+  function createNotification(input: Omit<Notification, "id" | "createdAt">): Notification {
     return {
       ...input,
       id: nextId("notification"),
@@ -214,15 +202,10 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     };
   }
 
-  function replaceCase(
-    updatedCase: Case,
-    notifications: Notification[] = []
-  ) {
+  function replaceCase(updatedCase: Case, notifications: Notification[] = []) {
     return commit({
       ...state,
-      cases: state.cases.map((item) =>
-        item.id === updatedCase.id ? updatedCase : item
-      ),
+      cases: state.cases.map((item) => (item.id === updatedCase.id ? updatedCase : item)),
       notifications: [...state.notifications, ...notifications],
       updatedAt: now().toISOString()
     });
@@ -236,8 +219,7 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     getUser,
     requireRole,
     getCase,
-    getDocument: (item: Case, documentId: string): CaseDocument =>
-      getDocument(item, documentId),
+    getDocument: (item: Case, documentId: string): CaseDocument => getDocument(item, documentId),
     createTimelineEvent,
     createNotification,
     replaceCase
@@ -248,15 +230,13 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
 
   function setSession(session: AuthSession) {
     if (!isAuthSession(session, state)) throw new Error("Sessão inválida.");
-    useLocalStorage((storage) =>
+    withLocalStorage((storage) =>
       storage.setItem(DEMO_SESSION_STORAGE_KEY, JSON.stringify(session))
     );
   }
 
   function getSession(): AuthSession | null {
-    const raw = useLocalStorage((storage) =>
-      storage.getItem(DEMO_SESSION_STORAGE_KEY)
-    );
+    const raw = withLocalStorage((storage) => storage.getItem(DEMO_SESSION_STORAGE_KEY));
     if (!raw) return null;
 
     try {
@@ -264,28 +244,22 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
       if (!isAuthSession(parsed, state)) throw new Error("invalid-session");
       return parsed;
     } catch {
-      useLocalStorage((storage) =>
-        storage.removeItem(DEMO_SESSION_STORAGE_KEY)
-      );
+      withLocalStorage((storage) => storage.removeItem(DEMO_SESSION_STORAGE_KEY));
       return null;
     }
   }
 
   function clearSession() {
-    useLocalStorage((storage) =>
-      storage.removeItem(DEMO_SESSION_STORAGE_KEY)
-    );
+    withLocalStorage((storage) => storage.removeItem(DEMO_SESSION_STORAGE_KEY));
   }
 
   function setPendingServiceId(serviceId: string) {
     if (!getServiceById(serviceId)) throw new Error("Serviço não encontrado.");
-    useSessionStorage((storage) =>
-      storage.setItem(DEMO_PENDING_SERVICE_STORAGE_KEY, serviceId)
-    );
+    withSessionStorage((storage) => storage.setItem(DEMO_PENDING_SERVICE_STORAGE_KEY, serviceId));
   }
 
   function getPendingServiceId(): string | null {
-    const serviceId = useSessionStorage((storage) =>
+    const serviceId = withSessionStorage((storage) =>
       storage.getItem(DEMO_PENDING_SERVICE_STORAGE_KEY)
     );
     return serviceId && getServiceById(serviceId) ? serviceId : null;
@@ -293,26 +267,21 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
 
   function consumePendingServiceId() {
     const serviceId = getPendingServiceId();
-    useSessionStorage((storage) =>
-      storage.removeItem(DEMO_PENDING_SERVICE_STORAGE_KEY)
-    );
+    withSessionStorage((storage) => storage.removeItem(DEMO_PENDING_SERVICE_STORAGE_KEY));
     return serviceId;
   }
 
   function resetDemo() {
     const resetState = commit(createDemoSeed());
     clearSession();
-    useSessionStorage((storage) =>
-      storage.removeItem(DEMO_PENDING_SERVICE_STORAGE_KEY)
-    );
+    withSessionStorage((storage) => storage.removeItem(DEMO_PENDING_SERVICE_STORAGE_KEY));
     return resetState;
   }
 
   function isolateResult<Arguments extends unknown[], Result>(
     action: (...args: Arguments) => Result
   ) {
-    return (...args: Arguments): Result =>
-      cloneSerializable(action(...args));
+    return (...args: Arguments): Result => cloneSerializable(action(...args));
   }
 
   return {
@@ -326,12 +295,8 @@ export function createDemoRepository(options: DemoRepositoryOptions = {}) {
     startDocumentReview: isolateResult(documentActions.startDocumentReview),
     reviewDocument: isolateResult(documentActions.reviewDocument),
     addMockDocumentVersion: isolateResult(documentActions.addMockDocumentVersion),
-    markNotificationRead: isolateResult(
-      notificationActions.markNotificationRead
-    ),
-    markAllNotificationsRead: isolateResult(
-      notificationActions.markAllNotificationsRead
-    ),
+    markNotificationRead: isolateResult(notificationActions.markNotificationRead),
+    markAllNotificationsRead: isolateResult(notificationActions.markAllNotificationsRead),
     setSession,
     getSession,
     clearSession,

@@ -25,8 +25,11 @@ export function useAdminDialogFocusTrap<
 }: UseAdminDialogFocusTrapOptions<TDialog, TInitialFocus>) {
   const onEscapeRef = useRef(onEscape);
   const onRestoreFocusRef = useRef(onRestoreFocus);
-  onEscapeRef.current = onEscape;
-  onRestoreFocusRef.current = onRestoreFocus;
+
+  useEffect(() => {
+    onEscapeRef.current = onEscape;
+    onRestoreFocusRef.current = onRestoreFocus;
+  }, [onEscape, onRestoreFocus]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -42,9 +45,7 @@ export function useAdminDialogFocusTrap<
       }
 
       if (event.key !== "Tab" || !dialog) return;
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(focusableSelector)
-      );
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector));
       if (focusable.length === 0) return;
 
       const first = focusable[0];

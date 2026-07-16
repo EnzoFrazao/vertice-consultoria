@@ -205,11 +205,9 @@ describe("PortalShell", () => {
       },
       media: "(min-width: 1280px)",
       onchange: null,
-      addEventListener: vi.fn(
-        (_event: string, listener: (event: MediaQueryListEvent) => void) => {
-          changeListeners.add(listener);
-        }
-      ),
+      addEventListener: vi.fn((_event: string, listener: (event: MediaQueryListEvent) => void) => {
+        changeListeners.add(listener);
+      }),
       removeEventListener: vi.fn(
         (_event: string, listener: (event: MediaQueryListEvent) => void) => {
           changeListeners.delete(listener);
@@ -219,7 +217,10 @@ describe("PortalShell", () => {
       removeListener: vi.fn(),
       dispatchEvent: vi.fn()
     } as unknown as MediaQueryList;
-    vi.stubGlobal("matchMedia", vi.fn(() => desktopQuery));
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => desktopQuery)
+    );
 
     render(
       <PortalShell
@@ -297,12 +298,13 @@ describe("PortalShell", () => {
     expect(within(panel).getByText("A matrícula do imóvel foi aprovada.")).toBeInTheDocument();
     expect(within(panel).getByText("Não lida.")).toHaveClass("sr-only");
     expect(within(panel).getByText("Lida.")).toHaveClass("sr-only");
-    expect(
-      within(panel).getByRole("link", { name: /Documento aprovado/i })
-    ).toHaveAttribute("href", "/cliente/processos/RV-2026-0001");
-    expect(
-      within(panel).getByRole("link", { name: /Documento aprovado/i })
-    ).toHaveClass("min-h-11");
+    expect(within(panel).getByRole("link", { name: /Documento aprovado/i })).toHaveAttribute(
+      "href",
+      "/cliente/processos/RV-2026-0001"
+    );
+    expect(within(panel).getByRole("link", { name: /Documento aprovado/i })).toHaveClass(
+      "min-h-11"
+    );
 
     fireEvent.click(
       within(panel).getByRole("button", {
@@ -389,9 +391,7 @@ describe("PortalShell", () => {
     expect(screen.getByRole("link", { name: "Vértice Consultoria" })).toHaveClass("min-h-11");
 
     fireEvent.click(screen.getByRole("button", { name: "Notificações, 1 não lida" }));
-    expect(screen.getByRole("link", { name: /Nova etapa disponível/i })).toHaveClass(
-      "min-h-11"
-    );
+    expect(screen.getByRole("link", { name: /Nova etapa disponível/i })).toHaveClass("min-h-11");
   });
 });
 
@@ -406,7 +406,9 @@ describe("portal presentation components", () => {
       />
     );
 
-    expect(screen.getByRole("heading", { name: "Acompanhe seus processos", level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Acompanhe seus processos", level: 1 })
+    ).toBeInTheDocument();
     expect(screen.getByText("Veja o andamento e as próximas ações.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Nova solicitação" })).toBeInTheDocument();
   });

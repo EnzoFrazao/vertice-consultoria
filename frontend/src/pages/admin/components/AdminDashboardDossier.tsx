@@ -48,7 +48,9 @@ export function AdminDashboardDossier({
       ref={mobileDossierRef}
       role={mobileDossierOpen && isMobilePauta ? "dialog" : undefined}
       aria-modal={mobileDossierOpen && isMobilePauta ? "true" : undefined}
-      aria-label={mobileDossierOpen && isMobilePauta ? `Dossiê operacional ${activeCase.protocol}` : undefined}
+      aria-label={
+        mobileDossierOpen && isMobilePauta ? `Dossiê operacional ${activeCase.protocol}` : undefined
+      }
       onKeyDown={onKeyDown}
       className={
         mobileDossierOpen
@@ -78,7 +80,9 @@ export function AdminDashboardDossier({
         status={activeCase.status}
         priority={
           <section className="border-t-4 border-t-tealTech p-5" aria-labelledby="dispatch-heading">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Despachar e seguir</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+              Despachar e seguir
+            </p>
             <h2
               id="dispatch-heading"
               ref={dispatchHeadingRef}
@@ -87,7 +91,9 @@ export function AdminDashboardDossier({
             >
               Despacho contextual
             </h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-espresso">{selectedItem.label}</p>
+            <p className="mt-3 text-sm font-semibold leading-6 text-espresso">
+              {selectedItem.label}
+            </p>
             <p className="mt-1 text-xs leading-5 text-cacao/70">{selectedItem.detail}</p>
 
             {activeDocument?.status === "Enviado" ? (
@@ -132,7 +138,9 @@ export function AdminDashboardDossier({
 
             {selectedItem.group === "client" && activeClient ? (
               <a
-                href={createWhatsAppUrl(`Olá, ${activeClient.name}. Quero falar sobre o protocolo ${activeCase.protocol}, serviço ${activeService?.name ?? "imobiliário"}.`)}
+                href={createWhatsAppUrl(
+                  `Olá, ${activeClient.name}. Quero falar sobre o protocolo ${activeCase.protocol}, serviço ${activeService?.name ?? "imobiliário"}.`
+                )}
                 target="_blank"
                 rel="noreferrer"
                 onClick={onContactClient}
@@ -147,18 +155,31 @@ export function AdminDashboardDossier({
       >
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Parte interessada</p>
-            <p className="mt-2 text-sm font-semibold text-espresso">{activeClient?.name ?? "Cliente"}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+              Parte interessada
+            </p>
+            <p className="mt-2 text-sm font-semibold text-espresso">
+              {activeClient?.name ?? "Cliente"}
+            </p>
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Último movimento</p>
-            <p className="mt-2 text-sm font-semibold text-espresso">{formatDate(activeCase.updatedAt)}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+              Último movimento
+            </p>
+            <p className="mt-2 text-sm font-semibold text-espresso">
+              {formatDate(activeCase.updatedAt)}
+            </p>
           </div>
           <div className="sm:col-span-2">
-            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Registro atual</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+              Registro atual
+            </p>
             <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
               <StatusBadge status={activeCase.status} />
-              <Link className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-bold text-tealTech hover:bg-tealTech/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech" to={`/admin/processos/${activeCase.id}`}>
+              <Link
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-bold text-tealTech hover:bg-tealTech/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tealTech"
+                to={`/admin/processos/${activeCase.id}`}
+              >
                 Ver fólio completo
                 <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </Link>

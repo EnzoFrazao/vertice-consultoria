@@ -4,7 +4,7 @@ import { PortalMobileNavigationDrawer } from "@/shared/ui/portal/PortalMobileNav
 import {
   getActiveNavigationHref,
   getPortalRoleLabel
-} from "@/shared/ui/portal/PortalNavigation";
+} from "@/shared/ui/portal/portalNavigationUtils";
 import type { PortalShellProps } from "@/shared/ui/portal/PortalShell.types";
 
 export type {
@@ -64,7 +64,6 @@ export function PortalShell({
       if (event.matches) setIsMobileNavigationOpen(false);
     };
 
-    if (desktopMediaQuery.matches) setIsMobileNavigationOpen(false);
     desktopMediaQuery.addEventListener("change", handleDesktopBreakpoint);
 
     return () => {

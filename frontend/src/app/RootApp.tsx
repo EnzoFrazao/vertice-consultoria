@@ -1,12 +1,5 @@
 import { lazy, Suspense, useEffect, type ReactElement } from "react";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "@/pages/landing/LandingPage";
 import { getServiceById } from "@/domain/catalog";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
@@ -69,13 +62,7 @@ function DemoWarnings() {
   );
 }
 
-function ProtectedRoute({
-  role,
-  children
-}: {
-  role: "client" | "admin";
-  children: ReactElement;
-}) {
+function ProtectedRoute({ role, children }: { role: "client" | "admin"; children: ReactElement }) {
   const { session } = usePortalData();
 
   if (!session) return <Navigate to="/login" replace />;
@@ -121,27 +108,21 @@ function PublicLandingRoute() {
 }
 
 function LoginRoute() {
-  const {
-    session,
-    pendingServiceId,
-    login,
-    resetDemo
-  } = usePortalData();
+  const { session, pendingServiceId, login, resetDemo } = usePortalData();
   const navigate = useNavigate();
 
-  const destination = session?.role === "admin"
-    ? "/admin"
-    : pendingServiceId
-      ? "/cliente/nova-solicitacao"
-      : "/cliente";
+  const destination =
+    session?.role === "admin"
+      ? "/admin"
+      : pendingServiceId
+        ? "/cliente/nova-solicitacao"
+        : "/cliente";
 
   if (session) return <Navigate to={destination} replace />;
 
   return (
     <LoginPage
-      pendingServiceName={
-        pendingServiceId ? getServiceById(pendingServiceId)?.name : undefined
-      }
+      pendingServiceName={pendingServiceId ? getServiceById(pendingServiceId)?.name : undefined}
       onLogin={(email, password) => {
         const nextSession = login(email, password);
         if (!nextSession) return false;

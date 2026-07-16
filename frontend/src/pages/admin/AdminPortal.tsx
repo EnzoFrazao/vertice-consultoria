@@ -20,13 +20,8 @@ const ADMIN_NAVIGATION: PortalNavigationItem[] = [
 ];
 
 export function AdminPortal() {
-  const {
-    currentUser,
-    state,
-    logout,
-    markNotificationRead,
-    markAllNotificationsRead
-  } = usePortalData();
+  const { currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
+    usePortalData();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -56,9 +51,7 @@ export function AdminPortal() {
         logout();
         navigate("/login", { replace: true });
       }}
-      onMarkNotification={(notificationId) =>
-        markNotificationRead(notificationId, currentUser.id)
-      }
+      onMarkNotification={(notificationId) => markNotificationRead(notificationId, currentUser.id)}
       onMarkAllNotifications={() => markAllNotificationsRead(currentUser.id)}
     >
       <Routes>

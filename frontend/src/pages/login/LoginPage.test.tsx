@@ -11,22 +11,17 @@ function render(ui: ReactElement) {
 describe("LoginPage", () => {
   it("explains the demo accounts and preserves the selected service context", () => {
     render(
-      <LoginPage
-        pendingServiceName="Escritura"
-        onLogin={() => false}
-        onResetDemo={() => {}}
-      />
+      <LoginPage pendingServiceName="Escritura" onLogin={() => false} onResetDemo={() => {}} />
     );
 
     expect(screen.getByRole("heading", { name: /acesse sua jornada/i })).toBeInTheDocument();
     expect(screen.getByText(/escritura/i)).toBeInTheDocument();
     expect(screen.getByText("cliente@demo.com")).toBeInTheDocument();
     expect(screen.getByText("admin@demo.com")).toBeInTheDocument();
-    expect(screen.getAllByRole("img", { name: "Vértice Consultoria" }).length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByRole("link", { name: /voltar para o site/i })).toHaveAttribute(
-      "href",
-      "/"
-    );
+    expect(
+      screen.getAllByRole("img", { name: "Vértice Consultoria" }).length
+    ).toBeGreaterThanOrEqual(2);
+    expect(screen.getByRole("link", { name: /voltar para o site/i })).toHaveAttribute("href", "/");
   });
 
   it("submits controlled credentials and exposes invalid access clearly", () => {

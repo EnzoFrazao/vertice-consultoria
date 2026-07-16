@@ -25,21 +25,14 @@ function isOptionalString(value: unknown): value is string | undefined {
 }
 
 function isDateString(value: unknown): value is string {
-  return (
-    isString(value) &&
-    value.trim().length > 0 &&
-    Number.isFinite(Date.parse(value))
-  );
+  return isString(value) && value.trim().length > 0 && Number.isFinite(Date.parse(value));
 }
 
 function isOptionalDateString(value: unknown): value is string | undefined {
   return value === undefined || isDateString(value);
 }
 
-function isOneOf<T extends string>(
-  value: unknown,
-  allowed: readonly T[]
-): value is T {
+function isOneOf<T extends string>(value: unknown, allowed: readonly T[]): value is T {
   return isString(value) && allowed.includes(value as T);
 }
 
@@ -190,9 +183,7 @@ function hasValidIntegrity(state: DemoState): boolean {
 
   const usersById = new Map(state.users.map((user) => [user.id, user]));
   const casesById = new Map(state.cases.map((item) => [item.id, item]));
-  const assetsById = new Map(
-    state.mockDocumentAssets.map((asset) => [asset.id, asset])
-  );
+  const assetsById = new Map(state.mockDocumentAssets.map((asset) => [asset.id, asset]));
 
   for (const item of state.cases) {
     const client = usersById.get(item.clientId);
@@ -202,11 +193,7 @@ function hasValidIntegrity(state: DemoState): boolean {
 
     for (const event of item.timeline) {
       const actor = usersById.get(event.actorId);
-      if (
-        event.caseId !== item.id ||
-        !actor ||
-        actor.role !== event.actorRole
-      ) {
+      if (event.caseId !== item.id || !actor || actor.role !== event.actorRole) {
         return false;
       }
     }
@@ -218,11 +205,7 @@ function hasValidIntegrity(state: DemoState): boolean {
 
       for (const version of document.versions) {
         const asset = assetsById.get(version.assetId);
-        if (
-          !asset ||
-          asset.kind !== document.kind ||
-          !usersById.has(version.submittedBy)
-        ) {
+        if (!asset || asset.kind !== document.kind || !usersById.has(version.submittedBy)) {
           return false;
         }
       }
@@ -232,16 +215,12 @@ function hasValidIntegrity(state: DemoState): boolean {
   for (const notification of state.notifications) {
     if (!usersById.has(notification.userId)) return false;
 
-    const relatedCase = notification.caseId
-      ? casesById.get(notification.caseId)
-      : undefined;
+    const relatedCase = notification.caseId ? casesById.get(notification.caseId) : undefined;
     if (notification.caseId && !relatedCase) return false;
     if (
       notification.documentId &&
       (!relatedCase ||
-        !relatedCase.documents.some(
-          (document) => document.id === notification.documentId
-        ))
+        !relatedCase.documents.some((document) => document.id === notification.documentId))
     ) {
       return false;
     }
@@ -267,10 +246,7 @@ export function isDemoState(value: unknown): value is DemoState {
   return hasValidShape && hasValidIntegrity(value as unknown as DemoState);
 }
 
-export function isAuthSession(
-  value: unknown,
-  state: DemoState
-): value is AuthSession {
+export function isAuthSession(value: unknown, state: DemoState): value is AuthSession {
   if (!isRecord(value)) return false;
   if (
     !isString(value.userId) ||

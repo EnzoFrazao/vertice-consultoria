@@ -1,26 +1,26 @@
 export const CASE_STATUSES = [
-  'Novo',
-  'Documentos pendentes',
-  'Documentos em análise',
-  'Análise técnica',
-  'Prefeitura/cartório',
-  'Aguardando cliente',
-  'Concluído',
+  "Novo",
+  "Documentos pendentes",
+  "Documentos em análise",
+  "Análise técnica",
+  "Prefeitura/cartório",
+  "Aguardando cliente",
+  "Concluído"
 ] as const;
 
 export type CaseStatus = (typeof CASE_STATUSES)[number];
 
 export const DOCUMENT_STATUSES = [
-  'Pendente',
-  'Enviado',
-  'Em análise',
-  'Aprovado',
-  'Rejeitado',
+  "Pendente",
+  "Enviado",
+  "Em análise",
+  "Aprovado",
+  "Rejeitado"
 ] as const;
 
 export type DocumentStatus = (typeof DOCUMENT_STATUSES)[number];
 
-export const USER_ROLES = ['client', 'admin'] as const;
+export const USER_ROLES = ["client", "admin"] as const;
 
 export type UserRole = (typeof USER_ROLES)[number];
 
@@ -93,14 +93,14 @@ export interface CaseDocument {
 }
 
 export const TIMELINE_EVENT_TYPES = [
-  'case-created',
-  'document-added',
-  'document-resubmitted',
-  'document-review-started',
-  'document-approved',
-  'document-rejected',
-  'status-changed',
-  'whatsapp-started',
+  "case-created",
+  "document-added",
+  "document-resubmitted",
+  "document-review-started",
+  "document-approved",
+  "document-rejected",
+  "status-changed",
+  "whatsapp-started"
 ] as const;
 
 export type TimelineEventType = (typeof TIMELINE_EVENT_TYPES)[number];
@@ -117,11 +117,11 @@ export interface TimelineEvent {
 }
 
 export const NOTIFICATION_TYPES = [
-  'new-case',
-  'document-submitted',
-  'document-approved',
-  'document-rejected',
-  'status-changed',
+  "new-case",
+  "document-submitted",
+  "document-approved",
+  "document-rejected",
+  "status-changed"
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -162,10 +162,7 @@ export interface Case {
   completedAt?: string;
 }
 
-export type PendingActionKind =
-  | 'client-document'
-  | 'admin-document-review'
-  | 'client-response';
+export type PendingActionKind = "client-document" | "admin-document-review" | "client-response";
 
 export interface PendingAction {
   id: string;

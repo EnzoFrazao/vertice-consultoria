@@ -69,11 +69,7 @@
         rgba(185, 130, 70, 0.38) 68% 68.8%,
         transparent 68.8%
       ),
-      repeating-linear-gradient(
-        0deg,
-        rgba(247, 234, 216, 0.17) 0 1px,
-        transparent 1px 2.25rem
-      );
+      repeating-linear-gradient(0deg, rgba(247, 234, 216, 0.17) 0 1px, transparent 1px 2.25rem);
   }
 }
 

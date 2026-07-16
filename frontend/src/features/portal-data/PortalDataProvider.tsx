@@ -48,15 +48,11 @@ export function PortalDataProvider({
   children: ReactNode;
   repository?: DemoRepository;
 }) {
-  const [repository] = useState(
-    () => providedRepository ?? createDemoRepository()
-  );
+  const [repository] = useState(() => providedRepository ?? createDemoRepository());
   const [state, setState] = useState(() => repository.getState());
-  const [session, setSession] = useState<AuthSession | null>(() =>
-    repository.getSession()
-  );
-  const [pendingServiceId, setPendingServiceState] = useState<string | null>(
-    () => repository.getPendingServiceId()
+  const [session, setSession] = useState<AuthSession | null>(() => repository.getSession());
+  const [pendingServiceId, setPendingServiceState] = useState<string | null>(() =>
+    repository.getPendingServiceId()
   );
 
   useEffect(() => {
@@ -118,42 +114,45 @@ export function PortalDataProvider({
   }, [repository]);
 
   const currentUser = session
-    ? state.users.find((user) => user.id === session.userId) ?? null
+    ? (state.users.find((user) => user.id === session.userId) ?? null)
     : null;
 
-  const value = useMemo<PortalDataContextValue>(() => ({
-    state,
-    session,
-    currentUser,
-    pendingServiceId,
-    warnings: repository.getWarnings(),
-    login,
-    logout,
-    setPendingServiceId,
-    consumePendingServiceId,
-    updateUserProfile,
-    resetDemo,
-    createCase: repository.createCase,
-    updateCaseStatus: repository.updateCaseStatus,
-    startDocumentReview: repository.startDocumentReview,
-    reviewDocument: repository.reviewDocument,
-    addMockDocumentVersion: repository.addMockDocumentVersion,
-    markNotificationRead: repository.markNotificationRead,
-    markAllNotificationsRead: repository.markAllNotificationsRead,
-    recordWhatsAppStarted: repository.recordWhatsAppStarted
-  }), [
-    consumePendingServiceId,
-    currentUser,
-    login,
-    logout,
-    pendingServiceId,
-    repository,
-    resetDemo,
-    session,
-    setPendingServiceId,
-    state,
-    updateUserProfile
-  ]);
+  const value = useMemo<PortalDataContextValue>(
+    () => ({
+      state,
+      session,
+      currentUser,
+      pendingServiceId,
+      warnings: repository.getWarnings(),
+      login,
+      logout,
+      setPendingServiceId,
+      consumePendingServiceId,
+      updateUserProfile,
+      resetDemo,
+      createCase: repository.createCase,
+      updateCaseStatus: repository.updateCaseStatus,
+      startDocumentReview: repository.startDocumentReview,
+      reviewDocument: repository.reviewDocument,
+      addMockDocumentVersion: repository.addMockDocumentVersion,
+      markNotificationRead: repository.markNotificationRead,
+      markAllNotificationsRead: repository.markAllNotificationsRead,
+      recordWhatsAppStarted: repository.recordWhatsAppStarted
+    }),
+    [
+      consumePendingServiceId,
+      currentUser,
+      login,
+      logout,
+      pendingServiceId,
+      repository,
+      resetDemo,
+      session,
+      setPendingServiceId,
+      state,
+      updateUserProfile
+    ]
+  );
 
   return <PortalDataContext.Provider value={value}>{children}</PortalDataContext.Provider>;
 }

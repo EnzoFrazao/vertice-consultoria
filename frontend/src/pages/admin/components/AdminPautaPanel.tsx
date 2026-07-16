@@ -1,14 +1,18 @@
-import type {
-  AdminPauta,
-  PautaGroup,
-  PautaItem
-} from "@/domain/selectors";
+import type { AdminPauta, PautaGroup, PautaItem } from "@/domain/selectors";
 import type { Case } from "@/domain/types";
 
 const pautaGroups: Array<{ id: PautaGroup; label: string; description: string }> = [
-  { id: "decide", label: "Decidir agora", description: "Triagens e documentos prontos para despacho." },
+  {
+    id: "decide",
+    label: "Decidir agora",
+    description: "Triagens e documentos prontos para despacho."
+  },
   { id: "client", label: "Depende do cliente", description: "Aguardando informação ou documento." },
-  { id: "progress", label: "Em andamento", description: "Processos que seguem sem decisão imediata." }
+  {
+    id: "progress",
+    label: "Em andamento",
+    description: "Processos que seguem sem decisão imediata."
+  }
 ];
 
 type AdminPautaPanelProps = {
@@ -27,10 +31,17 @@ export function AdminPautaPanel({
   onSelect
 }: AdminPautaPanelProps) {
   return (
-    <section aria-labelledby="pauta-heading" className="folio-sheet overflow-hidden lg:sticky lg:top-28">
+    <section
+      aria-labelledby="pauta-heading"
+      className="folio-sheet overflow-hidden lg:sticky lg:top-28"
+    >
       <header className="border-b border-espresso/15 bg-espresso px-4 py-5 text-ivory">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-champagne">Índice operacional</p>
-        <h2 id="pauta-heading" className="mt-1 font-display text-2xl font-semibold">Pauta</h2>
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-champagne">
+          Índice operacional
+        </p>
+        <h2 id="pauta-heading" className="mt-1 font-display text-2xl font-semibold">
+          Pauta
+        </h2>
       </header>
 
       <div className="divide-y divide-espresso/15">
@@ -38,7 +49,9 @@ export function AdminPautaPanel({
           <section key={group.id} aria-labelledby={`pauta-${group.id}`}>
             <div className="bg-champagne/25 px-4 py-3">
               <div className="flex items-center justify-between gap-3">
-                <h3 id={`pauta-${group.id}`} className="text-sm font-bold text-espresso">{group.label}</h3>
+                <h3 id={`pauta-${group.id}`} className="text-sm font-bold text-espresso">
+                  {group.label}
+                </h3>
                 <span className="text-xs font-bold text-tealTech">{groups[group.id].length}</span>
               </div>
               <p className="mt-1 text-xs leading-5 text-cacao/70">{group.description}</p>
@@ -61,8 +74,12 @@ export function AdminPautaPanel({
                             : "border-transparent hover:border-bronze/50 hover:bg-champagne/20"
                         }`}
                       >
-                        <span className="block text-xs font-bold text-tealTech">{item?.protocol}</span>
-                        <span className="mt-1 block text-sm font-semibold leading-5 text-espresso">{entry.label}</span>
+                        <span className="block text-xs font-bold text-tealTech">
+                          {item?.protocol}
+                        </span>
+                        <span className="mt-1 block text-sm font-semibold leading-5 text-espresso">
+                          {entry.label}
+                        </span>
                         <span className="mt-1 block text-xs text-cacao/65">{entry.detail}</span>
                       </button>
                     </li>

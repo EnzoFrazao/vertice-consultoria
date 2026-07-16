@@ -13,13 +13,7 @@ export interface PageHeaderProps {
   className?: string;
 }
 
-export function PageHeader({
-  eyebrow,
-  title,
-  description,
-  actions,
-  className
-}: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, actions, className }: PageHeaderProps) {
   return (
     <header
       className={joinClasses(

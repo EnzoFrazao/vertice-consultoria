@@ -2,10 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { PageHeader } from "@/shared/ui/portal";
-import {
-  buildAdminDocumentQueue,
-  type AdminDocumentQueueEntry
-} from "@/domain/selectors";
+import { buildAdminDocumentQueue, type AdminDocumentQueueEntry } from "@/domain/selectors";
 import { AdminDocumentQueue } from "@/pages/admin/components/AdminDocumentQueue";
 import { AdminRejectionDialog } from "@/pages/admin/components/AdminRejectionDialog";
 
@@ -29,18 +26,13 @@ function actionFor(entry: QueueEntry): FocusRequest["action"] {
 
 export function AdminDocumentsPage() {
   const location = useLocation();
-  const {
-    state,
-    currentUser,
-    startDocumentReview,
-    reviewDocument
-  } = usePortalData();
+  const { state, currentUser, startDocumentReview, reviewDocument } = usePortalData();
   const [rejectingDocumentId, setRejectingDocumentId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [validationError, setValidationError] = useState("");
   const [actionError, setActionError] = useState("");
   const [announcement, setAnnouncement] = useState("");
-  const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
+  const focusRequestRef = useRef<FocusRequest | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const reasonRef = useRef<HTMLTextAreaElement>(null);
   const rejectionTriggers = useRef(new Map<string, HTMLButtonElement>());
@@ -61,14 +53,9 @@ export function AdminDocumentsPage() {
     return callback;
   }, []);
 
-  const entries = useMemo<QueueEntry[]>(
-    () => buildAdminDocumentQueue(state),
-    [state]
-  );
+  const entries = useMemo<QueueEntry[]>(() => buildAdminDocumentQueue(state), [state]);
 
-  const rejectingEntry = entries.find(
-    (entry) => entry.document.id === rejectingDocumentId
-  );
+  const rejectingEntry = entries.find((entry) => entry.document.id === rejectingDocumentId);
 
   const restoreRejectionTrigger = (documentId: string | null) => {
     if (!documentId) return;
@@ -129,6 +116,7 @@ export function AdminDocumentsPage() {
   }, [rejectingDocumentId]);
 
   useEffect(() => {
+    const focusRequest = focusRequestRef.current;
     if (!focusRequest) return;
 
     const target = focusRequest.empty
@@ -139,9 +127,9 @@ export function AdminDocumentsPage() {
 
     if (target) {
       target.focus();
-      setFocusRequest(null);
+      focusRequestRef.current = null;
     }
-  }, [entries, focusRequest]);
+  }, [entries]);
 
   useEffect(() => {
     if (!location.hash.startsWith("#documento-") || openedHashRef.current === location.hash) return;
@@ -154,6 +142,8 @@ export function AdminDocumentsPage() {
     const entry = entries.find((candidate) => candidate.document.id === documentId);
     if (!entry || entry.document.status !== "Em análise") return;
     openedHashRef.current = location.hash;
+    // The URL fragment is external navigation state and intentionally opens the dialog.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     beginRejection(documentId);
   }, [entries, location.hash]);
 
@@ -161,17 +151,13 @@ export function AdminDocumentsPage() {
   const currentUserId = currentUser.id;
 
   const sentCount = entries.filter(({ document }) => document.status === "Enviado").length;
-  const inReviewCount = entries.filter(
-    ({ document }) => document.status === "Em análise"
-  ).length;
+  const inReviewCount = entries.filter(({ document }) => document.status === "Em análise").length;
 
   const requestNextFocus = (removedDocumentId: string) => {
     const next = nextEntryAfter(entries, removedDocumentId);
-    setFocusRequest(
-      next
-        ? { documentId: next.document.id, action: actionFor(next) }
-        : { empty: true }
-    );
+    focusRequestRef.current = next
+      ? { documentId: next.document.id, action: actionFor(next) }
+      : { empty: true };
   };
 
   const startReview = (entry: QueueEntry) => {
@@ -179,7 +165,7 @@ export function AdminDocumentsPage() {
     try {
       startDocumentReview(entry.item.id, entry.document.id, currentUserId);
       setAnnouncement(`${entry.document.label} entrou em análise.`);
-      setFocusRequest({ documentId: entry.document.id, action: "approve" });
+      focusRequestRef.current = { documentId: entry.document.id, action: "approve" };
     } catch (error) {
       setActionError(
         error instanceof Error ? error.message : "Não foi possível iniciar a análise."
@@ -190,12 +176,7 @@ export function AdminDocumentsPage() {
   const approve = (entry: QueueEntry) => {
     setActionError("");
     try {
-      reviewDocument(
-        entry.item.id,
-        entry.document.id,
-        { decision: "approve" },
-        currentUserId
-      );
+      reviewDocument(entry.item.id, entry.document.id, { decision: "approve" }, currentUserId);
       setAnnouncement(`${entry.document.label} aprovado. A pauta avançou.`);
       requestNextFocus(entry.document.id);
     } catch (error) {
@@ -249,9 +230,7 @@ export function AdminDocumentsPage() {
             <dt className="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-cacao/75">
               Aguardando
             </dt>
-            <dd className="mt-1 font-display text-2xl font-semibold text-espresso">
-              {sentCount}
-            </dd>
+            <dd className="mt-1 font-display text-2xl font-semibold text-espresso">{sentCount}</dd>
           </div>
           <div className="px-2 sm:px-5">
             <dt className="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-cacao/75">
@@ -294,7 +273,8 @@ export function AdminDocumentsPage() {
       />
 
       <p className="border-t border-dashed border-espresso/20 pt-3 text-xs leading-5 text-cacao/70">
-        Demonstração frontend: os nomes e tamanhos representam uma biblioteca fictícia; nenhum arquivo real é armazenado ou analisado.
+        Demonstração frontend: os nomes e tamanhos representam uma biblioteca fictícia; nenhum
+        arquivo real é armazenado ou analisado.
       </p>
 
       {rejectingEntry ? (

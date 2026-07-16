@@ -33,14 +33,28 @@ const COMPLETION_DIALOG_FOCUSABLE_SELECTOR =
 
 export function AdminProcessDetailPage() {
   const { id } = useParams();
-  const {
-    state,
-    currentUser,
-    updateCaseStatus,
-    recordWhatsAppStarted
-  } = usePortalData();
+  const { state, currentUser, updateCaseStatus, recordWhatsAppStarted } = usePortalData();
   const item = state.cases.find((candidate) => candidate.id === id);
-  const [selectedStatus, setSelectedStatus] = useState<CaseStatus>(item?.status ?? "Novo");
+  const [statusDraft, setStatusDraft] = useState<{
+    caseId?: string;
+    persistedStatus: CaseStatus;
+    selectedStatus: CaseStatus;
+  }>(() => ({
+    caseId: item?.id,
+    persistedStatus: item?.status ?? "Novo",
+    selectedStatus: item?.status ?? "Novo"
+  }));
+  const selectedStatus =
+    item && statusDraft.caseId === item.id && statusDraft.persistedStatus === item.status
+      ? statusDraft.selectedStatus
+      : (item?.status ?? "Novo");
+  const selectStatus = (nextStatus: CaseStatus) => {
+    setStatusDraft({
+      caseId: item?.id,
+      persistedStatus: item?.status ?? nextStatus,
+      selectedStatus: nextStatus
+    });
+  };
   const [showCompletionConfirmation, setShowCompletionConfirmation] = useState(false);
   const [showStatusConfirmation, setShowStatusConfirmation] = useState(false);
   const [isMobileStatusFlow, setIsMobileStatusFlow] = useState(false);
@@ -53,10 +67,6 @@ export function AdminProcessDetailPage() {
   const statusDialogRef = useRef<HTMLDivElement>(null);
   const statusCancelRef = useRef<HTMLButtonElement>(null);
   const statusTriggerRef = useRef<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    if (item) setSelectedStatus(item.status);
-  }, [item?.status]);
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -101,7 +111,10 @@ export function AdminProcessDetailPage() {
         title="Processo não encontrado"
         description="Confira o endereço ou volte para a lista de processos."
         action={
-          <Link to="/admin/processos" className={`${focusRing} inline-flex min-h-11 items-center rounded-xl bg-espresso px-5 text-sm font-bold text-ivory`}>
+          <Link
+            to="/admin/processos"
+            className={`${focusRing} inline-flex min-h-11 items-center rounded-xl bg-espresso px-5 text-sm font-bold text-ivory`}
+          >
             Voltar aos processos
           </Link>
         }
@@ -117,7 +130,7 @@ export function AdminProcessDetailPage() {
 
   const openCompletionDialog = (trigger: HTMLElement) => {
     completionTriggerRef.current = trigger;
-    setSelectedStatus("Concluído");
+    selectStatus("Concluído");
     setActionError("");
     setShowCompletionConfirmation(true);
   };
@@ -128,7 +141,9 @@ export function AdminProcessDetailPage() {
     try {
       updateCaseStatus(item.id, selectedStatus, currentUser.id);
     } catch (error) {
-      setActionError(error instanceof Error ? error.message : "Não foi possível atualizar o status.");
+      setActionError(
+        error instanceof Error ? error.message : "Não foi possível atualizar o status."
+      );
     }
   };
 
@@ -159,7 +174,9 @@ export function AdminProcessDetailPage() {
       setShowCompletionConfirmation(false);
     } catch (error) {
       completionConfirmedRef.current = false;
-      setActionError(error instanceof Error ? error.message : "Não foi possível concluir o processo.");
+      setActionError(
+        error instanceof Error ? error.message : "Não foi possível concluir o processo."
+      );
     }
   };
 
@@ -218,26 +235,53 @@ export function AdminProcessDetailPage() {
             <LockKeyhole aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-tealTech" />
             <div>
               <h3 className="font-semibold text-espresso">Processo concluído e somente leitura</h3>
-              <p className="mt-1 text-sm leading-6 text-cacao/75">O histórico permanece disponível, mas status e documentos não podem mais ser alterados.</p>
+              <p className="mt-1 text-sm leading-6 text-cacao/75">
+                O histórico permanece disponível, mas status e documentos não podem mais ser
+                alterados.
+              </p>
             </div>
           </section>
         ) : (
-          <section aria-labelledby="status-management-title" className="border-y border-espresso/15 bg-champagne/20 px-4 py-5 sm:px-5">
+          <section
+            aria-labelledby="status-management-title"
+            className="border-y border-espresso/15 bg-champagne/20 px-4 py-5 sm:px-5"
+          >
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">Despacho operacional</p>
-                <h3 id="status-management-title" className="mt-2 font-display text-2xl font-semibold text-espresso">Defina o próximo movimento</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-cacao/75">Cada mudança fica registrada no histórico e é comunicada ao cliente.</p>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">
+                  Despacho operacional
+                </p>
+                <h3
+                  id="status-management-title"
+                  className="mt-2 font-display text-2xl font-semibold text-espresso"
+                >
+                  Defina o próximo movimento
+                </h3>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-cacao/75">
+                  Cada mudança fica registrada no histórico e é comunicada ao cliente.
+                </p>
               </div>
-              <img src="/brand/vertice-consultoria.png" alt="" aria-hidden="true" className="h-14 w-auto max-w-32 object-contain opacity-75" />
+              <img
+                src="/brand/vertice-consultoria.png"
+                alt=""
+                aria-hidden="true"
+                className="h-14 w-auto max-w-32 object-contain opacity-75"
+              />
             </div>
 
             <div className="mt-5 grid gap-4 2xl:grid-cols-[minmax(15rem,1fr)_minmax(15rem,1fr)_auto] 2xl:items-end">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-cacao/60">Régua de estado</p>
-                <p className="mt-2 flex min-h-11 flex-wrap items-center gap-3 border-l-2 border-bronze pl-3 text-sm" aria-label={`Estado atual ${item.status}; novo estado ${selectedStatus}`}>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-cacao/60">
+                  Régua de estado
+                </p>
+                <p
+                  className="mt-2 flex min-h-11 flex-wrap items-center gap-3 border-l-2 border-bronze pl-3 text-sm"
+                  aria-label={`Estado atual ${item.status}; novo estado ${selectedStatus}`}
+                >
                   <strong className="text-espresso">{item.status}</strong>
-                  <span aria-hidden="true" className="text-bronze">→</span>
+                  <span aria-hidden="true" className="text-bronze">
+                    →
+                  </span>
                   <strong className="text-tealTech">{selectedStatus}</strong>
                 </p>
               </div>
@@ -245,10 +289,14 @@ export function AdminProcessDetailPage() {
                 Novo status do processo
                 <select
                   value={selectedStatus}
-                  onChange={(event) => setSelectedStatus(event.target.value as CaseStatus)}
+                  onChange={(event) => selectStatus(event.target.value as CaseStatus)}
                   className={`${fieldClass} mt-2`}
                 >
-                  {CASE_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
+                  {CASE_STATUSES.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
                 </select>
               </label>
               <div className="flex flex-wrap gap-2 2xl:justify-end">
@@ -269,7 +317,14 @@ export function AdminProcessDetailPage() {
                 </button>
               </div>
             </div>
-            {actionError ? <p role="alert" className="mt-4 border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{actionError}</p> : null}
+            {actionError ? (
+              <p
+                role="alert"
+                className="mt-4 border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800"
+              >
+                {actionError}
+              </p>
+            ) : null}
           </section>
         )}
 
@@ -277,28 +332,58 @@ export function AdminProcessDetailPage() {
           <section aria-labelledby="documents-title">
             <div className="flex flex-wrap items-end justify-between gap-3 border-b border-espresso/15 pb-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">Livro de documentos</p>
-                <h3 id="documents-title" className="mt-2 font-display text-2xl font-semibold text-espresso">Documentos vinculados</h3>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">
+                  Livro de documentos
+                </p>
+                <h3
+                  id="documents-title"
+                  className="mt-2 font-display text-2xl font-semibold text-espresso"
+                >
+                  Documentos vinculados
+                </h3>
               </div>
-              {!isCompleted ? <Link to="/admin/documentos" className={`${focusRing} inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-bold text-tealTech hover:bg-tealTech/10`}>Abrir fila de análise</Link> : null}
+              {!isCompleted ? (
+                <Link
+                  to="/admin/documentos"
+                  className={`${focusRing} inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-bold text-tealTech hover:bg-tealTech/10`}
+                >
+                  Abrir fila de análise
+                </Link>
+              ) : null}
             </div>
             {item.documents.length === 0 ? (
-              <p className="border-b border-espresso/10 py-6 text-sm text-cacao/70">Nenhum documento está vinculado a este processo.</p>
+              <p className="border-b border-espresso/10 py-6 text-sm text-cacao/70">
+                Nenhum documento está vinculado a este processo.
+              </p>
             ) : (
               <ul className="divide-y divide-espresso/10">
                 {item.documents.map((document) => {
                   const latestVersion = document.versions[document.versions.length - 1];
                   return (
-                    <li key={document.id} className="grid min-h-20 gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                    <li
+                      key={document.id}
+                      className="grid min-h-20 gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                    >
                       <span className="flex min-w-0 items-start gap-3">
-                        <FileText aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-tealTech" />
+                        <FileText
+                          aria-hidden="true"
+                          className="mt-0.5 h-5 w-5 shrink-0 text-tealTech"
+                        />
                         <span className="min-w-0">
-                          <span className="block text-sm font-semibold text-espresso">{document.label}</span>
+                          <span className="block text-sm font-semibold text-espresso">
+                            {document.label}
+                          </span>
                           <span className="mt-1 block text-xs leading-5 text-cacao/65">
-                            {document.required ? "Obrigatório" : "Complementar"} · {document.versions.length} {document.versions.length === 1 ? "versão" : "versões"}
+                            {document.required ? "Obrigatório" : "Complementar"} ·{" "}
+                            {document.versions.length}{" "}
+                            {document.versions.length === 1 ? "versão" : "versões"}
                             {latestVersion ? ` · ${latestVersion.sizeLabel}` : ""}
                           </span>
-                          {document.rejectionReason ? <span className="mt-1 block text-xs font-semibold text-red-700">Motivo: {document.rejectionReason}</span> : null}
+                          {document.rejectionReason ? (
+                            <span className="mt-1 block text-xs font-semibold text-red-700">
+                              Motivo: {document.rejectionReason}
+                            </span>
+                          ) : null}
                         </span>
                       </span>
                       <StatusBadge status={document.status} />
@@ -309,23 +394,45 @@ export function AdminProcessDetailPage() {
             )}
           </section>
 
-          <aside aria-labelledby="context-title" className="border-l border-espresso/15 pl-5 sm:pl-6">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">Contexto cadastral</p>
-            <h3 id="context-title" className="mt-2 font-display text-2xl font-semibold text-espresso">Parte e imóvel</h3>
+          <aside
+            aria-labelledby="context-title"
+            className="border-l border-espresso/15 pl-5 sm:pl-6"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">
+              Contexto cadastral
+            </p>
+            <h3
+              id="context-title"
+              className="mt-2 font-display text-2xl font-semibold text-espresso"
+            >
+              Parte e imóvel
+            </h3>
             <dl className="mt-5 divide-y divide-espresso/10 border-y border-espresso/10 text-sm">
               <div className="py-4">
-                <dt className="flex items-center gap-2 font-bold text-cacao"><UserRound aria-hidden="true" className="h-4 w-4 text-tealTech" /> Cliente</dt>
+                <dt className="flex items-center gap-2 font-bold text-cacao">
+                  <UserRound aria-hidden="true" className="h-4 w-4 text-tealTech" /> Cliente
+                </dt>
                 <dd className="mt-2 text-espresso">{client?.name ?? "Cliente não encontrado"}</dd>
                 <dd className="mt-1 break-all text-cacao/70">{client?.email}</dd>
               </div>
               <div className="py-4">
-                <dt className="flex items-center gap-2 font-bold text-cacao"><MapPin aria-hidden="true" className="h-4 w-4 text-tealTech" /> Endereço</dt>
-                <dd className="mt-2 leading-6 text-cacao/75">{formatPropertyAddressCompact(item.property)}</dd>
+                <dt className="flex items-center gap-2 font-bold text-cacao">
+                  <MapPin aria-hidden="true" className="h-4 w-4 text-tealTech" /> Endereço
+                </dt>
+                <dd className="mt-2 leading-6 text-cacao/75">
+                  {formatPropertyAddressCompact(item.property)}
+                </dd>
               </div>
               <div className="py-4">
-                <dt className="flex items-center gap-2 font-bold text-cacao"><CalendarDays aria-hidden="true" className="h-4 w-4 text-tealTech" /> Referências</dt>
-                <dd className="mt-2 text-cacao/75">Matrícula: {item.property.registrationNumber ?? "Não informada"}</dd>
-                <dd className="mt-1 text-cacao/75">IPTU: {item.property.iptuNumber ?? "Não informado"}</dd>
+                <dt className="flex items-center gap-2 font-bold text-cacao">
+                  <CalendarDays aria-hidden="true" className="h-4 w-4 text-tealTech" /> Referências
+                </dt>
+                <dd className="mt-2 text-cacao/75">
+                  Matrícula: {item.property.registrationNumber ?? "Não informada"}
+                </dd>
+                <dd className="mt-1 text-cacao/75">
+                  IPTU: {item.property.iptuNumber ?? "Não informado"}
+                </dd>
               </div>
             </dl>
             <a
@@ -341,32 +448,60 @@ export function AdminProcessDetailPage() {
               <MessageCircle aria-hidden="true" className="h-5 w-5" />
               Contatar por WhatsApp
             </a>
-            <p className="mt-2 text-xs leading-5 text-cacao/60">Canal secundário; abre uma conversa externa com serviço e protocolo preenchidos.</p>
+            <p className="mt-2 text-xs leading-5 text-cacao/60">
+              Canal secundário; abre uma conversa externa com serviço e protocolo preenchidos.
+            </p>
           </aside>
         </div>
 
-        <section aria-labelledby="timeline-title" className="mt-10 border-t border-espresso/15 pt-7">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">Diário do processo</p>
-          <h3 id="timeline-title" className="mt-2 font-display text-2xl font-semibold text-espresso">Histórico de movimentos</h3>
+        <section
+          aria-labelledby="timeline-title"
+          className="mt-10 border-t border-espresso/15 pt-7"
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-tealTech">
+            Diário do processo
+          </p>
+          <h3
+            id="timeline-title"
+            className="mt-2 font-display text-2xl font-semibold text-espresso"
+          >
+            Histórico de movimentos
+          </h3>
           {item.timeline.length === 0 ? (
-            <p className="mt-5 border-l-2 border-bronze pl-4 text-sm text-cacao/70">O primeiro movimento aparecerá aqui.</p>
+            <p className="mt-5 border-l-2 border-bronze pl-4 text-sm text-cacao/70">
+              O primeiro movimento aparecerá aqui.
+            </p>
           ) : (
             <ol className="mt-6 space-y-0">
-              {[...item.timeline].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((event, index, events) => (
-                <li key={event.id} className="relative grid grid-cols-[1.5rem_1fr] gap-3 pb-6 last:pb-0">
-                  {index < events.length - 1 ? <span aria-hidden="true" className="absolute bottom-0 left-[0.69rem] top-6 w-px bg-espresso/15" /> : null}
-                  <span className="relative mt-1 grid h-6 w-6 place-items-center rounded-full border-4 border-ivory bg-tealTech text-white ring-1 ring-tealTech/25">
-                    <Clock3 aria-hidden="true" className="h-3 w-3" />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-espresso">{event.title}</h4>
-                      <time className="text-xs text-cacao/60" dateTime={event.createdAt}>{formatDate(event.createdAt, true)}</time>
+              {[...item.timeline]
+                .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+                .map((event, index, events) => (
+                  <li
+                    key={event.id}
+                    className="relative grid grid-cols-[1.5rem_1fr] gap-3 pb-6 last:pb-0"
+                  >
+                    {index < events.length - 1 ? (
+                      <span
+                        aria-hidden="true"
+                        className="absolute bottom-0 left-[0.69rem] top-6 w-px bg-espresso/15"
+                      />
+                    ) : null}
+                    <span className="relative mt-1 grid h-6 w-6 place-items-center rounded-full border-4 border-ivory bg-tealTech text-white ring-1 ring-tealTech/25">
+                      <Clock3 aria-hidden="true" className="h-3 w-3" />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <h4 className="text-sm font-semibold text-espresso">{event.title}</h4>
+                        <time className="text-xs text-cacao/60" dateTime={event.createdAt}>
+                          {formatDate(event.createdAt, true)}
+                        </time>
+                      </div>
+                      {event.description ? (
+                        <p className="mt-1 text-sm leading-6 text-cacao/70">{event.description}</p>
+                      ) : null}
                     </div>
-                    {event.description ? <p className="mt-1 text-sm leading-6 text-cacao/70">{event.description}</p> : null}
-                  </div>
-                </li>
-              ))}
+                  </li>
+                ))}
             </ol>
           )}
         </section>

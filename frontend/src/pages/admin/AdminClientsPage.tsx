@@ -1,11 +1,4 @@
-import {
-  FolderKanban,
-  Mail,
-  MapPin,
-  Phone,
-  SearchX,
-  UserRound
-} from "lucide-react";
+import { FolderKanban, Mail, MapPin, Phone, SearchX, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { EmptyState, PageHeader, StatusBadge } from "@/shared/ui/portal";
@@ -93,9 +86,7 @@ export function AdminClientsPage() {
                     <dt className="flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-wide text-cacao/75">
                       <Phone aria-hidden="true" className="h-4 w-4" /> Telefone
                     </dt>
-                    <dd className="mt-1.5 font-semibold leading-6 text-espresso">
-                      {client.phone}
-                    </dd>
+                    <dd className="mt-1.5 font-semibold leading-6 text-espresso">{client.phone}</dd>
                   </div>
                 </dl>
 
@@ -121,7 +112,10 @@ export function AdminClientsPage() {
                   {cases.length > 0 ? (
                     <ul className="mt-2 divide-y divide-espresso/10 border-y border-espresso/10">
                       {cases.slice(0, 2).map((item) => (
-                        <li key={item.id} className="flex items-center justify-between gap-3 py-2.5">
+                        <li
+                          key={item.id}
+                          className="flex items-center justify-between gap-3 py-2.5"
+                        >
                           <div className="min-w-0">
                             <Link
                               to={`/admin/processos/${item.id}`}
@@ -159,7 +153,8 @@ export function AdminClientsPage() {
       )}
 
       <p className="border-t border-dashed border-espresso/20 pt-3 text-xs leading-5 text-cacao/70">
-        O administrador consulta apenas clientes com solicitações recebidas. Cadastro e edição de clientes não fazem parte desta versão frontend.
+        O administrador consulta apenas clientes com solicitações recebidas. Cadastro e edição de
+        clientes não fazem parte desta versão frontend.
       </p>
     </div>
   );

@@ -1,9 +1,4 @@
-import type {
-  CaseStatus,
-  DocumentStatus,
-  PendingAction,
-  TimelineEventType
-} from "@/domain/types";
+import type { CaseStatus, DocumentStatus, PendingAction, TimelineEventType } from "@/domain/types";
 
 export function getCaseStatusStep(status: CaseStatus) {
   const steps: CaseStatus[] = [
@@ -30,8 +25,6 @@ export function getTimelineIconLabel(type: TimelineEventType) {
 }
 
 export function getPendingActionHref(action: PendingAction) {
-  const target = action.documentId
-    ? `documento-${action.documentId}`
-    : "contato-processo";
+  const target = action.documentId ? `documento-${action.documentId}` : "contato-processo";
   return `/cliente/processos/${action.caseId}#${target}`;
 }

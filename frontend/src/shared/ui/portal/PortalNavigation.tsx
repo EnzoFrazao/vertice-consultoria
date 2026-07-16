@@ -1,22 +1,6 @@
 import { Link } from "react-router-dom";
-import type {
-  PortalNavigationItem,
-  PortalRole
-} from "@/shared/ui/portal/PortalShell.types";
+import type { PortalNavigationItem } from "@/shared/ui/portal/PortalShell.types";
 import { portalFocusRing } from "@/shared/ui/portal/portalStyles";
-
-export function getPortalRoleLabel(role: PortalRole) {
-  return role === "admin" ? "Área administrativa" : "Área do cliente";
-}
-
-export function getActiveNavigationHref(
-  items: PortalNavigationItem[],
-  currentPath: string
-) {
-  return items
-    .filter(({ href }) => currentPath === href || currentPath.startsWith(`${href}/`))
-    .sort((first, second) => second.href.length - first.href.length)[0]?.href;
-}
 
 interface PortalNavigationProps {
   items: PortalNavigationItem[];
@@ -24,11 +8,7 @@ interface PortalNavigationProps {
   onNavigate?: () => void;
 }
 
-export function PortalNavigation({
-  items,
-  activeHref,
-  onNavigate
-}: PortalNavigationProps) {
+export function PortalNavigation({ items, activeHref, onNavigate }: PortalNavigationProps) {
   return (
     <nav aria-label="Navegação do portal" className="border-y border-white/10">
       {items.map(({ label, href }, index) => {

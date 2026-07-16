@@ -140,9 +140,7 @@ export function validateBundle({
     if (typeof chunk.src !== "string") continue;
 
     const source = normalizeManifestPath(chunk.src);
-    const spec = PRIVATE_ROUTE_SPECS.find(({ sourceRoot }) =>
-      source.startsWith(sourceRoot)
-    );
+    const spec = PRIVATE_ROUTE_SPECS.find(({ sourceRoot }) => source.startsWith(sourceRoot));
     if (!spec || !staticFiles.has(chunk.file)) continue;
 
     const kind = source === spec.source ? "route entry" : "chunk auxiliar";
@@ -154,9 +152,9 @@ export function validateBundle({
   const areaFiles = { landing: landingChunk.file };
 
   for (const spec of PRIVATE_ROUTE_SPECS) {
-    const routeEntries = entries.filter(([, chunk]) =>
-      typeof chunk.src === "string" &&
-      normalizeManifestPath(chunk.src) === spec.source
+    const routeEntries = entries.filter(
+      ([, chunk]) =>
+        typeof chunk.src === "string" && normalizeManifestPath(chunk.src) === spec.source
     );
 
     if (routeEntries.length !== 1) {
@@ -170,9 +168,7 @@ export function validateBundle({
       fail(`A route entry "${spec.area}" precisa apontar para JavaScript.`);
     }
     if (routeChunk.name !== spec.area) {
-      fail(
-        `A route entry "${spec.area}" precisa manter o nome de chunk "${spec.area}".`
-      );
+      fail(`A route entry "${spec.area}" precisa manter o nome de chunk "${spec.area}".`);
     }
     if (routeChunk.isDynamicEntry !== true) {
       fail(`A route entry "${spec.area}" precisa declarar isDynamicEntry === true.`);

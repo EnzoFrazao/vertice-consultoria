@@ -13,9 +13,7 @@ export function createMemoryStorage(): StorageLike {
   };
 }
 
-export function getBrowserStorage(
-  name: "localStorage" | "sessionStorage"
-): StorageLike | null {
+export function getBrowserStorage(name: "localStorage" | "sessionStorage"): StorageLike | null {
   try {
     if (typeof window === "undefined") return null;
     return window[name];

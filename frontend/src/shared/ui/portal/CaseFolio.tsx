@@ -2,13 +2,7 @@ import { AlertTriangle, Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { CaseStatus } from "@/domain/types";
 
-const macroPhases = [
-  "Entrada",
-  "Documentação",
-  "Análise técnica",
-  "Órgãos",
-  "Conclusão"
-] as const;
+const macroPhases = ["Entrada", "Documentação", "Análise técnica", "Órgãos", "Conclusão"] as const;
 
 const statusPhaseIndex: Partial<Record<CaseStatus, number>> = {
   Novo: 0,
@@ -49,7 +43,10 @@ export function CaseFolio({
       }`}
     >
       <header className="relative overflow-hidden border-b border-espresso/15 bg-espresso px-5 py-7 text-ivory sm:px-8 sm:py-9 lg:col-start-1 lg:row-start-1">
-        <div aria-hidden="true" className="folio-cadastral-lines absolute inset-y-0 right-0 w-2/5 opacity-30" />
+        <div
+          aria-hidden="true"
+          className="folio-cadastral-lines absolute inset-y-0 right-0 w-2/5 opacity-30"
+        />
         <div className="relative max-w-3xl">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-champagne">
@@ -76,7 +73,10 @@ export function CaseFolio({
         </div>
       ) : null}
 
-      <section className="px-5 py-6 sm:px-8 sm:py-7 lg:col-start-1" aria-labelledby={`${protocol}-progress-title`}>
+      <section
+        className="px-5 py-6 sm:px-8 sm:py-7 lg:col-start-1"
+        aria-labelledby={`${protocol}-progress-title`}
+      >
         <div className="flex items-center justify-between gap-4">
           <h3
             id={`${protocol}-progress-title`}
@@ -111,9 +111,7 @@ export function CaseFolio({
                   priority
                     ? "2xl:min-h-24 2xl:items-start 2xl:border-l 2xl:border-espresso/10 2xl:px-4"
                     : "lg:min-h-24 lg:items-start lg:border-l lg:border-espresso/10 lg:px-4"
-                } ${
-                  isCurrent ? "bg-tealTech/[0.07] text-espresso" : "text-cacao/70"
-                }`}
+                } ${isCurrent ? "bg-tealTech/[0.07] text-espresso" : "text-cacao/70"}`}
               >
                 <span
                   aria-hidden="true"
@@ -148,14 +146,19 @@ export function CaseFolio({
             <div>
               <p className="text-sm font-bold">Aguardando cliente</p>
               <p className="mt-1 text-xs leading-5">
-                O processo está em pausa até receber uma informação, resposta ou documento do cliente.
+                O processo está em pausa até receber uma informação, resposta ou documento do
+                cliente.
               </p>
             </div>
           </aside>
         ) : null}
       </section>
 
-      {children ? <div className="border-t border-espresso/10 px-5 py-6 sm:px-8 sm:py-8 lg:col-start-1">{children}</div> : null}
+      {children ? (
+        <div className="border-t border-espresso/10 px-5 py-6 sm:px-8 sm:py-8 lg:col-start-1">
+          {children}
+        </div>
+      ) : null}
     </article>
   );
 }

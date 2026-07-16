@@ -20,9 +20,7 @@ function Probe() {
       <p data-testid="user-name">{app.currentUser?.name ?? "sem usuário"}</p>
       <p data-testid="pending-service">{app.pendingServiceId ?? "sem serviço"}</p>
       <p data-testid="user-phone">{app.currentUser?.phone ?? "sem telefone"}</p>
-      <p data-testid="repository-exposed">
-        {"repository" in app ? "exposto" : "encapsulado"}
-      </p>
+      <p data-testid="repository-exposed">{"repository" in app ? "exposto" : "encapsulado"}</p>
       <button type="button" onClick={() => app.login("cliente@demo.com", "cliente123")}>
         Login cliente
       </button>

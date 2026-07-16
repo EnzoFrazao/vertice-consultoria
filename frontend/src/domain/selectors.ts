@@ -1,11 +1,4 @@
-import type {
-  Case,
-  CaseDocument,
-  DemoState,
-  PendingAction,
-  User,
-  UserRole
-} from "@/domain/types";
+import type { Case, CaseDocument, DemoState, PendingAction, User, UserRole } from "@/domain/types";
 
 export function derivePendingActions(
   state: DemoState,
@@ -47,9 +40,7 @@ export function derivePendingActions(
         });
       }
     } else {
-      for (const document of item.documents.filter(
-        (candidate) => candidate.status === "Enviado"
-      )) {
+      for (const document of item.documents.filter((candidate) => candidate.status === "Enviado")) {
         actions.push({
           id: `pending-admin-${document.id}`,
           caseId: item.id,
@@ -63,9 +54,7 @@ export function derivePendingActions(
     }
   }
 
-  return actions.sort((left, right) =>
-    right.createdAt.localeCompare(left.createdAt)
-  );
+  return actions.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 }
 
 export type PautaGroup = "decide" | "client" | "progress";
@@ -129,18 +118,14 @@ export function buildAdminPauta(state: DemoState): AdminPauta {
     const needsClient =
       item.status === "Aguardando cliente" ||
       item.documents.some(
-        (document) =>
-          document.required &&
-          ["Pendente", "Rejeitado"].includes(document.status)
+        (document) => document.required && ["Pendente", "Rejeitado"].includes(document.status)
       );
     const group: PautaGroup = needsClient ? "client" : "progress";
     groups[group].push({
       id: `case-${item.id}`,
       group,
       caseId: item.id,
-      label: needsClient
-        ? "Aguardar retorno documental"
-        : "Acompanhar andamento",
+      label: needsClient ? "Aguardar retorno documental" : "Acompanhar andamento",
       detail: item.status,
       rank: needsClient ? 3 : 4,
       updatedAt: item.updatedAt
@@ -149,9 +134,7 @@ export function buildAdminPauta(state: DemoState): AdminPauta {
 
   for (const group of Object.values(groups)) {
     group.sort(
-      (left, right) =>
-        left.rank - right.rank ||
-        right.updatedAt.localeCompare(left.updatedAt)
+      (left, right) => left.rank - right.rank || right.updatedAt.localeCompare(left.updatedAt)
     );
   }
 
@@ -164,23 +147,17 @@ export interface AdminDocumentQueueEntry {
   client?: User;
 }
 
-export function buildAdminDocumentQueue(
-  state: DemoState
-): AdminDocumentQueueEntry[] {
+export function buildAdminDocumentQueue(state: DemoState): AdminDocumentQueueEntry[] {
   return state.cases
     .filter((item) => item.status !== "Concluído")
     .flatMap((item) =>
       item.documents
-        .filter((document) =>
-          ["Enviado", "Em análise"].includes(document.status)
-        )
+        .filter((document) => ["Enviado", "Em análise"].includes(document.status))
         .map((document) => ({
           item,
           document,
           client: state.users.find((user) => user.id === item.clientId)
         }))
     )
-    .sort((left, right) =>
-      right.document.updatedAt.localeCompare(left.document.updatedAt)
-    );
+    .sort((left, right) => right.document.updatedAt.localeCompare(left.document.updatedAt));
 }

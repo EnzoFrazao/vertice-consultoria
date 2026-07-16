@@ -64,9 +64,7 @@ export function PortalApplicationLayout({
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-espresso px-3 py-6 xl:flex"
       >
         <div className="border-b border-white/10 px-2 pb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">
-            {roleLabel}
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">{roleLabel}</p>
           <p className="mt-2 truncate text-sm font-medium text-ivory/70">{userName}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto py-5">

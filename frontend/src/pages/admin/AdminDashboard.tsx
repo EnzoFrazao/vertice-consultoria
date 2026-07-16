@@ -8,13 +8,8 @@ import { AdminPautaPanel } from "@/pages/admin/components/AdminPautaPanel";
 import { PageHeader } from "@/shared/ui/portal";
 
 export function AdminDashboard() {
-  const {
-    state,
-    currentUser,
-    startDocumentReview,
-    reviewDocument,
-    recordWhatsAppStarted
-  } = usePortalData();
+  const { state, currentUser, startDocumentReview, reviewDocument, recordWhatsAppStarted } =
+    usePortalData();
   const groups = buildAdminPauta(state);
   const allItems = [...groups.decide, ...groups.client, ...groups.progress];
   const [selectedId, setSelectedId] = useState(() => allItems[0]?.id ?? "");
@@ -71,9 +66,7 @@ export function AdminDashboard() {
 
   const closeMobileDossier = () => {
     setMobileDossierOpen(false);
-    const nextTrigger = selectedItem
-      ? pautaButtonsRef.current.get(selectedItem.id)
-      : undefined;
+    const nextTrigger = selectedItem ? pautaButtonsRef.current.get(selectedItem.id) : undefined;
     window.setTimeout(() => (nextTrigger ?? pautaTriggerRef.current)?.focus(), 0);
   };
 
@@ -108,18 +101,12 @@ export function AdminDashboard() {
     window.requestAnimationFrame(() => dispatchHeadingRef.current?.focus({ preventScroll: true }));
   };
 
-  const handlePautaTriggerMount = (
-    itemId: string,
-    node: HTMLButtonElement | null
-  ) => {
+  const handlePautaTriggerMount = (itemId: string, node: HTMLButtonElement | null) => {
     if (node) pautaButtonsRef.current.set(itemId, node);
     else pautaButtonsRef.current.delete(itemId);
   };
 
-  const handlePautaSelect = (
-    item: PautaItem,
-    trigger: HTMLButtonElement
-  ) => {
+  const handlePautaSelect = (item: PautaItem, trigger: HTMLButtonElement) => {
     pautaTriggerRef.current = trigger;
     setSelectedId(item.id);
     if (isMobilePauta) setMobileDossierOpen(true);
@@ -170,14 +157,21 @@ export function AdminDashboard() {
           ["Dependem do cliente", clientCount],
           ["Concluídos", completedCases]
         ].map(([label, value], index) => (
-          <div key={label} className={`px-4 py-4 sm:px-5 ${index ? "border-t border-espresso/10 sm:border-l sm:border-t-0" : ""}`}>
-            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">{label}</p>
+          <div
+            key={label}
+            className={`px-4 py-4 sm:px-5 ${index ? "border-t border-espresso/10 sm:border-l sm:border-t-0" : ""}`}
+          >
+            <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+              {label}
+            </p>
             <p className="mt-1 font-display text-2xl font-semibold text-espresso">{value}</p>
           </div>
         ))}
       </section>
 
-      <p role="status" aria-live="polite" className="sr-only">{announcement}</p>
+      <p role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
 
       <div className="grid items-start gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
         <AdminPautaPanel
@@ -210,7 +204,9 @@ export function AdminDashboard() {
           <section className="folio-sheet flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
             <CheckCircle2 aria-hidden="true" className="h-8 w-8 text-tealTech" />
             <h2 className="mt-4 font-display text-2xl font-semibold text-espresso">Mesa livre</h2>
-            <p className="mt-2 max-w-md text-sm leading-6 text-cacao/70">Nenhum processo aberto precisa de decisão neste momento.</p>
+            <p className="mt-2 max-w-md text-sm leading-6 text-cacao/70">
+              Nenhum processo aberto precisa de decisão neste momento.
+            </p>
           </section>
         )}
       </div>

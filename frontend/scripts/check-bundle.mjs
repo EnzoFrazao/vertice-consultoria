@@ -1,10 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  INITIAL_GZIP_BASELINE_BYTES,
-  validateBundle
-} from "./bundle-checker.mjs";
+import { INITIAL_GZIP_BASELINE_BYTES, validateBundle } from "./bundle-checker.mjs";
 
 const frontendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distRoot = join(frontendRoot, "dist");

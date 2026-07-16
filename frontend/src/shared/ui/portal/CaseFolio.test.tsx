@@ -51,10 +51,7 @@ describe("CaseFolio", () => {
     render(<CaseFolio {...baseProps} status={status} />);
 
     const phases = screen.getByRole("list", { name: "Andamento do processo" });
-    expect(within(phases).getByText(phase).closest("li")).toHaveAttribute(
-      "aria-current",
-      "step"
-    );
+    expect(within(phases).getByText(phase).closest("li")).toHaveAttribute("aria-current", "step");
   });
 
   it("shows awaiting client as an honest pause when the previous phase is not persisted", () => {

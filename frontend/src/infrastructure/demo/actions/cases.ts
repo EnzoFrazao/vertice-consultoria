@@ -5,10 +5,7 @@ import type { CreateCaseInput } from "@/infrastructure/demo/contracts";
 import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
 
 export function createCaseActions(context: DemoActionContext) {
-  function updateUserProfile(
-    userId: string,
-    updates: { phone: string; address: string }
-  ) {
+  function updateUserProfile(userId: string, updates: { phone: string; address: string }) {
     const state = context.getState();
     const user = state.users.find((item) => item.id === userId);
     if (!user) throw new Error("Usuário não encontrado.");
@@ -16,9 +13,7 @@ export function createCaseActions(context: DemoActionContext) {
     return context.commit({
       ...state,
       users: state.users.map((item) =>
-        item.id === userId
-          ? { ...item, phone: updates.phone, address: updates.address }
-          : item
+        item.id === userId ? { ...item, phone: updates.phone, address: updates.address } : item
       ),
       updatedAt: context.now().toISOString()
     });
@@ -37,9 +32,7 @@ export function createCaseActions(context: DemoActionContext) {
     const year = context.now().getFullYear();
     const sequence =
       state.cases.reduce((largest, item) => {
-        const match = item.protocol.match(
-          new RegExp(`^RV-${year}-(\\d{4})$`)
-        );
+        const match = item.protocol.match(new RegExp(`^RV-${year}-(\\d{4})$`));
         return match ? Math.max(largest, Number(match[1])) : largest;
       }, 0) + 1;
     const protocol = `RV-${year}-${String(sequence).padStart(4, "0")}`;
@@ -146,11 +139,7 @@ export function createCaseActions(context: DemoActionContext) {
     return createdCase;
   }
 
-  function updateCaseStatus(
-    caseId: string,
-    status: CaseStatus,
-    actorId: string
-  ) {
+  function updateCaseStatus(caseId: string, status: CaseStatus, actorId: string) {
     context.requireRole(actorId, "admin");
     const item = context.getCase(caseId);
     if (item.status === "Concluído") {

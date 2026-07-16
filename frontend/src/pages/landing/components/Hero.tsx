@@ -60,14 +60,21 @@ export function Hero() {
             Regularize, avalie e decida sobre seu imóvel com clareza.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-champagne/80">
-            Organize documentos, compreenda o valor do seu imóvel e avance com mais clareza em cada decisão.
+            Organize documentos, compreenda o valor do seu imóvel e avance com mais clareza em cada
+            decisão.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href="#servicos" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-tealTech px-6 font-bold text-white transition-colors hover:bg-[#0b625c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze">
+            <a
+              href="#servicos"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-tealTech px-6 font-bold text-white transition-colors hover:bg-[#0b625c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze"
+            >
               Regularizar meu imóvel
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </a>
-            <a href="#servicos" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-champagne/45 bg-white/5 px-6 font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze">
+            <a
+              href="#servicos"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-champagne/45 bg-white/5 px-6 font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze"
+            >
               Avaliar valor de mercado
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </a>

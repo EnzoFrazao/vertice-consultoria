@@ -46,10 +46,16 @@ export function ClientProcessesPage() {
         <section aria-labelledby="folio-index-heading" className="folio-sheet overflow-hidden">
           <header className="grid gap-2 border-b border-espresso/15 bg-espresso px-5 py-5 text-ivory sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:px-7">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-champagne">Registro vivo</p>
-              <h2 id="folio-index-heading" className="mt-1 font-display text-2xl font-semibold">Índice de fólios</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-champagne">
+                Registro vivo
+              </p>
+              <h2 id="folio-index-heading" className="mt-1 font-display text-2xl font-semibold">
+                Índice de fólios
+              </h2>
             </div>
-            <p className="text-sm text-ivory/75">{cases.length} {cases.length === 1 ? "processo" : "processos"}</p>
+            <p className="text-sm text-ivory/75">
+              {cases.length} {cases.length === 1 ? "processo" : "processos"}
+            </p>
           </header>
 
           <ol className="divide-y divide-espresso/10">
@@ -76,13 +82,20 @@ export function ClientProcessesPage() {
                       </span>
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[11px] font-bold uppercase tracking-[0.15em] text-cacao/60">Objetivo</span>
-                      <span className="mt-1 line-clamp-2 block text-sm leading-5 text-cacao/75">{item.objective}</span>
+                      <span className="block text-[11px] font-bold uppercase tracking-[0.15em] text-cacao/60">
+                        Objetivo
+                      </span>
+                      <span className="mt-1 line-clamp-2 block text-sm leading-5 text-cacao/75">
+                        {item.objective}
+                      </span>
                     </span>
                     <span className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
                       <StatusBadge status={item.status} />
                       <span className="text-xs text-cacao/65">{formatDate(item.updatedAt)}</span>
-                      <ArrowRight aria-hidden="true" className="h-5 w-5 text-tealTech transition-transform group-hover:translate-x-1" />
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="h-5 w-5 text-tealTech transition-transform group-hover:translate-x-1"
+                      />
                     </span>
                   </Link>
                 </li>

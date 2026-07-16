@@ -24,11 +24,6 @@ export interface DemoActionContext {
     actorId: string;
     description?: string;
   }) => TimelineEvent;
-  createNotification: (
-    input: Omit<Notification, "id" | "createdAt">
-  ) => Notification;
-  replaceCase: (
-    updatedCase: Case,
-    notifications?: Notification[]
-  ) => DemoState;
+  createNotification: (input: Omit<Notification, "id" | "createdAt">) => Notification;
+  replaceCase: (updatedCase: Case, notifications?: Notification[]) => DemoState;
 }

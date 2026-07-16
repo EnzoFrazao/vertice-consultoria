@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc -b && npm run bundle:test && vite build && npm run bundle:check",
+    "build": "npm run typecheck:app && npm run bundle:test && vite build && npm run bundle:check",
     "bundle:check": "node ./scripts/check-bundle.mjs",
     "bundle:test": "node --test ./scripts/bundle-checker.node-test.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
-    "typecheck": "tsc -b"
+    "typecheck:app": "tsc -b tsconfig.app.json tsconfig.node.json",
+    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "typecheck": "npm run typecheck:app && npm run typecheck:test"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
@@ -25,6 +26,7 @@
     "@testing-library/react": "^16.1.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.20",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.49",

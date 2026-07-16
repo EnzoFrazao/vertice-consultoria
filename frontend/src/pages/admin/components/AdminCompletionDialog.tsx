@@ -47,13 +47,9 @@ export function AdminCompletionDialog({
         >
           Concluir processo?
         </h2>
-        <p
-          id="completion-description"
-          className="mt-3 text-sm leading-6 text-cacao/75"
-        >
-          Depois da confirmação, o processo não poderá mais ser alterado nesta
-          demonstração. Documentos e histórico continuarão disponíveis em modo
-          de leitura.
+        <p id="completion-description" className="mt-3 text-sm leading-6 text-cacao/75">
+          Depois da confirmação, o processo não poderá mais ser alterado nesta demonstração.
+          Documentos e histórico continuarão disponíveis em modo de leitura.
         </p>
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button

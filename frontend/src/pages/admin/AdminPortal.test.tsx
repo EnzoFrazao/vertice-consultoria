@@ -51,7 +51,9 @@ describe("AdminPortal", () => {
   it("organiza a Mesa de Operações em pauta, fólio ativo e despacho contextual", async () => {
     renderAdmin();
 
-    expect(screen.getByRole("heading", { name: "Mesa de Operações", level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Mesa de Operações", level: 1 })
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Pauta" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Decidir agora" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Depende do cliente" })).toBeInTheDocument();
@@ -66,7 +68,9 @@ describe("AdminPortal", () => {
     const pautaItem = screen.getAllByRole("button", { name: /RV-2026-0001/i })[0];
     fireEvent.click(pautaItem);
     const mobileDossier = screen.getByRole("dialog", { name: "Dossiê operacional RV-2026-0001" });
-    expect(within(mobileDossier).getByRole("article", { name: "Fólio RV-2026-0001" })).toBeInTheDocument();
+    expect(
+      within(mobileDossier).getByRole("article", { name: "Fólio RV-2026-0001" })
+    ).toBeInTheDocument();
     fireEvent.click(within(mobileDossier).getByRole("button", { name: "Voltar à pauta" }));
     await waitFor(() => expect(pautaItem).toHaveFocus());
 
@@ -131,17 +135,22 @@ describe("AdminPortal", () => {
       "Prefeitura/cartório"
     );
     expect(
-      repository.getState().cases.find((item) => item.id === "case-0002")?.timeline.some(
-        (event) => event.type === "status-changed" && event.title.includes("Prefeitura/cartório")
-      )
+      repository
+        .getState()
+        .cases.find((item) => item.id === "case-0002")
+        ?.timeline.some(
+          (event) => event.type === "status-changed" && event.title.includes("Prefeitura/cartório")
+        )
     ).toBe(true);
     expect(
-      repository.getState().notifications.some(
-        (notification) =>
-          notification.userId === "user-client-demo" &&
-          notification.caseId === "case-0002" &&
-          notification.type === "status-changed"
-      )
+      repository
+        .getState()
+        .notifications.some(
+          (notification) =>
+            notification.userId === "user-client-demo" &&
+            notification.caseId === "case-0002" &&
+            notification.type === "status-changed"
+        )
     ).toBe(true);
 
     fireEvent.change(screen.getByLabelText("Novo status do processo"), {
@@ -168,8 +177,10 @@ describe("AdminPortal", () => {
         matches: query.includes("max-width: 639px"),
         media: query,
         onchange: null,
-        addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener),
-        removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener),
+        addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) =>
+          listeners.add(listener),
+        removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) =>
+          listeners.delete(listener),
         addListener: () => {},
         removeListener: () => {},
         dispatchEvent: () => true
@@ -188,7 +199,9 @@ describe("AdminPortal", () => {
       const dialog = screen.getByRole("dialog", { name: "Alterar estado do processo?" });
       const cancel = within(dialog).getByRole("button", { name: "Cancelar" });
       await waitFor(() => expect(cancel).toHaveFocus());
-      expect(repository.getState().cases.find((item) => item.id === "case-0002")?.status).toBe("Análise técnica");
+      expect(repository.getState().cases.find((item) => item.id === "case-0002")?.status).toBe(
+        "Análise técnica"
+      );
 
       fireEvent.keyDown(document, { key: "Escape" });
       await waitFor(() => expect(dialog).not.toBeInTheDocument());
@@ -196,7 +209,9 @@ describe("AdminPortal", () => {
 
       fireEvent.click(trigger);
       fireEvent.click(screen.getByRole("button", { name: "Confirmar novo estado" }));
-      expect(repository.getState().cases.find((item) => item.id === "case-0002")?.status).toBe("Prefeitura/cartório");
+      expect(repository.getState().cases.find((item) => item.id === "case-0002")?.status).toBe(
+        "Prefeitura/cartório"
+      );
     } finally {
       vi.unstubAllGlobals();
     }
@@ -205,7 +220,8 @@ describe("AdminPortal", () => {
   it("registra o contato por WhatsApp com serviço e protocolo", () => {
     const repository = createAdminRepository();
     renderAdmin("/admin/processos/case-0003", repository);
-    const before = repository.getState().cases.find((item) => item.id === "case-0003")!.timeline.length;
+    const before = repository.getState().cases.find((item) => item.id === "case-0003")!.timeline
+      .length;
 
     const whatsapp = screen.getByRole("link", { name: "Conversar com Fernanda Alves no WhatsApp" });
     expect(whatsapp.getAttribute("href")).toContain("RV-2026-0003");
@@ -256,17 +272,23 @@ describe("AdminPortal", () => {
     expect(rejected.status).toBe("Rejeitado");
     expect(rejected.rejectionReason).toBe("Documento sem todas as páginas.");
     expect(
-      repository.getState().cases.find((item) => item.id === "case-0001")?.timeline.some(
-        (event) => event.type === "document-rejected" && event.description === rejected.rejectionReason
-      )
+      repository
+        .getState()
+        .cases.find((item) => item.id === "case-0001")
+        ?.timeline.some(
+          (event) =>
+            event.type === "document-rejected" && event.description === rejected.rejectionReason
+        )
     ).toBe(true);
     expect(
-      repository.getState().notifications.some(
-        (notification) =>
-          notification.userId === "user-client-demo" &&
-          notification.documentId === rejected.id &&
-          notification.type === "document-rejected"
-      )
+      repository
+        .getState()
+        .notifications.some(
+          (notification) =>
+            notification.userId === "user-client-demo" &&
+            notification.documentId === rejected.id &&
+            notification.type === "document-rejected"
+        )
     ).toBe(true);
 
     fireEvent.click(
@@ -274,9 +296,7 @@ describe("AdminPortal", () => {
         name: "Iniciar análise de IPTU do protocolo RV-2026-0001"
       })
     );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Aprovar IPTU do protocolo RV-2026-0001" })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Aprovar IPTU do protocolo RV-2026-0001" }));
     expect(
       repository
         .getState()
@@ -301,7 +321,9 @@ describe("AdminPortal", () => {
     expect(screen.getByRole("heading", { name: "Clientes", level: 1 })).toBeInTheDocument();
     expect(screen.getByText("Marina Oliveira")).toBeInTheDocument();
     expect(screen.getByText("Fernanda Alves")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /novo cliente|editar cliente/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /novo cliente|editar cliente/i })
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Ver processos de Marina Oliveira" })).toHaveAttribute(
       "href",
       "/admin/processos?cliente=user-client-demo"

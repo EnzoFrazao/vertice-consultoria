@@ -60,16 +60,18 @@ export function AdminRejectionDialog({
             <X aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
-    
+
         <p id="rejection-dialog-description" className="mt-3 text-sm leading-6 text-cacao/75">
-          O motivo será registrado no histórico e enviado ao cliente. Descreva somente o ajuste verificável.
+          O motivo será registrado no histórico e enviado ao cliente. Descreva somente o ajuste
+          verificável.
         </p>
-    
+
         <label
           htmlFor={`rejection-reason-${rejectingEntry.document.id}`}
           className="mt-5 block text-sm font-bold text-espresso"
         >
-          Motivo da rejeição de {rejectingEntry.document.label} do protocolo {rejectingEntry.item.protocol}
+          Motivo da rejeição de {rejectingEntry.document.label} do protocolo{" "}
+          {rejectingEntry.item.protocol}
         </label>
         <textarea
           ref={reasonRef}
@@ -86,7 +88,7 @@ export function AdminRejectionDialog({
           placeholder="Explique objetivamente o ajuste necessário"
           className={`${focusRing} mt-2 w-full rounded-lg border border-espresso/25 bg-white px-3.5 py-3 text-sm leading-6 text-espresso shadow-sm`}
         />
-    
+
         {validationError ? (
           <p
             id={`rejection-error-${rejectingEntry.document.id}`}
@@ -96,7 +98,7 @@ export function AdminRejectionDialog({
             {validationError}
           </p>
         ) : null}
-    
+
         <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"

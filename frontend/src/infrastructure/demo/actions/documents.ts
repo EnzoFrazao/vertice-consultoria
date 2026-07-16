@@ -3,11 +3,7 @@ import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
 import type { DocumentReview } from "@/infrastructure/demo/contracts";
 
 export function createDocumentActions(context: DemoActionContext) {
-  function startDocumentReview(
-    caseId: string,
-    documentId: string,
-    actorId: string
-  ) {
+  function startDocumentReview(caseId: string, documentId: string, actorId: string) {
     context.requireRole(actorId, "admin");
     const item = context.getCase(caseId);
     if (item.status === "Concluído") {
@@ -15,9 +11,7 @@ export function createDocumentActions(context: DemoActionContext) {
     }
     const document = context.getDocument(item, documentId);
     if (document.status !== "Enviado") {
-      throw new Error(
-        "Apenas documentos enviados podem entrar em análise."
-      );
+      throw new Error("Apenas documentos enviados podem entrar em análise.");
     }
 
     const updatedAt = context.now().toISOString();
@@ -59,8 +53,7 @@ export function createDocumentActions(context: DemoActionContext) {
     if (document.status !== "Em análise") {
       throw new Error("Inicie a análise antes de revisar o documento.");
     }
-    const reason =
-      review.decision === "reject" ? review.reason.trim() : undefined;
+    const reason = review.decision === "reject" ? review.reason.trim() : undefined;
     if (review.decision === "reject" && !reason) {
       throw new Error("Informe o motivo da rejeição.");
     }
@@ -93,9 +86,7 @@ export function createDocumentActions(context: DemoActionContext) {
     const notification = context.createNotification({
       userId: item.clientId,
       type: approved ? "document-approved" : "document-rejected",
-      title: `${document.label} ${
-        approved ? "aprovado" : "precisa de ajuste"
-      }`,
+      title: `${document.label} ${approved ? "aprovado" : "precisa de ajuste"}`,
       message: approved
         ? `O documento do protocolo ${item.protocol} foi aprovado.`
         : `${reason} Protocolo ${item.protocol}.`,
@@ -125,9 +116,7 @@ export function createDocumentActions(context: DemoActionContext) {
     if (!["Pendente", "Rejeitado"].includes(document.status)) {
       throw new Error("Este documento não está disponível para envio.");
     }
-    const asset = state.mockDocumentAssets.find(
-      (candidate) => candidate.id === assetId
-    );
+    const asset = state.mockDocumentAssets.find((candidate) => candidate.id === assetId);
     if (!asset || asset.kind !== document.kind) {
       throw new Error("Documento fictício incompatível.");
     }
@@ -156,9 +145,7 @@ export function createDocumentActions(context: DemoActionContext) {
     const event = context.createTimelineEvent({
       caseId,
       type: isResubmission ? "document-resubmitted" : "document-added",
-      title: `${document.label} ${
-        isResubmission ? "reenviado" : "adicionado"
-      }`,
+      title: `${document.label} ${isResubmission ? "reenviado" : "adicionado"}`,
       actorId
     });
     const updatedCase: Case = {
@@ -175,9 +162,7 @@ export function createDocumentActions(context: DemoActionContext) {
         context.createNotification({
           userId: admin.id,
           type: "document-submitted",
-          title: isResubmission
-            ? "Documento reenviado"
-            : "Novo documento enviado",
+          title: isResubmission ? "Documento reenviado" : "Novo documento enviado",
           message: `${document.label} foi adicionado ao protocolo ${item.protocol}.`,
           caseId,
           documentId

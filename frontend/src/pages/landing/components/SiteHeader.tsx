@@ -15,9 +15,15 @@ export function SiteHeader() {
         />
       </a>
       <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
-        <a className="nav-link" href="#servicos">Serviços</a>
-        <a className="nav-link" href="#seguranca">Como funciona</a>
-        <a className="nav-link" href="#contato">Contato</a>
+        <a className="nav-link" href="#servicos">
+          Serviços
+        </a>
+        <a className="nav-link" href="#seguranca">
+          Como funciona
+        </a>
+        <a className="nav-link" href="#contato">
+          Contato
+        </a>
       </nav>
       <div className="flex items-center gap-2 sm:gap-3">
         <Link
@@ -26,7 +32,9 @@ export function SiteHeader() {
         >
           Acessar minha conta
         </Link>
-        <a href="#servicos" className="glass-button hidden lg:inline-flex">Escolher serviço</a>
+        <a href="#servicos" className="glass-button hidden lg:inline-flex">
+          Escolher serviço
+        </a>
       </div>
     </header>
   );

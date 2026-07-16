@@ -110,9 +110,7 @@ test("allows auxiliary private chunks when they stay outside the initial graph",
     src: "src/pages/login/LoginForm.tsx",
     imports: ["_runtime.js", "_shared-ui.js"]
   };
-  manifest["src/pages/login/LoginPage.tsx"].imports.push(
-    "src/pages/login/LoginForm.tsx"
-  );
+  manifest["src/pages/login/LoginPage.tsx"].imports.push("src/pages/login/LoginForm.tsx");
   const distRoot = createFixture(manifest);
 
   assert.doesNotThrow(() => validateBundle({ manifest, distRoot }));
@@ -202,7 +200,8 @@ test("validates the manifest schema before reading its chunks", () => {
           dynamicImports: "src/pages/login/LoginPage.tsx"
         }
       },
-      expected: /\[bundle:check\](?=.*chunk "index\.html")(?=.*dynamicImports)(?=.*array de strings)/i
+      expected:
+        /\[bundle:check\](?=.*chunk "index\.html")(?=.*dynamicImports)(?=.*array de strings)/i
     },
     {
       label: "isEntry is not boolean",

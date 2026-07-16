@@ -1,7 +1,4 @@
-export {
-  CaseFolio,
-  type CaseFolioProps
-} from "@/shared/ui/portal/CaseFolio";
+export { CaseFolio, type CaseFolioProps } from "@/shared/ui/portal/CaseFolio";
 export {
   EmptyState,
   PageHeader,

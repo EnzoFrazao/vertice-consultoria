@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  NOTIFICATION_TYPES,
-  TIMELINE_EVENT_TYPES,
-  USER_ROLES
-} from "@/domain/types";
+import { NOTIFICATION_TYPES, TIMELINE_EVENT_TYPES, USER_ROLES } from "@/domain/types";
 
 describe("enums canônicos do domínio", () => {
   it("expõe os valores usados pelos tipos e pela validação", () => {

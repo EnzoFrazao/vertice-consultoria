@@ -16,13 +16,8 @@ const clientNavigation = [
 ];
 
 export function ClientPortal() {
-  const {
-    currentUser,
-    state,
-    logout,
-    markNotificationRead,
-    markAllNotificationsRead
-  } = usePortalData();
+  const { currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
+    usePortalData();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -53,9 +48,7 @@ export function ClientPortal() {
         logout();
         navigate("/login", { replace: true });
       }}
-      onMarkNotification={(notificationId) =>
-        markNotificationRead(notificationId, currentUser.id)
-      }
+      onMarkNotification={(notificationId) => markNotificationRead(notificationId, currentUser.id)}
       onMarkAllNotifications={() => markAllNotificationsRead(currentUser.id)}
     >
       <Routes>

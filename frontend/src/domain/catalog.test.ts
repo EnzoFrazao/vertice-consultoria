@@ -1,47 +1,45 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
 import { SERVICE_CATEGORIES, SERVICES, getServiceById } from "@/domain/catalog";
 
-describe('catálogo de serviços', () => {
-  it('organiza os nove serviços aprovados nas cinco categorias da experiência', () => {
+describe("catálogo de serviços", () => {
+  it("organiza os nove serviços aprovados nas cinco categorias da experiência", () => {
     expect(SERVICE_CATEGORIES.map((category) => category.name)).toEqual([
-      'Orientação geral',
-      'Regularização e registro',
-      'Posse e sucessão',
-      'Terrenos',
-      'Avaliação',
+      "Orientação geral",
+      "Regularização e registro",
+      "Posse e sucessão",
+      "Terrenos",
+      "Avaliação"
     ]);
 
     expect(SERVICES.map((service) => service.name)).toEqual([
-      'Regularização de imóveis',
-      'Escritura',
-      'Averbação',
-      'Retificação de área',
-      'Regularização em prefeitura/cartório',
-      'Usucapião',
-      'Inventário imobiliário',
-      'Desmembramento de terreno',
-      'Análise de Valor de Mercado',
+      "Regularização de imóveis",
+      "Escritura",
+      "Averbação",
+      "Retificação de área",
+      "Regularização em prefeitura/cartório",
+      "Usucapião",
+      "Inventário imobiliário",
+      "Desmembramento de terreno",
+      "Análise de Valor de Mercado"
     ]);
   });
 
-  it('mantém identificadores únicos e resolve um serviço pelo identificador', () => {
+  it("mantém identificadores únicos e resolve um serviço pelo identificador", () => {
     expect(new Set(SERVICES.map((service) => service.id)).size).toBe(SERVICES.length);
-    expect(getServiceById('analise-valor-mercado')?.name).toBe(
-      'Análise de Valor de Mercado',
-    );
+    expect(getServiceById("analise-valor-mercado")?.name).toBe("Análise de Valor de Mercado");
   });
 
-  it('impede mutações do catálogo e preserva a identidade usada na consulta', () => {
+  it("impede mutações do catálogo e preserva a identidade usada na consulta", () => {
     const service = SERVICE_CATEGORIES[0].services[0];
     const originalName = service.name;
     const originalServiceCount = SERVICES.length;
     const originalCategoryCount = SERVICE_CATEGORIES.length;
     const forgedService = {
-      id: 'servico-injetado',
+      id: "servico-injetado",
       categoryId: SERVICE_CATEGORIES[0].id,
-      name: 'Serviço injetado',
-      description: 'Não deve entrar no catálogo.',
+      name: "Serviço injetado",
+      description: "Não deve entrar no catálogo."
     };
 
     const attemptMutation = (mutation: () => void) => {
@@ -53,7 +51,7 @@ describe('catálogo de serviços', () => {
     };
 
     attemptMutation(() => {
-      (SERVICES as unknown as typeof forgedService[]).push(forgedService);
+      (SERVICES as unknown as (typeof forgedService)[]).push(forgedService);
     });
     attemptMutation(() => {
       (
@@ -61,17 +59,17 @@ describe('catálogo de serviços', () => {
           id: string;
           name: string;
           description: string;
-          services: typeof forgedService[];
+          services: (typeof forgedService)[];
         }>
       ).push({
-        id: 'categoria-injetada',
-        name: 'Categoria injetada',
-        description: 'Não deve entrar no catálogo.',
-        services: [forgedService],
+        id: "categoria-injetada",
+        name: "Categoria injetada",
+        description: "Não deve entrar no catálogo.",
+        services: [forgedService]
       });
     });
     attemptMutation(() => {
-      (service as unknown as { name: string }).name = 'Nome adulterado';
+      (service as unknown as { name: string }).name = "Nome adulterado";
     });
 
     expect(SERVICES).toHaveLength(originalServiceCount);

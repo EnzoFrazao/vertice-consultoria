@@ -43,9 +43,7 @@ export function PortalMobileNavigationDrawer({
       >
         <div className="flex items-start justify-between gap-3 border-b border-white/10 px-2 pb-5">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">
-              {roleLabel}
-            </p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-bronze">{roleLabel}</p>
             <p className="mt-2 truncate text-sm font-medium text-ivory/70">{userName}</p>
           </div>
           <button
@@ -59,11 +57,7 @@ export function PortalMobileNavigationDrawer({
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto py-5">
-          <PortalNavigation
-            items={navigation}
-            activeHref={activeHref}
-            onNavigate={onClose}
-          />
+          <PortalNavigation items={navigation} activeHref={activeHref} onNavigate={onClose} />
         </div>
       </aside>
     </div>

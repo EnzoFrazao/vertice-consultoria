@@ -32,11 +32,7 @@ const demoAccounts = [
   }
 ] as const;
 
-export function LoginPage({
-  pendingServiceName,
-  onLogin,
-  onResetDemo
-}: LoginPageProps) {
+export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -97,8 +93,8 @@ export function LoginPage({
             Acompanhe cada decisão sem perder o contexto.
           </h2>
           <p className="mt-6 max-w-lg text-lg leading-8 text-champagne/[0.76]">
-            Um protótipo completo para visualizar solicitações, documentos,
-            pendências e andamento do atendimento imobiliário.
+            Um protótipo completo para visualizar solicitações, documentos, pendências e andamento
+            do atendimento imobiliário.
           </p>
         </div>
         <div className="relative z-10 flex items-center gap-3 text-sm text-champagne/70">
@@ -141,8 +137,8 @@ export function LoginPage({
               Acesse sua jornada
             </h1>
             <p className="mt-4 max-w-xl leading-7 text-cacao/[0.72]">
-              Entre com uma conta demonstrativa para conhecer a experiência do
-              cliente ou a rotina administrativa.
+              Entre com uma conta demonstrativa para conhecer a experiência do cliente ou a rotina
+              administrativa.
             </p>
           </div>
 
@@ -217,12 +213,18 @@ export function LoginPage({
             </div>
 
             {error ? (
-              <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+              <p
+                role="alert"
+                className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+              >
                 {error}
               </p>
             ) : null}
             {notice ? (
-              <p role="status" className="mt-4 rounded-lg bg-mist px-4 py-3 text-sm font-medium text-teal-900">
+              <p
+                role="status"
+                className="mt-4 rounded-lg bg-mist px-4 py-3 text-sm font-medium text-teal-900"
+              >
                 {notice}
               </p>
             ) : null}

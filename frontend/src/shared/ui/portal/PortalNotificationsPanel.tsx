@@ -73,9 +73,7 @@ export function PortalNotificationsPanel({
                     <span className="block text-sm font-semibold leading-5 text-espresso">
                       {notification.title}
                     </span>
-                    <span className="sr-only">
-                      {notification.isRead ? "Lida." : "Não lida."}
-                    </span>
+                    <span className="sr-only">{notification.isRead ? "Lida." : "Não lida."}</span>
                     {notification.message ? (
                       <span className="mt-1 block text-xs leading-5 text-cacao/[0.65]">
                         {notification.message}

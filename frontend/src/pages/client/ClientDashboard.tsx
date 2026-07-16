@@ -78,8 +78,12 @@ export function ClientDashboard() {
           <p className="mt-1 font-display text-2xl font-semibold text-espresso">{cases.length}</p>
         </div>
         <div className="border-t border-espresso/10 px-4 py-4 sm:border-l sm:border-t-0 sm:px-5">
-          <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Dependem de você</p>
-          <p className="mt-1 font-display text-2xl font-semibold text-espresso">{pendingActions.length}</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+            Dependem de você
+          </p>
+          <p className="mt-1 font-display text-2xl font-semibold text-espresso">
+            {pendingActions.length}
+          </p>
         </div>
         <div className="border-t border-espresso/10 px-4 py-4 sm:border-l sm:border-t-0 sm:px-5">
           <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Em foco</p>
@@ -88,7 +92,10 @@ export function ClientDashboard() {
       </section>
 
       <div className="grid items-start gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] 2xl:grid-cols-[14rem_minmax(0,1fr)]">
-        <nav aria-label="Índice dos seus processos" className="folio-sheet overflow-hidden lg:sticky lg:top-28">
+        <nav
+          aria-label="Índice dos seus processos"
+          className="folio-sheet overflow-hidden lg:sticky lg:top-28"
+        >
           <div className="border-b border-espresso/15 px-4 py-4">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Índice</p>
             <h2 className="mt-1 font-display text-xl font-semibold text-espresso">Seus fólios</h2>
@@ -108,7 +115,10 @@ export function ClientDashboard() {
                         : "border-transparent hover:border-bronze/50 hover:bg-champagne/25"
                     }`}
                   >
-                    <span aria-hidden="true" className="pt-0.5 text-[10px] font-bold tracking-[0.16em] text-bronze">
+                    <span
+                      aria-hidden="true"
+                      className="pt-0.5 text-[10px] font-bold tracking-[0.16em] text-bronze"
+                    >
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="min-w-0">
@@ -144,11 +154,20 @@ export function ClientDashboard() {
               aria-labelledby="agora-heading"
               className="border-t-4 border-t-tealTech p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-tealTech"
             >
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">Próxima decisão</p>
-              <h2 id="agora-heading" className="mt-2 font-display text-2xl font-semibold text-espresso">Agora</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-tealTech">
+                Próxima decisão
+              </p>
+              <h2
+                id="agora-heading"
+                className="mt-2 font-display text-2xl font-semibold text-espresso"
+              >
+                Agora
+              </h2>
               {dominantAction ? (
                 <>
-                  <p className="mt-4 text-base font-semibold leading-6 text-espresso">{dominantAction.title}</p>
+                  <p className="mt-4 text-base font-semibold leading-6 text-espresso">
+                    {dominantAction.title}
+                  </p>
                   <p className="mt-2 text-sm leading-6 text-cacao/70">
                     {dominantAction.kind === "client-response"
                       ? "Abra uma conversa já identificada com serviço e protocolo."
@@ -166,7 +185,10 @@ export function ClientDashboard() {
                       <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </a>
                   ) : (
-                    <Link className={`${primaryActionClass} mt-5 w-full`} to={getPendingActionHref(dominantAction)}>
+                    <Link
+                      className={`${primaryActionClass} mt-5 w-full`}
+                      to={getPendingActionHref(dominantAction)}
+                    >
                       {dominantAction.title}
                       <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </Link>
@@ -179,10 +201,15 @@ export function ClientDashboard() {
                 </>
               ) : (
                 <>
-                  <p className="mt-4 text-base font-semibold text-espresso">Nada precisa de você agora</p>
-                  <p className="mt-2 text-sm leading-6 text-cacao/70">Estado atual: {activeCase.status}</p>
+                  <p className="mt-4 text-base font-semibold text-espresso">
+                    Nada precisa de você agora
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-cacao/70">
+                    Estado atual: {activeCase.status}
+                  </p>
                   <p className="mt-3 text-sm leading-6 text-cacao/70">
-                    O processo segue com a equipe. Um novo movimento aparecerá aqui quando houver algo a decidir.
+                    O processo segue com a equipe. Um novo movimento aparecerá aqui quando houver
+                    algo a decidir.
                   </p>
                 </>
               )}
@@ -191,16 +218,21 @@ export function ClientDashboard() {
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Último movimento</p>
-              <p className="mt-2 text-sm font-semibold text-espresso">{formatDate(activeCase.updatedAt, true)}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+                Último movimento
+              </p>
+              <p className="mt-2 text-sm font-semibold text-espresso">
+                {formatDate(activeCase.updatedAt, true)}
+              </p>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">Estado atual</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-cacao/65">
+                Estado atual
+              </p>
               <StatusBadge className="mt-2" status={activeCase.status} />
             </div>
           </div>
         </CaseFolio>
-
       </div>
     </div>
   );
