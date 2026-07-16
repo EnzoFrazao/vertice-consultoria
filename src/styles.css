@@ -1,0 +1,155 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    position: relative;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: #fff9ef;
+    font-family: "Inter", sans-serif;
+    color: #3a2419;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: rgba(185, 130, 70, 0.35);
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply text-sm font-medium text-champagne outline-none transition-colors duration-200 hover:text-ivory focus-visible:ring-2 focus-visible:ring-bronze;
+  }
+
+  .footer-link {
+    @apply w-fit text-champagne/80 outline-none transition-colors duration-200 hover:text-ivory focus-visible:ring-2 focus-visible:ring-bronze;
+  }
+
+  .glass-button {
+    @apply items-center rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-ivory shadow-sm backdrop-blur-lg transition-colors duration-200 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze;
+  }
+
+  .primary-cta {
+    @apply inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-bronze px-6 py-3 font-semibold text-espresso shadow-glow transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#c99050] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-espresso sm:px-7 sm:py-4;
+  }
+
+  .secondary-cta {
+    @apply inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-6 py-3 font-semibold text-ivory backdrop-blur-md transition-transform duration-200 hover:-translate-y-0.5 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-espresso sm:px-7 sm:py-4;
+  }
+
+  .folio-sheet {
+    @apply rounded-lg border border-espresso/15 bg-ivory shadow-[0_12px_30px_rgba(32,19,13,0.08)];
+  }
+
+  .folio-rule::before {
+    position: absolute;
+    top: 0.625rem;
+    bottom: 0.625rem;
+    left: 0;
+    width: 2px;
+    content: "";
+    background: transparent;
+  }
+
+  .folio-rule[aria-current="step"]::before {
+    background: #0f766e;
+  }
+
+.folio-cadastral-lines {
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        118deg,
+        transparent 0 32%,
+        rgba(247, 234, 216, 0.3) 32% 32.6%,
+        transparent 32.6% 68%,
+        rgba(185, 130, 70, 0.38) 68% 68.8%,
+        transparent 68.8%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(247, 234, 216, 0.17) 0 1px,
+        transparent 1px 2.25rem
+      );
+  }
+}
+
+.folio-phase-number::before {
+  content: attr(data-number);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 767px) {
+  [data-testid="site-hero"] > header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  [data-testid="site-hero"] #top {
+    min-height: calc(100svh - 3rem);
+    padding-top: 0.25rem;
+    padding-bottom: 0.5rem;
+  }
+
+  [data-testid="hero-copy-animation"] .hero-eyebrow {
+    margin-bottom: 0.625rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  [data-testid="hero-copy-animation"] h1 {
+    font-size: 2rem;
+    line-height: 1.03;
+  }
+
+  [data-testid="hero-copy-animation"] .hero-description {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  [data-testid="hero-copy-animation"] .hero-actions {
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+
+  [data-testid="hero-copy-animation"] .hero-actions a {
+    min-height: 2.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .whatsapp-floating {
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

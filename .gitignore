@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.agents/
+.worktrees/
+.vite/
+coverage/
+tmp/
+.playwright-mcp/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.local
