@@ -6,6 +6,8 @@ import { DEMO_CLIENT_ID } from "@/infrastructure/demo/seed";
 import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
 import RootApp, { ApplicationRoutes } from "@/app/RootApp";
 
+const LAZY_ROUTE_WAIT_OPTIONS = { timeout: 5_000 };
+
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
   return {
@@ -113,7 +115,7 @@ describe("route lifecycle", () => {
     }
   });
 
-  it("keeps browser scroll restoration manual across routes until the root unmounts", () => {
+  it("keeps browser scroll restoration manual across routes until the root unmounts", async () => {
     const originalScrollRestoration = window.history.scrollRestoration;
     window.history.replaceState(null, "", "/");
     window.history.scrollRestoration = "auto";
@@ -127,12 +129,24 @@ describe("route lifecycle", () => {
       fireEvent.click(screen.getByRole("button", { name: "Regularização e registro" }));
       fireEvent.click(screen.getByRole("button", { name: "Escritura" }));
       fireEvent.click(screen.getByRole("button", { name: /iniciar solicitação de escritura/i }));
-      expect(screen.getByRole("heading", { name: /acesse sua jornada/i })).toBeInTheDocument();
+      expect(
+        await screen.findByRole(
+          "heading",
+          { name: /acesse sua jornada/i },
+          LAZY_ROUTE_WAIT_OPTIONS
+        )
+      ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
       fireEvent.click(screen.getByRole("button", { name: /usar conta cliente/i }));
       fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
-      expect(screen.getByRole("heading", { name: "Nova solicitação" })).toBeInTheDocument();
+      expect(
+        await screen.findByRole(
+          "heading",
+          { name: "Nova solicitação" },
+          LAZY_ROUTE_WAIT_OPTIONS
+        )
+      ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
       application.unmount();
@@ -148,7 +162,29 @@ describe("route lifecycle", () => {
 });
 
 describe("application routing and access", () => {
-  it("uses client-side navigation for public account and return links", () => {
+  it("keeps the landing outside the route fallback and eventually renders lazy entry points", async () => {
+    const landing = renderApplication("/");
+
+    expect(
+      screen.getByRole("heading", {
+        name: /encontre o caminho certo para o seu imóvel/i
+      })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("status", { name: /carregando área/i })).not.toBeInTheDocument();
+
+    landing.unmount();
+    renderApplication("/login");
+
+    expect(
+      await screen.findByRole(
+        "heading",
+        { name: /acesse sua jornada/i },
+        LAZY_ROUTE_WAIT_OPTIONS
+      )
+    ).toBeInTheDocument();
+  });
+
+  it("uses client-side navigation for public account and return links", async () => {
     renderApplication("/");
 
     const publicHeader = screen.getByRole("banner", { hidden: true });
@@ -160,23 +196,41 @@ describe("application routing and access", () => {
     );
     expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
 
-    fireEvent.click(screen.getByRole("link", { name: "Voltar para o site" }));
+    fireEvent.click(
+      await screen.findByRole(
+        "link",
+        { name: "Voltar para o site" },
+        LAZY_ROUTE_WAIT_OPTIONS
+      )
+    );
     expect(screen.getByTestId("current-location")).toHaveTextContent("/");
   });
 
-  it("redirects protected areas to the single login", () => {
+  it("redirects protected areas to the single login", async () => {
     renderApplication("/cliente/processos");
 
     expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
-    expect(screen.getByRole("heading", { name: /acesse sua jornada/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole(
+        "heading",
+        { name: /acesse sua jornada/i },
+        LAZY_ROUTE_WAIT_OPTIONS
+      )
+    ).toBeInTheDocument();
   });
 
-  it("sends a client with a pending selection to the new request", () => {
+  it("sends a client with a pending selection to the new request", async () => {
     const repository = createRepository();
     repository.setPendingServiceId("escritura");
     renderApplication("/login", repository);
 
-    fireEvent.click(screen.getByRole("button", { name: /usar conta cliente/i }));
+    fireEvent.click(
+      await screen.findByRole(
+        "button",
+        { name: /usar conta cliente/i },
+        LAZY_ROUTE_WAIT_OPTIONS
+      )
+    );
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     expect(screen.getByTestId("current-location")).toHaveTextContent(
@@ -184,12 +238,18 @@ describe("application routing and access", () => {
     );
   });
 
-  it("routes the administrator home and leaves a client service selection untouched", () => {
+  it("routes the administrator home and leaves a client service selection untouched", async () => {
     const repository = createRepository();
     repository.setPendingServiceId("usucapiao");
     renderApplication("/login", repository);
 
-    fireEvent.click(screen.getByRole("button", { name: /usar conta administrador/i }));
+    fireEvent.click(
+      await screen.findByRole(
+        "button",
+        { name: /usar conta administrador/i },
+        LAZY_ROUTE_WAIT_OPTIONS
+      )
+    );
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     expect(screen.getByTestId("current-location")).toHaveTextContent("/admin");

@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { lazy, Suspense, useEffect, type ReactElement } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -9,10 +9,18 @@ import {
 } from "react-router-dom";
 import LandingPage from "@/pages/landing/LandingPage";
 import { getServiceById } from "@/domain/catalog";
-import { AdminPortal } from "@/pages/admin/AdminPortal";
-import { LoginPage } from "@/pages/login/LoginPage";
-import { ClientPortal } from "@/pages/client/ClientPortal";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
+import { LazyRouteErrorBoundary } from "@/app/LazyRouteErrorBoundary";
+
+const LoginPage = lazy(() =>
+  import("@/pages/login/LoginPage").then((module) => ({ default: module.LoginPage }))
+);
+const ClientPortal = lazy(() =>
+  import("@/pages/client/ClientPortal").then((module) => ({ default: module.ClientPortal }))
+);
+const AdminPortal = lazy(() =>
+  import("@/pages/admin/AdminPortal").then((module) => ({ default: module.AdminPortal }))
+);
 
 export function RouteLifecycle() {
   const { hash, pathname } = useLocation();
@@ -78,6 +86,26 @@ function ProtectedRoute({
   return children;
 }
 
+function LazyRoute({ children }: { children: ReactElement }) {
+  return (
+    <LazyRouteErrorBoundary>
+      <Suspense
+        fallback={
+          <div
+            role="status"
+            aria-label="Carregando área segura"
+            className="flex min-h-screen items-center justify-center bg-mist px-6 text-sm font-medium text-cacao/70"
+          >
+            Carregando área segura…
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
+    </LazyRouteErrorBoundary>
+  );
+}
+
 function PublicLandingRoute() {
   const { setPendingServiceId } = usePortalData();
   const navigate = useNavigate();
@@ -137,21 +165,32 @@ export function ApplicationRoutes() {
       <DemoWarnings />
       <Routes>
         <Route path="/" element={<PublicLandingRoute />} />
-        <Route path="/login" element={<LoginRoute />} />
+        <Route
+          path="/login"
+          element={
+            <LazyRoute>
+              <LoginRoute />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/cliente/*"
           element={
-            <ProtectedRoute role="client">
-              <ClientPortal />
-            </ProtectedRoute>
+            <LazyRoute>
+              <ProtectedRoute role="client">
+                <ClientPortal />
+              </ProtectedRoute>
+            </LazyRoute>
           }
         />
         <Route
           path="/admin/*"
           element={
-            <ProtectedRoute role="admin">
-              <AdminPortal />
-            </ProtectedRoute>
+            <LazyRoute>
+              <ProtectedRoute role="admin">
+                <AdminPortal />
+              </ProtectedRoute>
+            </LazyRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

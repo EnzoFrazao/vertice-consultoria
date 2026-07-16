@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && npm run bundle:test && vite build && npm run bundle:check",
+    "bundle:check": "node ./scripts/check-bundle.mjs",
+    "bundle:test": "node --test ./scripts/bundle-checker.node-test.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "typecheck": "tsc -b"
