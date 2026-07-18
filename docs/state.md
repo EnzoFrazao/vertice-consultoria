@@ -2,15 +2,15 @@
 
 ## Visão atual
 
-Frontend React + Vite + TypeScript + Tailwind com landing, login e portais demonstrativos da Vértice Consultoria. O redesign “Fólio Vivo” está implementado: Dossiê Vivo para o cliente e Mesa de Operações para o administrador.
+Monorepo npm da Vértice Consultoria com frontend React + Vite + TypeScript + Tailwind e um espaço documental para o backend. Landing, login, Dossiê Vivo do cliente e Mesa de Operações administrativa seguem demonstrativos, agora separados por páginas, domínio, infraestrutura local e módulos compartilhados.
 
 ## Pendências
 
-- [ ] Publicar o conteúdo atualizado de `dist/` no Netlify e validar as rotas no domínio real.
+- [ ] Conectar o repositório ao Netlify, validar a prévia e testar refresh direto nas rotas protegidas no domínio publicado.
 - [ ] Trocar o WhatsApp placeholder (`5500000000000`) pelo número real.
 - [ ] Definir os destinos operacionais dos CTAs quando houver atendimento/backend reais.
 - [ ] Substituir autenticação, uploads e persistência demonstrativos por integrações reais, caso o protótipo avance para produção.
-- [ ] Revisar vulnerabilidades transitivas indicadas por `npm audit` antes de uma produção real.
+- [ ] Repetir o smoke visual manual da área administrativa em 375, 768 e 1440 px; a reconexão ao localhost foi bloqueada pelo navegador interno nesta sessão.
 
 ## Decisões importantes
 
@@ -20,10 +20,12 @@ Frontend React + Vite + TypeScript + Tailwind com landing, login e portais demon
 - Não são inventados prazo, percentual, responsável, fotografia, mapa, coordenadas ou prioridade sem suporte no modelo de dados.
 - A aplicação continua frontend-only nesta etapa, com dados locais de demonstração e sem assinatura digital ou upload real.
 - O Netlify usa fallback SPA via `public/_redirects`, copiado pelo build como `dist/_redirects`.
+- O domínio não conhece React ou navegador; páginas acessam persistência somente pela fachada `features/portal-data`, com fronteiras verificadas pelo ESLint.
+- IA, banco, segredos e serviços externos pertencerão ao backend; `packages/contracts` só deve surgir com o primeiro endpoint real.
+- Login, cliente e administração usam chunks lazy separados; a landing permanece no carregamento inicial.
 
-## Última sessão (2026-07-12, Codex)
+## Última sessão (2026-07-18, Codex)
 
-- Implementados o Dossiê Vivo, a Mesa de Operações, os índices editoriais, os fluxos mobile acessíveis e a correção dos espaços/cortes responsivos entre 375 e 1600 px.
-- Integradas a logo Vértice, a nova experiência de login e o catálogo interativo com 5 categorias e 9 serviços; corrigidos ciclo de rotas, foco, contraste e fallback do Netlify.
-- Verificação final aprovada: 15 arquivos de teste, 111/111 testes e build de produção concluído; `dist/` contém a marca e `/* /index.html 200`.
-- Fechada a auditoria AA da área pública: navegação interna sem reload, contraste de campos/textos aprovado, seleção não dependente apenas de cor e cobertura mobile/reduced-motion; código legado do wizard removido.
+- Convertido o projeto para workspace `frontend`, com backend documental e arquitetura híbrida por páginas, domínio, infraestrutura demo e compartilhados.
+- Extraídas regras puras e persistência validada, decompostas landing/portais/administração e separados os chunks de login, cliente e admin; o JavaScript inicial ficou abaixo do baseline.
+- Adicionados ESLint/Prettier/typecheck de testes, CI, Netlify e documentação; 168/168 testes e `npm audit` sem vulnerabilidades na última verificação completa.
