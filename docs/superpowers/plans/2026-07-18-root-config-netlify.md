@@ -13,6 +13,7 @@
 ### Task 1: Registrar o baseline das ferramentas
 
 **Files:**
+
 - Read: `package.json`
 - Read: `eslint.config.mjs`
 - Read: `.prettierrc.json`
@@ -43,6 +44,7 @@ Expected: ambos terminam com código 0; o Prettier informa que os arquivos verif
 ### Task 2: Ampliar os ignorados locais
 
 **Files:**
+
 - Modify: `.gitignore`
 
 - [ ] **Step 1: Adicionar padrões locais sem ignorar código ou documentação**
@@ -81,6 +83,7 @@ Expected: cada probe corresponde a uma linha nova de `.gitignore`.
 ### Task 3: Criar `config/` e mover ESLint e Prettier
 
 **Files:**
+
 - Create: `config/eslint.config.mjs` from `eslint.config.mjs`, sem alterar conteúdo
 - Create: `config/prettier.json` from `.prettierrc.json`
 - Create: `config/prettierignore` from `.prettierignore`
@@ -180,6 +183,7 @@ Expected: commit criado sem adicionar `dist`, `node_modules`, `.netlify` ou arqu
 ### Task 4: Documentar a raiz e validar o fluxo do Netlify
 
 **Files:**
+
 - Modify: `README.md`
 - Read: `netlify.toml`
 - Read: `frontend/public/_redirects`
@@ -235,6 +239,7 @@ Documentar que o deploy contínuo correto é: push do código-fonte para a branc
 ### Task 5: Atualizar handoff e concluir a branch
 
 **Files:**
+
 - Modify: `docs/state.md`
 - Modify: `docs/superpowers/plans/2026-07-18-root-config-netlify.md` somente para marcar checkboxes executados
 
