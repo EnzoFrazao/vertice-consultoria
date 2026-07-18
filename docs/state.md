@@ -26,6 +26,6 @@ Monorepo npm da Vértice Consultoria com frontend React + Vite + TypeScript + Ta
 
 ## Última sessão (2026-07-18, Codex)
 
-- Movidas as configurações compartilhadas de ESLint e Prettier para `config/`, com caminhos explícitos nos scripts da raiz.
+- Movidas as configurações compartilhadas de ESLint e Prettier para `config/`, com caminhos explícitos nos scripts da raiz e no VS Code.
 - Ampliados os ignorados locais e confirmado que `frontend/dist` continua reproduzível, ignorado e contém o fallback SPA.
 - `npm run check` passou localmente; o Netlify continua pendente de vínculo/validação do ambiente publicado.

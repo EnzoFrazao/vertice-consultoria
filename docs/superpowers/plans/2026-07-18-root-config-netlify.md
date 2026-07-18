@@ -284,3 +284,57 @@ git commit -m "docs: explain config and Netlify workflow"
 ```
 
 Expected: branch limpa e commits locais à frente de `origin/main`. Não fazer push, abrir PR ou publicar no Netlify sem uma solicitação específica.
+
+### Task 6: Preservar a descoberta das ferramentas no editor
+
+**Files:**
+
+- Modify: `.vscode/settings.json`
+- Modify: `config/prettierignore`
+- Modify: `README.md`
+- Modify: `docs/superpowers/specs/2026-07-18-root-config-netlify-design.md`
+- Modify: `docs/superpowers/plans/2026-07-18-root-config-netlify.md`
+- Modify: `docs/state.md`
+
+- [x] **Step 1: Registrar o RED da descoberta automática**
+
+Run:
+
+```powershell
+npx eslint frontend/src/main.tsx --max-warnings 0
+npx prettier --find-config-path frontend/src/main.tsx
+```
+
+Observed: o ESLint retornou warning por não encontrar configuração aplicável e código 1; o Prettier encontrou `../../.prettierrc.json`, fora do worktree.
+
+- [x] **Step 2: Direcionar o VS Code e consolidar os ignorados do editor**
+
+Adicionar a `.vscode/settings.json` os caminhos explícitos para ESLint e Prettier, preservando `files.exclude` e `search.exclude`. Manter em `config/prettierignore` os padrões próprios do Prettier e os ignorados locais necessários porque o editor aceita apenas um `prettier.ignorePath`.
+
+- [x] **Step 3: Documentar a interface canônica das ferramentas**
+
+Registrar no README, nesta especificação e no handoff que os scripts npm da raiz são a interface canônica, o VS Code aponta para `config/` e invocações diretas precisam fornecer os mesmos caminhos.
+
+- [x] **Step 4: Validar o GREEN e o gate completo**
+
+Run:
+
+```powershell
+npx eslint frontend/src/main.tsx --config config/eslint.config.mjs --max-warnings 0
+npx prettier frontend/src/main.tsx --config config/prettier.json --ignore-path config/prettierignore --check
+npm run check
+git diff --check
+```
+
+Expected: os checks focados e o gate completo passam; `config/prettierignore` ignora os probes locais sem excluir o arquivo fonte.
+
+- [x] **Step 5: Commitar a compatibilidade do editor**
+
+Run:
+
+```powershell
+git add -- .vscode/settings.json config/prettierignore README.md docs/state.md docs/superpowers/specs/2026-07-18-root-config-netlify-design.md docs/superpowers/plans/2026-07-18-root-config-netlify.md
+git commit -m "fix: preserve editor tooling discovery"
+```
+
+Expected: somente os seis arquivos listados entram no commit; a worktree fica limpa sem push, PR, merge ou deploy.

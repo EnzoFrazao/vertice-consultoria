@@ -34,6 +34,7 @@ da arquitetura interna do frontend.
 ├── package-lock.json
 ├── .gitignore
 ├── .gitattributes
+├── .vscode/settings.json
 └── .nvmrc
 ```
 
@@ -46,7 +47,9 @@ descoberto pelo Netlify nesse local.
 
 O `.gitignore` receberá padrões para `.netlify/`, logs dos gerenciadores JavaScript,
 `.eslintcache`, `.idea/`, `.DS_Store` e `Thumbs.db`. A configuração compartilhada existente em
-`.vscode/settings.json` continuará versionada.
+`.vscode/settings.json` continuará versionada e apontará as extensões de ESLint e Prettier para
+os arquivos em `config/`. Como o VS Code aceita um único `prettier.ignorePath`,
+`config/prettierignore` também conterá os padrões locais relevantes do repositório.
 
 ## Fluxo do Netlify
 
@@ -61,8 +64,10 @@ exige autorização separada e um site localmente vinculado.
 
 ## Compatibilidade e validação
 
-- `npm run lint`, `npm run format`, `npm run format:check` e `npm run check` continuarão sendo
-  executados pela raiz;
+- `npm run lint`, `npm run format`, `npm run format:check` e `npm run check` serão a interface
+  canônica executada pela raiz;
+- `.vscode/settings.json` direcionará as extensões de ESLint e Prettier aos arquivos em
+  `config/`; invocações diretas dos binários deverão fornecer os mesmos caminhos explícitos;
 - os padrões de arquivos do ESLint continuarão relativos à raiz do repositório;
 - o build deverá manter `frontend/dist/_redirects` para refresh direto das rotas SPA;
 - `npm run check` será executado depois dos movimentos;

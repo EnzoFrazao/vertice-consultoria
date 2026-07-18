@@ -69,6 +69,8 @@ O Vite inicia por padrão em `http://127.0.0.1:5173`.
 | `npm run build`        | Gera `frontend/dist` e verifica a divisão dos bundles.     |
 | `npm run check`        | Executa lint, formato, tipos, testes e build em sequência. |
 
+Os scripts npm da raiz são a interface canônica para ESLint e Prettier. O `.vscode/settings.json` direciona as extensões para os arquivos em `config/`; invocações diretas dos binários devem passar os mesmos caminhos com `--config` e, no Prettier, os dois `--ignore-path` usados pelos scripts.
+
 Antes de enviar uma alteração, execute:
 
 ```bash
@@ -119,7 +121,7 @@ O GitHub Actions executa `npm ci` e `npm run check` com Node 22 em todos os push
 
 O deploy contínuo ocorre quando o código-fonte é enviado à branch de produção: o Netlify instala as dependências e executa o build a partir da raiz, depois publica `frontend/dist`. Esse diretório é um artefato gerado e não deve ser versionado. O arquivo `frontend/public/_redirects` é copiado pelo Vite para o build e mantém o fallback da SPA ao atualizar diretamente qualquer rota.
 
-Para um deploy manual, execute a instalação, o build e a validação antes de enviar o artefato:
+Para um deploy manual, com o Netlify CLI instalado, autenticado e o site vinculado, execute a instalação, o build e a validação antes de enviar o artefato:
 
 ```bash
 npm ci
@@ -127,7 +129,7 @@ npm run check
 netlify deploy --dir frontend/dist
 ```
 
-O comando exige autenticação no Netlify e um site vinculado. A publicação manual em produção requer autorização explícita separada, como o uso deliberado da opção `--prod`; os comandos acima não publicam em produção.
+A publicação manual em produção requer autorização explícita separada, como o uso deliberado da opção `--prod`; os comandos acima não publicam em produção.
 
 Para validar uma compilação localmente:
 

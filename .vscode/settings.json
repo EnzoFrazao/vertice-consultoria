@@ -12,5 +12,16 @@
     "**/node_modules": true,
     "**/dist": true,
     "**/tmp": true
-  }
+  },
+  "eslint.options": {
+    "overrideConfigFile": "config/eslint.config.mjs"
+  },
+  "eslint.workingDirectories": [
+    {
+      "directory": ".",
+      "changeProcessCWD": true
+    }
+  ],
+  "prettier.configPath": "config/prettier.json",
+  "prettier.ignorePath": "config/prettierignore"
 }
