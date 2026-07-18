@@ -6,6 +6,8 @@
 
 **Architecture:** A raiz continuará responsável pela orquestração do workspace npm e pelo deploy. ESLint e Prettier serão chamados com caminhos explícitos para arquivos em `config/`; Git, npm, Node e Netlify manterão seus arquivos convencionais na raiz. O artefato `frontend/dist` continuará reproduzível, ignorado e validado pelo build.
 
+O Prettier receberá `.gitignore` e `config/prettierignore` como ignore paths explícitos, preservando tanto os ignorados locais do repositório quanto os padrões próprios da ferramenta.
+
 **Tech Stack:** npm workspaces, ESLint flat config, Prettier, Vite, Vitest, TypeScript, Netlify e GitHub Actions.
 
 ---
@@ -138,11 +140,13 @@ Substituir somente estes scripts em `package.json`:
 {
   "scripts": {
     "lint": "eslint . --config config/eslint.config.mjs --max-warnings 0",
-    "format": "prettier . --config config/prettier.json --ignore-path config/prettierignore --write",
-    "format:check": "prettier . --config config/prettier.json --ignore-path config/prettierignore --check"
+    "format": "prettier . --config config/prettier.json --ignore-path .gitignore --ignore-path config/prettierignore --write",
+    "format:check": "prettier . --config config/prettier.json --ignore-path .gitignore --ignore-path config/prettierignore --check"
   }
 }
 ```
+
+Os dois `--ignore-path` são necessários porque informar um ignore path explícito substitui a descoberta padrão do Prettier; `.gitignore` preserva os ignorados locais e `config/prettierignore` mantém os padrões específicos de formatação.
 
 Manter todos os demais scripts e campos sem alteração.
 
