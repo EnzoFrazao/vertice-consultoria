@@ -1,0 +1,133 @@
+# Vértice Consultoria
+
+Landing page e portais demonstrativos para uma consultoria imobiliária. O projeto apresenta os serviços ao público e simula jornadas separadas para clientes e administradores, com processos, documentos, notificações e acompanhamento de status.
+
+Nesta etapa, todo o produto executável está no frontend. Não existe API, banco de dados, autenticação real ou processamento de documentos e IA.
+
+## Arquitetura
+
+O repositório usa npm workspaces e mantém um único lockfile na raiz.
+
+```text
+.
+├── frontend/
+│   ├── src/
+│   │   ├── app/                  # composição, rotas e guards
+│   │   ├── pages/                # landing, login, cliente e administração
+│   │   ├── features/             # autenticação demo e fachada portal-data
+│   │   ├── domain/               # tipos, catálogo, regras e selectors puros
+│   │   ├── infrastructure/demo/  # seed, validação e persistência local
+│   │   ├── shared/               # UI, configurações e utilitários compartilhados
+│   │   └── test/
+│   ├── public/
+│   └── package.json
+├── backend/                    # fronteira documentada; ainda sem implementação
+├── docs/
+├── .github/workflows/
+├── netlify.toml
+├── package.json
+└── package-lock.json
+```
+
+As dependências entre camadas seguem estas regras:
+
+- `domain` não depende de React, navegador, armazenamento ou outras camadas;
+- `infrastructure/demo` depende apenas do domínio e de seus próprios módulos;
+- páginas acessam dados e persistência pela fachada `features/portal-data`, nunca diretamente pela infraestrutura;
+- `shared` não depende de `app`, `pages`, `features` ou `infrastructure`;
+- componentes exclusivos de uma jornada permanecem próximos da página; `shared/ui` abriga somente elementos compartilhados;
+- banco, segredos, serviços externos e futuros recursos de IA pertencem ao backend.
+
+O ESLint verifica essas fronteiras, incluindo imports relativos, e o alias `@/` aponta para `frontend/src`.
+
+## Requisitos e instalação
+
+- Node.js 22, também registrado em `.nvmrc`;
+- npm compatível com o Node 22.
+
+Na raiz do repositório:
+
+```bash
+nvm use
+npm ci
+npm run dev
+```
+
+O Vite inicia por padrão em `http://127.0.0.1:5173`.
+
+## Comandos da raiz
+
+| Comando                | Finalidade                                                 |
+| ---------------------- | ---------------------------------------------------------- |
+| `npm run dev`          | Inicia o frontend em desenvolvimento.                      |
+| `npm test`             | Executa a suíte Vitest.                                    |
+| `npm run lint`         | Executa ESLint com zero warnings permitidos.               |
+| `npm run format`       | Formata arquivos suportados com Prettier.                  |
+| `npm run format:check` | Verifica formatação sem alterar arquivos.                  |
+| `npm run typecheck`    | Valida tipos da aplicação, configurações e testes.         |
+| `npm run build`        | Gera `frontend/dist` e verifica a divisão dos bundles.     |
+| `npm run check`        | Executa lint, formato, tipos, testes e build em sequência. |
+
+Antes de enviar uma alteração, execute:
+
+```bash
+npm run check
+```
+
+## Rotas
+
+| Rota                        | Área                                |
+| --------------------------- | ----------------------------------- |
+| `/`                         | Landing pública.                    |
+| `/login`                    | Entrada nas contas demonstrativas.  |
+| `/cliente`                  | Início do portal do cliente.        |
+| `/cliente/processos`        | Lista de processos do cliente.      |
+| `/cliente/processos/:id`    | Detalhe de um processo do cliente.  |
+| `/cliente/nova-solicitacao` | Fluxo de nova solicitação.          |
+| `/cliente/perfil`           | Perfil demonstrativo do cliente.    |
+| `/admin`                    | Início do portal administrativo.    |
+| `/admin/processos`          | Lista de processos administrativos. |
+| `/admin/processos/:id`      | Detalhe e despacho de um processo.  |
+| `/admin/documentos`         | Fila de análise documental.         |
+| `/admin/clientes`           | Lista de clientes demonstrativos.   |
+
+Login, cliente e administração são carregados sob demanda. As rotas protegidas redirecionam sessões ausentes ou de outro perfil.
+
+## Contas demonstrativas
+
+| Perfil        | E-mail             | Senha        |
+| ------------- | ------------------ | ------------ |
+| Cliente       | `cliente@demo.com` | `cliente123` |
+| Administrador | `admin@demo.com`   | `admin123`   |
+
+As credenciais existem apenas no bundle do frontend e não oferecem segurança real. Todos os nomes, documentos, protocolos e arquivos exibidos são fictícios.
+
+## Persistência demonstrativa
+
+O repositório local salva dados no navegador e preserva o formato existente:
+
+- `localStorage["rv.demo.state.v1"]`: estado completo da demonstração;
+- `localStorage["rv.demo.session.v1"]`: sessão demonstrativa atual;
+- `sessionStorage["rv.demo.pending-service"]`: serviço escolhido na landing antes do login.
+
+O estado persistido passa por validação profunda. Dados ausentes ou incompatíveis são substituídos pelo seed seguro, e indisponibilidade do armazenamento usa fallback em memória com aviso na interface. A tela de login também permite restaurar a demonstração.
+
+## CI e deploy
+
+O GitHub Actions executa `npm ci` e `npm run check` com Node 22 em todos os pushes e pull requests.
+
+O Netlify constrói a partir da raiz com `npm run build` e publica `frontend/dist`. O arquivo `frontend/public/_redirects` é copiado pelo Vite para o build e mantém o fallback da SPA ao atualizar diretamente qualquer rota.
+
+Para validar uma compilação localmente:
+
+```bash
+npm ci
+npm run build
+npm run preview --workspace @vertice/frontend
+```
+
+## Backend
+
+O diretório [`backend/`](backend/README.md) documenta responsabilidades, fronteiras e decisões ainda abertas. Nenhuma stack foi escolhida e não existe código de servidor nesta entrega.
+
+Quando surgir o primeiro endpoint real, a implementação deve substituir gradualmente o repositório demo por um adaptador HTTP sem fazer as páginas dependerem de detalhes de transporte. Um pacote compartilhado de contratos só deve ser criado quando houver um contrato efetivamente consumido por frontend e backend.
