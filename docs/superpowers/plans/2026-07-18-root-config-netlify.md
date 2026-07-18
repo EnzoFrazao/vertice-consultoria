@@ -22,7 +22,7 @@ O Prettier receberá `.gitignore` e `config/prettierignore` como ignore paths ex
 - Read: `.prettierignore`
 - Read: `netlify.toml`
 
-- [ ] **Step 1: Confirmar que o worktree contém apenas os documentos aprovados**
+- [x] **Step 1: Confirmar que o worktree contém apenas os documentos aprovados**
 
 Run:
 
@@ -32,7 +32,7 @@ git status --short --branch
 
 Expected: branch `chore/config-organization`, com no máximo este plano ainda não commitado.
 
-- [ ] **Step 2: Executar o baseline das ferramentas que serão movidas**
+- [x] **Step 2: Executar o baseline das ferramentas que serão movidas**
 
 Run:
 
@@ -49,7 +49,7 @@ Expected: ambos terminam com código 0; o Prettier informa que os arquivos verif
 
 - Modify: `.gitignore`
 
-- [ ] **Step 1: Adicionar padrões locais sem ignorar código ou documentação**
+- [x] **Step 1: Adicionar padrões locais sem ignorar código ou documentação**
 
 Aplicar ao final de `.gitignore`:
 
@@ -72,7 +72,7 @@ Thumbs.db
 .idea/
 ```
 
-- [ ] **Step 2: Verificar os padrões com probes que não criam arquivos**
+- [x] **Step 2: Verificar os padrões com probes que não criam arquivos**
 
 Run:
 
@@ -94,7 +94,7 @@ Expected: cada probe corresponde a uma linha nova de `.gitignore`.
 - Delete: `.prettierignore`
 - Modify: `package.json`
 
-- [ ] **Step 1: Mover os três arquivos com `apply_patch`**
+- [x] **Step 1: Mover os três arquivos com `apply_patch`**
 
 Preservar integralmente o conteúdo de `eslint.config.mjs`. Criar `config/prettier.json` com:
 
@@ -132,7 +132,7 @@ package-lock.json
 
 Depois de criar os destinos, remover os três arquivos antigos no mesmo patch para que não existam configurações duplicadas.
 
-- [ ] **Step 2: Apontar os scripts da raiz para os novos caminhos**
+- [x] **Step 2: Apontar os scripts da raiz para os novos caminhos**
 
 Substituir somente estes scripts em `package.json`:
 
@@ -150,7 +150,7 @@ Os dois `--ignore-path` são necessários porque informar um ignore path explíc
 
 Manter todos os demais scripts e campos sem alteração.
 
-- [ ] **Step 3: Verificar que não restaram configurações duplicadas**
+- [x] **Step 3: Verificar que não restaram configurações duplicadas**
 
 Run:
 
@@ -162,7 +162,7 @@ Get-ChildItem -LiteralPath config -File | Select-Object -ExpandProperty Name
 
 Expected: os três caminhos antigos retornam `False`; `config/` contém exatamente `eslint.config.mjs`, `prettier.json` e `prettierignore`.
 
-- [ ] **Step 4: Executar os checks focados após o movimento**
+- [x] **Step 4: Executar os checks focados após o movimento**
 
 Run:
 
@@ -173,7 +173,7 @@ npm run format:check
 
 Expected: ambos terminam com código 0 usando os caminhos explícitos de `config/`. Se os globs do ESLint forem interpretados em relação ao arquivo movido, prefixá-los com `../` apenas onde necessário e repetir os dois comandos.
 
-- [ ] **Step 5: Commitar a organização mecânica**
+- [x] **Step 5: Commitar a organização mecânica**
 
 Run:
 
@@ -193,7 +193,7 @@ Expected: commit criado sem adicionar `dist`, `node_modules`, `.netlify` ou arqu
 - Read: `frontend/public/_redirects`
 - Generated and ignored: `frontend/dist/`
 
-- [ ] **Step 1: Atualizar a árvore do README**
+- [x] **Step 1: Atualizar a árvore do README**
 
 Adicionar antes de `frontend/`:
 
@@ -213,7 +213,7 @@ Não mover `netlify.toml`: ele deve continuar na raiz e manter:
   NODE_VERSION = "22"
 ```
 
-- [ ] **Step 2: Executar o gate canônico completo**
+- [x] **Step 2: Executar o gate canônico completo**
 
 Run:
 
@@ -223,7 +223,7 @@ npm run check
 
 Expected: lint, formato, typecheck de produção e testes, 168 testes Vitest, nove testes do bundle e build Vite passam; o orçamento do JavaScript inicial permanece abaixo do limite configurado.
 
-- [ ] **Step 3: Validar o artefato que seria publicado**
+- [x] **Step 3: Validar o artefato que seria publicado**
 
 Run:
 
@@ -236,7 +236,7 @@ git check-ignore -v -- frontend/dist/index.html
 
 Expected: `_redirects` contém `/* /index.html 200`, e `frontend/dist/index.html` corresponde à regra `dist/` do `.gitignore`.
 
-- [ ] **Step 4: Registrar a conclusão local sem declarar deploy remoto**
+- [x] **Step 4: Registrar a conclusão local sem declarar deploy remoto**
 
 Documentar que o deploy contínuo correto é: push do código-fonte para a branch de produção, build `npm run build` na raiz e publicação de `frontend/dist`. Registrar também que deploy manual exige build local seguido de `netlify deploy --dir frontend/dist`, vínculo/autenticação do site e autorização explícita para produção.
 
@@ -247,7 +247,7 @@ Documentar que o deploy contínuo correto é: push do código-fonte para a branc
 - Modify: `docs/state.md`
 - Modify: `docs/superpowers/plans/2026-07-18-root-config-netlify.md` somente para marcar checkboxes executados
 
-- [ ] **Step 1: Atualizar `docs/state.md`**
+- [x] **Step 1: Atualizar `docs/state.md`**
 
 Na seção `Última sessão`, registrar com data `2026-07-18` e agente `Codex`:
 
@@ -261,7 +261,7 @@ Na seção `Última sessão`, registrar com data `2026-07-18` e agente `Codex`:
 
 Preservar as pendências externas ainda abertas, especialmente a conexão e o smoke do Netlify.
 
-- [ ] **Step 2: Fazer a verificação final do escopo**
+- [x] **Step 2: Fazer a verificação final do escopo**
 
 Run:
 
@@ -274,7 +274,7 @@ git log --oneline --decorate origin/main..HEAD
 
 Expected: sem erros de whitespace; somente documentos, `.gitignore`, `config/`, `package.json`, `README.md` e `docs/state.md` aparecem no escopo.
 
-- [ ] **Step 3: Commitar documentação e handoff**
+- [x] **Step 3: Commitar documentação e handoff**
 
 Run:
 

@@ -26,6 +26,6 @@ Monorepo npm da Vértice Consultoria com frontend React + Vite + TypeScript + Ta
 
 ## Última sessão (2026-07-18, Codex)
 
-- Convertido o projeto para workspace `frontend`, com backend documental e arquitetura híbrida por páginas, domínio, infraestrutura demo e compartilhados.
-- Extraídas regras puras e persistência validada, decompostas landing/portais/administração e separados os chunks de login, cliente e admin; o JavaScript inicial ficou abaixo do baseline.
-- Adicionados ESLint/Prettier/typecheck de testes, CI, Netlify e documentação; `npm run check` (168/168 testes) e `npm audit` passaram localmente, e os checks do PR [#1](https://github.com/EnzoFrazao/vertice_consultoria/pull/1) ficaram verdes.
+- Movidas as configurações compartilhadas de ESLint e Prettier para `config/`, com caminhos explícitos nos scripts da raiz.
+- Ampliados os ignorados locais e confirmado que `frontend/dist` continua reproduzível, ignorado e contém o fallback SPA.
+- `npm run check` passou localmente; o Netlify continua pendente de vínculo/validação do ambiente publicado.
