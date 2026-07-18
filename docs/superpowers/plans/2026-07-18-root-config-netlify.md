@@ -309,7 +309,7 @@ Observed: o ESLint retornou warning por não encontrar configuração aplicável
 
 - [x] **Step 2: Direcionar o VS Code e consolidar os ignorados do editor**
 
-Adicionar a `.vscode/settings.json` os caminhos explícitos para ESLint e Prettier, preservando `files.exclude` e `search.exclude`. Manter em `config/prettierignore` os padrões próprios do Prettier e os ignorados locais necessários porque o editor aceita apenas um `prettier.ignorePath`.
+Adicionar a `.vscode/settings.json` os caminhos explícitos para ESLint e Prettier, usando `"eslint.workingDirectories": ["."]` e preservando `files.exclude` e `search.exclude`. Manter em `config/prettierignore` os padrões próprios do Prettier e os ignorados locais necessários porque o editor aceita apenas um `prettier.ignorePath`.
 
 - [x] **Step 3: Documentar a interface canônica das ferramentas**
 

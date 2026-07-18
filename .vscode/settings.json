@@ -16,12 +16,7 @@
   "eslint.options": {
     "overrideConfigFile": "config/eslint.config.mjs"
   },
-  "eslint.workingDirectories": [
-    {
-      "directory": ".",
-      "changeProcessCWD": true
-    }
-  ],
+  "eslint.workingDirectories": ["."],
   "prettier.configPath": "config/prettier.json",
   "prettier.ignorePath": "config/prettierignore"
 }
