@@ -15,6 +15,7 @@
 ### Task 1: Build, SPA routing and route lifecycle
 
 **Files:**
+
 - Create: `public/_redirects`
 - Modify: `src/app/RootApp.tsx`
 - Modify: `src/features/client/ClientProfilePage.tsx`
@@ -32,6 +33,7 @@
 ### Task 2: Shared Fólio visual foundation and accessible shell
 
 **Files:**
+
 - Modify: `tailwind.config.ts`
 - Modify: `src/styles.css`
 - Modify: `src/components/portal/PortalShell.tsx`
@@ -51,6 +53,7 @@
 ### Task 3: Client Dossiê Vivo
 
 **Files:**
+
 - Modify: `src/features/client/ClientDashboard.tsx`
 - Modify: `src/features/client/ClientProcessesPage.tsx`
 - Modify: `src/features/client/ClientProcessDetailPage.tsx`
@@ -68,6 +71,7 @@
 ### Task 4: Admin Mesa de Operações
 
 **Files:**
+
 - Modify: `src/features/admin/AdminPortal.tsx`
 - Modify: `src/features/admin/AdminProcessPages.tsx`
 - Modify: `src/features/admin/AdminDocumentsPage.tsx`
@@ -85,6 +89,7 @@
 ### Task 5: Vértice brand, login and interactive service catalog
 
 **Files:**
+
 - Asset: `public/brand/vertice-consultoria.png`
 - Modify: `src/App.tsx`
 - Modify: `src/features/auth/LoginPage.tsx`
@@ -104,6 +109,7 @@
 ### Task 6: Full verification, visual QA and handoff
 
 **Files:**
+
 - Update: `docs/state.md`
 - Generate: `dist/**`
 
