@@ -11,6 +11,7 @@ tmp/
 .env.*
 !.env.example
 *.local
+.tokensave/
 
 # Local deployment metadata
 .netlify/

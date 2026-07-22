@@ -1,6 +1,15 @@
 # Backend da Vértice Consultoria
 
-Este diretório reserva a fronteira do backend sem antecipar uma tecnologia antes de existirem requisitos de integração reais. Nesta etapa ele é apenas documental: não há servidor, banco de dados, endpoint ou contrato de API implementado.
+O backend é gerida por um backend Supabase localizado em `supabase/`. Ele é independente do frontend atual, que continua no modo demonstrativo até que um endpoint de domínio seja integrado pela fachada `features/portal-data`.
+
+## Base instalada
+
+- Supabase;
+- Postgres;
+
+## Executar localmente
+
+registrar aqui*
 
 ## Responsabilidades futuras
 
@@ -25,18 +34,16 @@ O frontend continuará responsável pela experiência de uso, navegação e esta
 
 Devem ser decididos com base nos requisitos do produto e da equipe:
 
-- linguagem, framework e modelo de implantação;
-- banco de dados, migrações e estratégia de backup;
+- banco de produção, migrações e estratégia de backup;
 - provedor de identidade e modelo de permissões;
 - armazenamento, limites e varredura de documentos enviados;
 - filas, tarefas agendadas e processamento de IA;
 - observabilidade, ambientes e política de retenção de dados.
 
-## Como adicionar o backend no futuro
+## Próximas etapas
 
-1. Registre em `docs/state.md` as decisões de stack e os motivos que não forem óbvios no código.
-2. Crie o projeto dentro de `backend/`, mantendo seus comandos executáveis pela raiz do repositório.
-3. Defina o primeiro endpoint e documente autenticação, entrada, saída e erros antes de integrar o frontend.
-4. Extraia `packages/contracts` apenas se houver tipos ou esquemas realmente compartilhados entre os dois lados.
-5. Adicione validações, testes, variáveis de ambiente exemplificadas e etapas de CI sem versionar segredos.
-6. Substitua gradualmente o repositório demonstrativo do frontend por uma implementação HTTP, preservando a fachada consumida pelas páginas.
+1. Registre em `docs/state.md` decisões de produção, especialmente banco e Redis.
+2. Defina o primeiro endpoint e documente autenticação, entrada, saída e erros antes de integrar o frontend.
+3. Extraia `packages/contracts` apenas se houver tipos ou esquemas realmente compartilhados entre os dois lados.
+4. Adicione validações, testes, variáveis de ambiente exemplificadas e etapas de CI sem versionar segredos.
+5. Substitua gradualmente o repositório demonstrativo do frontend por uma implementação HTTP, preservando a fachada consumida pelas páginas.
