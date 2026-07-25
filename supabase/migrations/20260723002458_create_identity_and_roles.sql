@@ -232,3 +232,62 @@ from public, anon, authenticated;
 
 revoke execute on function public.sync_auth_user_email()
 from public, anon, authenticated;
+
+
+-- =========================================================
+-- FUNÇÕES PRIVADAS DE AUTORIZAÇÃO
+-- =========================================================
+
+create schema if not exists private;
+
+revoke all on schema private from public;
+grant usage on schema private to authenticated;
+
+
+create or replace function private.has_role(required_role text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+    select exists (
+        select 1
+        from public.user_roles ur
+        join public.roles r
+            on r.id = ur.role_id
+        where ur.user_id = (select auth.uid())
+          and r.code = required_role
+    );
+$$;
+
+revoke all on function private.has_role(text) from public;
+grant execute on function private.has_role(text) to authenticated;
+
+-- Remove privilégios automáticos antes de liberar somente o necessário.
+
+revoke all on public.profiles from anon, authenticated;
+revoke all on public.roles from anon, authenticated;
+revoke all on public.user_roles from anon, authenticated;
+revoke all on public.user_addresses from anon, authenticated;
+
+
+-- Perfis podem ser consultados.
+grant select on public.profiles to authenticated;
+
+-- O usuário só poderá alterar nome e telefone diretamente.
+grant update (name, phone)
+on public.profiles
+to authenticated;
+
+
+-- Papéis podem ser consultados, mas não alterados.
+grant select on public.roles to authenticated;
+grant select on public.user_roles to authenticated;
+
+
+-- Usuários poderão administrar os próprios endereços.
+grant select, insert, update, delete
+on public.user_addresses
+to authenticated;
+
