@@ -2,7 +2,7 @@
 
 Landing page e portais demonstrativos para uma consultoria imobiliária. O projeto apresenta os serviços ao público e simula jornadas separadas para clientes e administradores, com processos, documentos, notificações e acompanhamento de status.
 
-Nesta etapa, todo o produto executável está no frontend. Não existe API, banco de dados, autenticação real ou processamento de documentos e IA.
+O frontend ainda opera em modo demonstrativo, mas o repositório já contém a fundação de uma API Laravel. A integração entre os dois lados ainda não foi iniciada.
 
 ## Arquitetura
 
@@ -22,7 +22,7 @@ O repositório usa npm workspaces e mantém um único lockfile na raiz.
 │   │   └── test/
 │   ├── public/
 │   └── package.json
-├── backend/                    # fronteira documentada; ainda sem implementação
+├── backend/                    # API Laravel, autenticação e filas
 ├── docs/
 ├── .github/workflows/
 ├── netlify.toml
@@ -45,6 +45,7 @@ O ESLint verifica essas fronteiras, incluindo imports relativos, e o alias `@/` 
 
 - Node.js 22, também registrado em `.nvmrc`;
 - npm compatível com o Node 22.
+- PHP 8.4 e Composer 2 para o backend.
 
 Na raiz do repositório:
 
@@ -141,6 +142,6 @@ npm run preview --workspace @vertice/frontend
 
 ## Backend
 
-O diretório [`backend/`](backend/README.md) documenta responsabilidades, fronteiras e decisões ainda abertas. Nenhuma stack foi escolhida e não existe código de servidor nesta entrega.
+O diretório [`backend/`](backend/) contém a API Laravel. A configuração inicial usa SQLite, UUID para usuários, Laravel Sanctum para autenticação de API, Policies e tabelas de filas. O Horizon está instalado, mas requer Redis antes de ser executado. Consulte [`docs/backend.md`](docs/backend.md) para os comandos e limites desta etapa.
 
-Quando surgir o primeiro endpoint real, a implementação deve substituir gradualmente o repositório demo por um adaptador HTTP sem fazer as páginas dependerem de detalhes de transporte. Um pacote compartilhado de contratos só deve ser criado quando houver um contrato efetivamente consumido por frontend e backend.
+Quando surgir o primeiro endpoint de domínio, a implementação deve substituir gradualmente o repositório demo por um adaptador HTTP sem fazer as páginas dependerem de detalhes de transporte. Um pacote compartilhado de contratos só deve ser criado quando houver um contrato efetivamente consumido por frontend e backend.
