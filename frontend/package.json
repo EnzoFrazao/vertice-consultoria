@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck:app && npm run typecheck:test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
