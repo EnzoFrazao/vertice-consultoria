@@ -1,34 +1,76 @@
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react";
+
 import {
   createDemoRepository,
   type DemoRepository,
-  type RepositoryWarning
-} from "@/infrastructure/demo/repository";
-import type { AuthSession, DemoState, User } from "@/domain/types";
-import { authenticateDemoUser } from "@/features/auth/auth";
+  type RepositoryWarning,
+} from "@/infrastructure/repository";
+
+import type {
+  AuthSession,
+  DemoState,
+  User,
+} from "@/domain/types";
+
+import type {
+  AuthenticatedUser,
+  AuthRepository,
+  AuthResult,
+  SignUpInput,
+} from "@/features/auth/auth";
+
+import { supabase } from "@/infrastructure/supabase/client";
+
+import {
+  createSupabaseAuthRepository,
+} from "@/infrastructure/supabase/SupabaseAuthRepository";
 
 type ProfileUpdates = Pick<User, "phone" | "address">;
 
+export type AuthStatus =
+  | "loading"
+  | "authenticated"
+  | "anonymous";
+
 export interface PortalDataContextValue {
   state: DemoState;
+
+  authStatus: AuthStatus;
   session: AuthSession | null;
   currentUser: User | null;
+
   pendingServiceId: string | null;
   warnings: RepositoryWarning[];
-  login: (email: string, password: string) => AuthSession | null;
-  logout: () => void;
+
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<AuthResult<AuthenticatedUser>>;
+
+  signUp: (
+    input: SignUpInput,
+  ) => Promise<AuthResult<void>>;
+
+  logout: () => Promise<void>;
+
   setPendingServiceId: (serviceId: string) => void;
   consumePendingServiceId: () => string | null;
-  updateUserProfile: (userId: string, updates: ProfileUpdates) => void;
+
+  updateUserProfile: (
+    userId: string,
+    updates: ProfileUpdates,
+  ) => void;
+
   resetDemo: () => void;
+
   createCase: DemoRepository["createCase"];
   updateCaseStatus: DemoRepository["updateCaseStatus"];
   startDocumentReview: DemoRepository["startDocumentReview"];
@@ -39,107 +81,259 @@ export interface PortalDataContextValue {
   recordWhatsAppStarted: DemoRepository["recordWhatsAppStarted"];
 }
 
-const PortalDataContext = createContext<PortalDataContextValue | null>(null);
+interface PortalDataProviderProps {
+  children: ReactNode;
+  repository?: DemoRepository;
+  authRepository?: AuthRepository;
+}
+
+const PortalDataContext =
+  createContext<PortalDataContextValue | null>(null);
 
 export function PortalDataProvider({
   children,
-  repository: providedRepository
-}: {
-  children: ReactNode;
-  repository?: DemoRepository;
-}) {
-  const [repository] = useState(() => providedRepository ?? createDemoRepository());
-  const [state, setState] = useState(() => repository.getState());
-  const [session, setSession] = useState<AuthSession | null>(() => repository.getSession());
-  const [pendingServiceId, setPendingServiceState] = useState<string | null>(() =>
-    repository.getPendingServiceId()
+  repository: providedRepository,
+  authRepository: providedAuthRepository,
+}: PortalDataProviderProps) {
+  const [repository] = useState(
+    () => providedRepository ?? createDemoRepository(),
   );
 
+  const [authRepository] = useState(
+    () =>
+      providedAuthRepository ??
+      createSupabaseAuthRepository(supabase),
+  );
+
+  const [state, setState] = useState<DemoState>(
+    () => repository.getState(),
+  );
+
+  const [authStatus, setAuthStatus] =
+    useState<AuthStatus>("loading");
+
+  const [session, setSession] =
+    useState<AuthSession | null>(null);
+
+  const [currentUser, setCurrentUser] =
+    useState<User | null>(null);
+
+  const [pendingServiceId, setPendingServiceState] =
+    useState<string | null>(
+      () => repository.getPendingServiceId(),
+    );
+
+  const clearAuthentication = useCallback(() => {
+    setSession(null);
+    setCurrentUser(null);
+    setAuthStatus("anonymous");
+  }, []);
+
+  const restoreAuthentication = useCallback(async () => {
+    const result = await authRepository.restoreSession();
+
+    if (!result.ok || !result.data) {
+      clearAuthentication();
+      return;
+    }
+
+    setSession(result.data.session);
+    setCurrentUser(result.data.user);
+    setAuthStatus("authenticated");
+  }, [authRepository, clearAuthentication]);
+
   useEffect(() => {
-    const unsubscribe = repository.subscribe(setState);
-    return () => {
-      unsubscribe();
-    };
+    const unsubscribeRepository =
+      repository.subscribe(setState);
+
+    return unsubscribeRepository;
   }, [repository]);
+
+  useEffect(() => {
+    let active = true;
+
+    const restore = async () => {
+      const result = await authRepository.restoreSession();
+
+      if (!active) {
+        return;
+      }
+
+      if (!result.ok || !result.data) {
+        setSession(null);
+        setCurrentUser(null);
+        setAuthStatus("anonymous");
+        return;
+      }
+
+      setSession(result.data.session);
+      setCurrentUser(result.data.user);
+      setAuthStatus("authenticated");
+    };
+
+    void restore();
+
+    const unsubscribeAuth = authRepository.subscribe((event) => {
+      if (!active) {
+        return;
+      }
+
+      if (event === "signed-out") {
+        setSession(null);
+        setCurrentUser(null);
+        setAuthStatus("anonymous");
+        return;
+      }
+
+      if (
+        event === "signed-in" ||
+        event === "token-refreshed"
+      ) {
+        /*
+         * Não executamos operações assíncronas diretamente
+         * dentro do callback do Supabase Auth.
+         */
+        queueMicrotask(() => {
+          if (active) {
+            void restore();
+          }
+        });
+      }
+    });
+
+    return () => {
+      active = false;
+      unsubscribeAuth();
+    };
+  }, [authRepository]);
 
   const refreshState = useCallback(() => {
     const nextState = repository.getState();
     setState(nextState);
+
     return nextState;
   }, [repository]);
 
   const login = useCallback(
-    (email: string, password: string) => {
-      const nextSession = authenticateDemoUser(email, password, repository.getState().users);
-      if (!nextSession) return null;
-      repository.setSession(nextSession);
-      setSession(nextSession);
-      return nextSession;
+    async (
+      email: string,
+      password: string,
+    ): Promise<AuthResult<AuthenticatedUser>> => {
+      const result = await authRepository.login(
+        email,
+        password,
+      );
+
+      if (!result.ok) {
+        return result;
+      }
+
+      setSession(result.data.session);
+      setCurrentUser(result.data.user);
+      setAuthStatus("authenticated");
+
+      return result;
     },
-    [repository]
+    [authRepository],
   );
 
-  const logout = useCallback(() => {
-    repository.clearSession();
-    setSession(null);
-  }, [repository]);
+  const signUp = useCallback(
+    (input: SignUpInput) => {
+      return authRepository.signUp(input);
+    },
+    [authRepository],
+  );
+
+  const logout = useCallback(async () => {
+    /*
+     * Limpa a interface mesmo se a requisição remota falhar.
+     * O usuário não deve continuar vendo conteúdo protegido.
+     */
+    clearAuthentication();
+
+    await authRepository.logout();
+  }, [authRepository, clearAuthentication]);
 
   const setPendingServiceId = useCallback(
     (serviceId: string) => {
       repository.setPendingServiceId(serviceId);
       setPendingServiceState(serviceId);
     },
-    [repository]
+    [repository],
   );
 
   const consumePendingServiceId = useCallback(() => {
-    const serviceId = repository.consumePendingServiceId();
+    const serviceId =
+      repository.consumePendingServiceId();
+
     setPendingServiceState(null);
+
     return serviceId;
   }, [repository]);
 
   const updateUserProfile = useCallback(
-    (userId: string, updates: ProfileUpdates) => {
+    (
+      userId: string,
+      updates: ProfileUpdates,
+    ) => {
       repository.updateUserProfile(userId, updates);
       refreshState();
+
+      setCurrentUser((user) => {
+        if (!user || user.id !== userId) {
+          return user;
+        }
+
+        return {
+          ...user,
+          ...updates,
+        };
+      });
     },
-    [refreshState, repository]
+    [refreshState, repository],
   );
 
   const resetDemo = useCallback(() => {
     repository.resetDemo();
     setState(repository.getState());
-    setSession(null);
     setPendingServiceState(null);
   }, [repository]);
-
-  const currentUser = session
-    ? (state.users.find((user) => user.id === session.userId) ?? null)
-    : null;
 
   const value = useMemo<PortalDataContextValue>(
     () => ({
       state,
+
+      authStatus,
       session,
       currentUser,
+
       pendingServiceId,
       warnings: repository.getWarnings(),
+
       login,
+      signUp,
       logout,
+
       setPendingServiceId,
       consumePendingServiceId,
       updateUserProfile,
       resetDemo,
+
       createCase: repository.createCase,
       updateCaseStatus: repository.updateCaseStatus,
       startDocumentReview: repository.startDocumentReview,
       reviewDocument: repository.reviewDocument,
-      addMockDocumentVersion: repository.addMockDocumentVersion,
-      markNotificationRead: repository.markNotificationRead,
-      markAllNotificationsRead: repository.markAllNotificationsRead,
-      recordWhatsAppStarted: repository.recordWhatsAppStarted
+      addMockDocumentVersion:
+        repository.addMockDocumentVersion,
+      markNotificationRead:
+        repository.markNotificationRead,
+      markAllNotificationsRead:
+        repository.markAllNotificationsRead,
+      recordWhatsAppStarted:
+        repository.recordWhatsAppStarted,
     }),
     [
+      authStatus,
       consumePendingServiceId,
       currentUser,
       login,
@@ -149,16 +343,27 @@ export function PortalDataProvider({
       resetDemo,
       session,
       setPendingServiceId,
+      signUp,
       state,
-      updateUserProfile
-    ]
+      updateUserProfile,
+    ],
   );
 
-  return <PortalDataContext.Provider value={value}>{children}</PortalDataContext.Provider>;
+  return (
+    <PortalDataContext.Provider value={value}>
+      {children}
+    </PortalDataContext.Provider>
+  );
 }
 
-export function usePortalData() {
+export function usePortalData(): PortalDataContextValue {
   const context = useContext(PortalDataContext);
-  if (!context) throw new Error("usePortalData deve ser usado dentro de PortalDataProvider.");
+
+  if (!context) {
+    throw new Error(
+      "usePortalData deve ser usado dentro de PortalDataProvider.",
+    );
+  }
+
   return context;
 }

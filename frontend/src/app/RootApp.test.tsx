@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { Link, MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { createDemoRepository, type StorageLike } from "@/infrastructure/demo/repository";
-import { DEMO_CLIENT_ID } from "@/infrastructure/demo/seed";
+import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
+import { DEMO_CLIENT_ID } from "@/infrastructure/seed";
 import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
 import RootApp, { ApplicationRoutes } from "@/app/RootApp";
 

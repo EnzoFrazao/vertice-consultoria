@@ -8,7 +8,7 @@ import {
   type AuthSession,
   type DemoState
 } from "@/domain/types";
-import { DEMO_STATE_VERSION } from "@/infrastructure/demo/seed";
+import { DEMO_STATE_VERSION } from "@/infrastructure/seed";
 
 type UnknownRecord = Record<string, unknown>;
 

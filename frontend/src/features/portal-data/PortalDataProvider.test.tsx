@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { createDemoRepository, type StorageLike } from "@/infrastructure/demo/repository";
+import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
 
 function createStorage(): StorageLike {

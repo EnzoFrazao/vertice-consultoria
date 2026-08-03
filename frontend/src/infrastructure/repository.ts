@@ -8,21 +8,21 @@ import type {
   TimelineEvent,
   UserRole
 } from "@/domain/types";
-import { createCaseActions } from "@/infrastructure/demo/actions/cases";
-import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
-import { createDocumentActions } from "@/infrastructure/demo/actions/documents";
-import { createNotificationActions } from "@/infrastructure/demo/actions/notifications";
-import { createDemoSeed } from "@/infrastructure/demo/seed";
-import { cloneSerializable } from "@/infrastructure/demo/serialization";
+import { createCaseActions } from "@/infrastructure/actions/cases";
+import type { DemoActionContext } from "@/infrastructure/actions/context";
+import { createDocumentActions } from "@/infrastructure/actions/documents";
+import { createNotificationActions } from "@/infrastructure/actions/notifications";
+import { createDemoSeed } from "@/infrastructure/seed";
+import { cloneSerializable } from "@/infrastructure/serialization";
 import {
   createMemoryStorage,
   getBrowserStorage,
   type StorageLike
-} from "@/infrastructure/demo/storage";
-import { isAuthSession, isDemoState } from "@/infrastructure/demo/validation";
+} from "@/infrastructure/storage";
+import { isAuthSession, isDemoState } from "@/infrastructure/validation";
 
-export type { CreateCaseInput, DocumentReview } from "@/infrastructure/demo/contracts";
-export type { StorageLike } from "@/infrastructure/demo/storage";
+export type { CreateCaseInput, DocumentReview } from "@/infrastructure/contracts";
+export type { StorageLike } from "@/infrastructure/storage";
 
 export const DEMO_STATE_STORAGE_KEY = "rv.demo.state.v1";
 export const DEMO_SESSION_STORAGE_KEY = "rv.demo.session.v1";
