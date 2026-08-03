@@ -123,16 +123,16 @@ function LoginRoute() {
   return (
     <LoginPage
       pendingServiceName={pendingServiceId ? getServiceById(pendingServiceId)?.name : undefined}
-      onLogin={(email, password) => {
-        const nextSession = login(email, password);
-        if (!nextSession) return false;
+      onLogin={async (email, password) => {
+        const result = await login(email, password);
+        if (!result.ok) return result;
 
-        if (nextSession.role === "admin") navigate("/admin", { replace: true });
+        if (result.data.user.role === "admin") navigate("/admin", { replace: true });
         else if (pendingServiceId) {
           navigate("/cliente/nova-solicitacao", { replace: true });
         } else navigate("/cliente", { replace: true });
 
-        return true;
+        return result;
       }}
       onResetDemo={resetDemo}
     />

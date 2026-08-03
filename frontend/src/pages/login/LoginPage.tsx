@@ -11,11 +11,39 @@ import {
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
+import type {
+  AuthenticatedUser,
+  AuthErrorCode,
+  AuthResult,
+} from "@/features/auth/auth";
+
 export type LoginPageProps = {
   pendingServiceName?: string;
-  onLogin: (email: string, password: string) => boolean;
+  onLogin: (
+    email: string,
+    password: string,
+  ) => Promise<AuthResult<AuthenticatedUser>>;
   onResetDemo: () => void;
 };
+
+function getLoginErrorMessage(error: AuthErrorCode): string {
+  switch (error) {
+    case "invalid_credentials":
+      return "E-mail ou senha incorretos.";
+    case "email_not_confirmed":
+      return "Confirme seu e-mail antes de entrar.";
+    case "profile_unavailable":
+      return "Seu acesso ainda não está configurado. Entre em contato com o suporte.";
+    case "network_error":
+      return "Não foi possível conectar ao servidor. Tente novamente.";
+    case "configuration_error":
+      return "O acesso está temporariamente indisponível.";
+    case "email_already_registered":
+      return "Este e-mail já está cadastrado.";
+    case "unexpected_error":
+      return "Não foi possível entrar. Tente novamente.";
+  }
+}
 
 const demoAccounts = [
   {
@@ -38,22 +66,31 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setNotice("");
+
+    if (isSubmitting) return;
 
     if (!email.trim() || !password) {
       setError("Preencha o e-mail e a senha para continuar.");
       return;
     }
 
-    if (!onLogin(email, password)) {
-      setError("Credenciais inválidas. Use uma das contas demonstrativas.");
-      return;
-    }
-
     setError("");
+    setIsSubmitting(true);
+
+    try {
+      const result = await onLogin(email, password);
+
+      if (!result.ok) {
+        setError(getLoginErrorMessage(result.error));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fillDemoAccount = (account: (typeof demoAccounts)[number]) => {
@@ -231,10 +268,17 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="mt-5 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-espresso px-6 font-semibold text-ivory shadow-glow outline-none transition-colors duration-200 hover:bg-cacao focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
             >
-              Entrar
-              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+              {isSubmitting ? (
+                "Entrando..."
+              ) : (
+                <>
+                  Entrar
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                </>
+              )}
             </button>
           </form>
 
