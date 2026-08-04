@@ -2,7 +2,6 @@ import type {
   AuthEvent,
   AuthRepository,
   AuthResult,
-  AuthenticatedUser,
   SignUpInput
 } from "@/features/auth/auth";
 
