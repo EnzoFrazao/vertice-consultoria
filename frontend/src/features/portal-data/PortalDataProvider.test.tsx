@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import type { AuthenticatedUser } from "@/features/auth/auth";
 import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
 import { createDemoAuthRepository } from "@/test/demoAuthRepository";
@@ -30,6 +31,18 @@ function Probe() {
       </button>
       <button type="button" onClick={() => app.setPendingServiceId("escritura")}>
         Selecionar escritura
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          app.signUp({
+            name: "Nova Cliente",
+            email: "nova@example.com",
+            password: "senha-segura"
+          })
+        }
+      >
+        Cadastrar cliente
       </button>
       <button
         type="button"
@@ -85,6 +98,47 @@ describe("PortalDataProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "Sair" }));
     await waitFor(() => {
       expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
+    });
+  });
+
+  it("reflete imediatamente a sessão criada pelo cadastro", async () => {
+    const repository = createDemoRepository({
+      localStorage: createStorage(),
+      sessionStorage: createStorage()
+    });
+    const authenticatedUser: AuthenticatedUser = {
+      session: {
+        userId: "new-user",
+        role: "client",
+        signedInAt: "2026-08-04T12:00:00.000Z"
+      },
+      user: {
+        id: "new-user",
+        role: "client",
+        name: "Nova Cliente",
+        email: "nova@example.com",
+        cpf: "",
+        phone: "",
+        address: "",
+        createdAt: "2026-08-04T12:00:00.000Z"
+      }
+    };
+    const authRepository = {
+      ...createDemoAuthRepository(repository),
+      signUp: vi.fn().mockResolvedValue({ ok: true, data: authenticatedUser })
+    };
+
+    render(
+      <PortalDataProvider repository={repository} authRepository={authRepository}>
+        <Probe />
+      </PortalDataProvider>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Cadastrar cliente" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("session-role")).toHaveTextContent("client");
+      expect(screen.getByTestId("user-name")).toHaveTextContent("Nova Cliente");
     });
   });
 });

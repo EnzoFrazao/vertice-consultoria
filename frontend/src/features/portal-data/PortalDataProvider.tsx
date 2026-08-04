@@ -41,7 +41,7 @@ export interface PortalDataContextValue {
 
   login: (email: string, password: string) => Promise<AuthResult<AuthenticatedUser>>;
 
-  signUp: (input: SignUpInput) => Promise<AuthResult<void>>;
+  signUp: (input: SignUpInput) => Promise<AuthResult<AuthenticatedUser | null>>;
 
   logout: () => Promise<void>;
 
@@ -187,8 +187,15 @@ export function PortalDataProvider({
   );
 
   const signUp = useCallback(
-    (input: SignUpInput) => {
-      return authRepository.signUp(input);
+    async (input: SignUpInput): Promise<AuthResult<AuthenticatedUser | null>> => {
+      const result = await authRepository.signUp(input);
+
+      if (!result.ok || !result.data) return result;
+
+      setSession(result.data.session);
+      setCurrentUser(result.data.user);
+      setAuthStatus("authenticated");
+      return result;
     },
     [authRepository]
   );
