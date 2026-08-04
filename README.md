@@ -80,22 +80,23 @@ npm run check
 
 ## Rotas
 
-| Rota                        | Área                                |
-| --------------------------- | ----------------------------------- |
-| `/`                         | Landing pública.                    |
-| `/login`                    | Entrada nas contas demonstrativas.  |
-| `/cliente`                  | Início do portal do cliente.        |
-| `/cliente/processos`        | Lista de processos do cliente.      |
-| `/cliente/processos/:id`    | Detalhe de um processo do cliente.  |
-| `/cliente/nova-solicitacao` | Fluxo de nova solicitação.          |
-| `/cliente/perfil`           | Perfil demonstrativo do cliente.    |
-| `/admin`                    | Início do portal administrativo.    |
-| `/admin/processos`          | Lista de processos administrativos. |
-| `/admin/processos/:id`      | Detalhe e despacho de um processo.  |
-| `/admin/documentos`         | Fila de análise documental.         |
-| `/admin/clientes`           | Lista de clientes demonstrativos.   |
+| Rota                        | Área                                   |
+| --------------------------- | -------------------------------------- |
+| `/`                         | Landing pública.                       |
+| `/login`                    | Entrada de clientes e administradores. |
+| `/cadastro`                 | Cadastro público de clientes.          |
+| `/cliente`                  | Início do portal do cliente.           |
+| `/cliente/processos`        | Lista de processos do cliente.         |
+| `/cliente/processos/:id`    | Detalhe de um processo do cliente.     |
+| `/cliente/nova-solicitacao` | Fluxo de nova solicitação.             |
+| `/cliente/perfil`           | Perfil demonstrativo do cliente.       |
+| `/admin`                    | Início do portal administrativo.       |
+| `/admin/processos`          | Lista de processos administrativos.    |
+| `/admin/processos/:id`      | Detalhe e despacho de um processo.     |
+| `/admin/documentos`         | Fila de análise documental.            |
+| `/admin/clientes`           | Lista de clientes demonstrativos.      |
 
-Login, cliente e administração são carregados sob demanda. As rotas protegidas redirecionam sessões ausentes ou de outro perfil.
+Login, cadastro, cliente e administração são carregados sob demanda. As rotas protegidas redirecionam sessões ausentes ou de outro perfil. Quando o provedor exige confirmação de e-mail, o novo cliente permanece no cadastro até confirmar a conta.
 
 ## Contas demonstrativas
 

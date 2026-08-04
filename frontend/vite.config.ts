@@ -16,6 +16,7 @@ export default defineConfig({
 
           if (normalizedId.indexOf("/src/pages/landing/") >= 0) return "landing";
           if (normalizedId.indexOf("/src/pages/login/") >= 0) return "login";
+          if (normalizedId.indexOf("/src/pages/register/") >= 0) return "register";
           if (normalizedId.indexOf("/src/pages/client/") >= 0) return "client";
           if (normalizedId.indexOf("/src/pages/admin/") >= 0) return "admin";
         }

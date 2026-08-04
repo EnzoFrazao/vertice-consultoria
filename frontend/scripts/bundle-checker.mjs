@@ -11,6 +11,11 @@ const PRIVATE_ROUTE_SPECS = [
     sourceRoot: "src/pages/login/"
   },
   {
+    area: "register",
+    source: "src/pages/register/RegisterPage.tsx",
+    sourceRoot: "src/pages/register/"
+  },
+  {
     area: "client",
     source: "src/pages/client/ClientPortal.tsx",
     sourceRoot: "src/pages/client/"
@@ -177,8 +182,10 @@ export function validateBundle({
     areaFiles[spec.area] = routeChunk.file;
   }
 
-  if (new Set(Object.values(areaFiles)).size !== 4) {
-    fail("Landing, login, cliente e administrador precisam apontar para quatro chunks distintos.");
+  if (new Set(Object.values(areaFiles)).size !== 5) {
+    fail(
+      "Landing, login, cadastro, cliente e administrador precisam apontar para cinco chunks distintos."
+    );
   }
 
   let initialGzipBytes = 0;

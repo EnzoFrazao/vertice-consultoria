@@ -31,6 +31,7 @@ function createValidManifest() {
       imports: ["_runtime.js", "_landing.js"],
       dynamicImports: [
         "src/pages/login/LoginPage.tsx",
+        "src/pages/register/RegisterPage.tsx",
         "src/pages/client/ClientPortal.tsx",
         "src/pages/admin/AdminPortal.tsx"
       ]
@@ -39,6 +40,13 @@ function createValidManifest() {
       file: "assets/login-fixture.js",
       name: "login",
       src: "src/pages/login/LoginPage.tsx",
+      isDynamicEntry: true,
+      imports: ["_runtime.js", "_shared-ui.js"]
+    },
+    "src/pages/register/RegisterPage.tsx": {
+      file: "assets/register-fixture.js",
+      name: "register",
+      src: "src/pages/register/RegisterPage.tsx",
       isDynamicEntry: true,
       imports: ["_runtime.js", "_shared-ui.js"]
     },
@@ -87,7 +95,7 @@ afterEach(() => {
   }
 });
 
-test("accepts one eager landing and three distinct lazy route entries", () => {
+test("accepts one eager landing and four distinct lazy route entries", () => {
   const manifest = createValidManifest();
   const distRoot = createFixture(manifest);
 
@@ -96,6 +104,7 @@ test("accepts one eager landing and three distinct lazy route entries", () => {
   assert.deepEqual(result.areaFiles, {
     landing: "assets/landing-fixture.js",
     login: "assets/login-fixture.js",
+    register: "assets/register-fixture.js",
     client: "assets/client-fixture.js",
     admin: "assets/admin-fixture.js"
   });
