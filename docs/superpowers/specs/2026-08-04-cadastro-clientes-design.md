@@ -8,7 +8,7 @@ Remover da página de login os atalhos que preenchem credenciais demonstrativas 
 
 - Criar a rota pública `/cadastro`, carregada sob demanda.
 - Adicionar um formulário com nome, e-mail, senha e confirmação de senha.
-- Validar campos obrigatórios, formato do e-mail, tamanho mínimo da senha e igualdade entre senha e confirmação.
+- Validar campos obrigatórios, formato do e-mail, senha com no mínimo 8 caracteres e igualdade entre senha e confirmação.
 - Criar novas contas exclusivamente com o papel `client`, usando o gatilho de banco já existente.
 - Entrar automaticamente no portal quando o Supabase retornar uma sessão no cadastro.
 - Quando a confirmação de e-mail estiver habilitada e nenhuma sessão for criada, orientar o usuário a verificar a caixa de entrada e oferecer acesso ao login.
@@ -43,7 +43,7 @@ O contrato `AuthRepository.signUp` passará a retornar `AuthenticatedUser | null
 
 ### Falha
 
-Erros conhecidos serão apresentados em português: e-mail já cadastrado, indisponibilidade de rede, configuração inválida e erro inesperado. O envio ficará bloqueado enquanto a requisição estiver em andamento, e os dados digitados serão preservados após falha.
+Erros conhecidos serão apresentados em português: e-mail já cadastrado, senha fraca, indisponibilidade de rede, configuração inválida e erro inesperado. O envio ficará bloqueado enquanto a requisição estiver em andamento, e os dados digitados serão preservados após falha.
 
 ## Segurança
 
