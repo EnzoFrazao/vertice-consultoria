@@ -255,15 +255,15 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
             </button>
           </form>
 
-          <p className="mt-5 text-center text-sm text-cacao/75">
-            Ainda não tem uma conta?{" "}
+          <div className="mt-5 text-center">
+            <p className="text-sm text-cacao/75">Ainda não tem uma conta?</p>
             <Link
               to="/cadastro"
-              className="font-semibold text-tealTech outline-none hover:text-espresso focus-visible:ring-2 focus-visible:ring-bronze"
+              className="mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-full border border-espresso px-6 font-semibold text-espresso outline-none transition-colors hover:bg-espresso hover:text-ivory focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
             >
-              Criar conta
+              Cadastre-se
             </Link>
-          </p>
+          </div>
 
           <button
             type="button"

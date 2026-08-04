@@ -28,7 +28,11 @@ describe("LoginPage", () => {
     expect(screen.getByText(/escritura/i)).toBeInTheDocument();
     expect(screen.queryByText(/preencher uma conta demo/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /usar conta/i })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /criar conta/i })).toHaveAttribute("href", "/cadastro");
+    expect(screen.getByRole("link", { name: /cadastre-se/i })).toHaveAttribute("href", "/cadastro");
+    expect(screen.getByRole("link", { name: /cadastre-se/i })).toHaveClass(
+      "min-h-12",
+      "rounded-full"
+    );
     expect(
       screen.getAllByRole("img", { name: "Vértice Consultoria" }).length
     ).toBeGreaterThanOrEqual(2);
