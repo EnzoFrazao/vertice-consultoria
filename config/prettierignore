@@ -4,6 +4,7 @@
 **/coverage
 **/.vite
 **/.tmp
+**/.temp
 **/*.tsbuildinfo
 .git
 .agents
