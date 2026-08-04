@@ -20,10 +20,14 @@ const ADMIN_NAVIGATION: PortalNavigationItem[] = [
 ];
 
 export function AdminPortal() {
-  const { currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
+  const { authStatus, currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
     usePortalData();
   const location = useLocation();
   const navigate = useNavigate();
+
+  if (authStatus === "loading") {
+    return <p role="status">Carregando sessão…</p>;
+  }
 
   if (!currentUser) return <Navigate to="/login" replace />;
   if (currentUser.role !== "admin") return <Navigate to="/cliente" replace />;

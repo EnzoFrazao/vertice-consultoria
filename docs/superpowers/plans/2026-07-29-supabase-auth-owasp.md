@@ -76,6 +76,7 @@
 ### Task 1: Contratos de autenticação e configuração pública
 
 **Files:**
+
 - Create: `frontend/.env.example`
 - Create: `frontend/src/vite-env.d.ts`
 - Create: `frontend/src/infrastructure/supabase/client.ts`
@@ -86,6 +87,7 @@
 - Modify: `package-lock.json`
 
 **Interfaces:**
+
 - Produces: `AuthRepository`, `AuthResult<T>`, `AuthenticatedUser`, `AuthErrorCode`, `SignUpInput`, `AuthEvent`, `readSupabaseConfig()` e `supabase`.
 - Consumes: `AuthSession`, `User` e `UserRole` de `@/domain/types`.
 
@@ -163,9 +165,7 @@ export type AuthErrorCode =
   | "configuration_error"
   | "unexpected_error";
 
-export type AuthResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: AuthErrorCode };
+export type AuthResult<T> = { ok: true; data: T } | { ok: false; error: AuthErrorCode };
 
 export interface AuthenticatedUser {
   session: AuthSession;
@@ -266,10 +266,12 @@ Expected: testes e typecheck passam; o commit não contém valor real de chave.
 ### Task 2: Adaptador Supabase Auth
 
 **Files:**
+
 - Create: `frontend/src/infrastructure/supabase/SupabaseAuthRepository.ts`
 - Test: `frontend/src/infrastructure/supabase/SupabaseAuthRepository.test.ts`
 
 **Interfaces:**
+
 - Consumes: `AuthRepository`, `AuthResult<T>`, `AuthenticatedUser`, `SignUpInput`, `toDomainUser()` e um `SupabaseClient`.
 - Produces: `SupabaseAuthRepository` e `createSupabaseAuthRepository(client)`.
 
@@ -314,16 +316,12 @@ export function createSupabaseAuthRepository(client: SupabaseClient): AuthReposi
 `restoreSession()` chama `client.auth.getSession()`. Se não houver sessão, retorna `{ ok: true, data: null }`. Com sessão, consulta separadamente:
 
 ```ts
-client.from("profiles")
-  .select("id,name,email,phone,created_at")
-  .eq("id", userId)
-  .single();
+client.from("profiles").select("id,name,email,phone,created_at").eq("id", userId).single();
 
-client.from("user_roles")
-  .select("roles!inner(code)")
-  .eq("user_id", userId);
+client.from("user_roles").select("roles!inner(code)").eq("user_id", userId);
 
-client.from("user_addresses")
+client
+  .from("user_addresses")
   .select("street,number,complement,neighborhood,city,state,postal_code")
   .eq("user_id", userId)
   .eq("is_primary", true)
@@ -378,6 +376,7 @@ git commit -m "feat: implement Supabase auth repository"
 ### Task 3: Sessão real no PortalDataProvider
 
 **Files:**
+
 - Create: `frontend/src/test/FakeAuthRepository.ts`
 - Modify: `frontend/src/features/portal-data/PortalDataProvider.tsx`
 - Test: `frontend/src/features/portal-data/PortalDataProvider.test.tsx`
@@ -387,6 +386,7 @@ git commit -m "feat: implement Supabase auth repository"
 - Test: `frontend/src/infrastructure/demo/validation.test.ts`
 
 **Interfaces:**
+
 - Consumes: `AuthRepository` e `createSupabaseAuthRepository(supabase)`.
 - Produces no contexto: `authStatus`, `session`, `currentUser`, `login`, `signUp`, `requestPasswordReset`, `updatePassword`, `logout` e `isRecoverySession`.
 
@@ -477,6 +477,7 @@ git commit -m "feat: restore Supabase sessions in portal provider"
 ### Task 4: Login real e componentes compartilhados
 
 **Files:**
+
 - Create: `frontend/src/pages/auth/AuthLayout.tsx`
 - Create: `frontend/src/pages/auth/PasswordField.tsx`
 - Create: `frontend/src/pages/auth/validation.ts`
@@ -485,6 +486,7 @@ git commit -m "feat: restore Supabase sessions in portal provider"
 - Test: `frontend/src/pages/login/LoginPage.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AuthResult<AuthenticatedUser>` e `AuthErrorCode`.
 - Produces: `LoginPageProps.onLogin(email, password): Promise<AuthResult<AuthenticatedUser>>`, `validatePassword()` e layout reutilizável.
 
@@ -494,8 +496,7 @@ Testar:
 
 ```ts
 expect(validatePassword("1234567")).toBe("A senha deve ter pelo menos 8 caracteres.");
-expect(validatePasswordConfirmation("12345678", "87654321"))
-  .toBe("As senhas não coincidem.");
+expect(validatePasswordConfirmation("12345678", "87654321")).toBe("As senhas não coincidem.");
 ```
 
 Na página, cobrir:
@@ -561,6 +562,7 @@ git commit -m "feat: replace demo login with async auth"
 ### Task 5: Cadastro, recuperação e redefinição
 
 **Files:**
+
 - Create: `frontend/src/pages/signup/SignupPage.tsx`
 - Test: `frontend/src/pages/signup/SignupPage.test.tsx`
 - Create: `frontend/src/pages/recover-password/RecoverPasswordPage.tsx`
@@ -569,6 +571,7 @@ git commit -m "feat: replace demo login with async auth"
 - Test: `frontend/src/pages/reset-password/ResetPasswordPage.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AuthLayout`, `PasswordField`, validações e callbacks assíncronos do provider.
 - Produces: páginas públicas sem conhecimento direto do Supabase.
 
@@ -628,11 +631,13 @@ git commit -m "feat: add account recovery flows"
 ### Task 6: Rotas, papéis e transições seguras
 
 **Files:**
+
 - Modify: `frontend/src/app/RootApp.tsx`
 - Test: `frontend/src/app/RootApp.test.tsx`
 - Modify: `frontend/vite.config.ts`
 
 **Interfaces:**
+
 - Consumes: `authStatus`, `isRecoverySession`, `session.role` e as quatro páginas.
 - Produces: `/login`, `/cadastro`, `/recuperar-senha`, `/redefinir-senha`, `/cliente/*` e `/admin/*`.
 
@@ -691,10 +696,12 @@ git commit -m "feat: protect portal routes with Supabase sessions"
 ### Task 7: Regressão de autorização no PostgreSQL
 
 **Files:**
+
 - Create: `supabase/tests/database/auth_rls.test.sql`
 - Modify: `supabase/config.toml`
 
 **Interfaces:**
+
 - Consumes: migrations existentes de identidade, catálogo e domínio.
 - Produces: teste pgTAP repetível de grants e RLS.
 
@@ -794,6 +801,7 @@ Adicionar ao commit somente a migration criada por esta tarefa, caso ela realmen
 ### Task 8: Cabeçalhos Netlify e inspeção do bundle
 
 **Files:**
+
 - Modify: `netlify.toml`
 - Create: `frontend/scripts/check-security-bundle.mjs`
 - Test: `frontend/scripts/check-security-bundle.node-test.mjs`
@@ -801,6 +809,7 @@ Adicionar ao commit somente a migration criada por esta tarefa, caso ela realmen
 - Modify: `package.json`
 
 **Interfaces:**
+
 - Produces: `npm run security:bundle` e headers aplicados a `/*`.
 
 - [ ] **Step 1: Escrever teste do scanner**
@@ -808,13 +817,17 @@ Adicionar ao commit somente a migration criada por esta tarefa, caso ela realmen
 Exportar `findForbiddenArtifacts(files)` e testar:
 
 ```js
-assert.deepEqual(findForbiddenArtifacts([
-  { path: "dist/assets/app.js", content: 'const key="sb_publishable_ok"' }
-]), []);
+assert.deepEqual(
+  findForbiddenArtifacts([
+    { path: "dist/assets/app.js", content: 'const key="sb_publishable_ok"' }
+  ]),
+  []
+);
 
-assert.deepEqual(findForbiddenArtifacts([
-  { path: "dist/assets/app.js", content: 'const key="service_role"' }
-]), ["dist/assets/app.js:service_role"]);
+assert.deepEqual(
+  findForbiddenArtifacts([{ path: "dist/assets/app.js", content: 'const key="service_role"' }]),
+  ["dist/assets/app.js:service_role"]
+);
 ```
 
 Padrões proibidos:
@@ -891,10 +904,12 @@ git commit -m "security: harden frontend delivery"
 ### Task 9: Documentação operacional e verificação completa
 
 **Files:**
+
 - Modify: `README.md`
 - Modify: `docs/state.md`
 
 **Interfaces:**
+
 - Consumes: todos os fluxos e comandos entregues.
 - Produces: instruções reproduzíveis de desenvolvimento e checklist do Dashboard.
 

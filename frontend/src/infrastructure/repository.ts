@@ -14,11 +14,7 @@ import { createDocumentActions } from "@/infrastructure/actions/documents";
 import { createNotificationActions } from "@/infrastructure/actions/notifications";
 import { createDemoSeed } from "@/infrastructure/seed";
 import { cloneSerializable } from "@/infrastructure/serialization";
-import {
-  createMemoryStorage,
-  getBrowserStorage,
-  type StorageLike
-} from "@/infrastructure/storage";
+import { createMemoryStorage, getBrowserStorage, type StorageLike } from "@/infrastructure/storage";
 import { isAuthSession, isDemoState } from "@/infrastructure/validation";
 
 export type { CreateCaseInput, DocumentReview } from "@/infrastructure/contracts";

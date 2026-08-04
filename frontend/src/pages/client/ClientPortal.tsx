@@ -16,10 +16,14 @@ const clientNavigation = [
 ];
 
 export function ClientPortal() {
-  const { currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
+  const { authStatus, currentUser, state, logout, markNotificationRead, markAllNotificationsRead } =
     usePortalData();
   const location = useLocation();
   const navigate = useNavigate();
+
+  if (authStatus === "loading") {
+    return <p role="status">Carregando sessão…</p>;
+  }
 
   if (!currentUser || currentUser.role !== "client") {
     return <Navigate to="/login" replace />;

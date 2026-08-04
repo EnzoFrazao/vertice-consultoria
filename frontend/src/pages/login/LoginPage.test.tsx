@@ -1,9 +1,4 @@
-import {
-  fireEvent,
-  render as renderTestingLibrary,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { fireEvent, render as renderTestingLibrary, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
@@ -73,9 +68,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     expect(onLogin).toHaveBeenCalledWith("cliente@demo.com", "errada");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "E-mail ou senha incorretos."
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("E-mail ou senha incorretos.");
   });
 
   it("prevents repeated submissions while authentication is pending", async () => {
@@ -99,9 +92,7 @@ describe("LoginPage", () => {
     expect(screen.getByRole("button", { name: "Entrando..." })).toBeDisabled();
 
     finishLogin(INVALID_LOGIN);
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "E-mail ou senha incorretos."
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("E-mail ou senha incorretos.");
   });
 
   it("can fill either demo account and reset the shared demonstration", async () => {
@@ -124,12 +115,7 @@ describe("LoginPage", () => {
   });
 
   it("keeps control boundaries and small supporting text at AA contrast", () => {
-    render(
-      <LoginPage
-        onLogin={() => Promise.resolve(INVALID_LOGIN)}
-        onResetDemo={() => {}}
-      />
-    );
+    render(<LoginPage onLogin={() => Promise.resolve(INVALID_LOGIN)} onResetDemo={() => {}} />);
 
     expect(screen.getByLabelText(/e-mail/i)).toHaveClass("border-cacao/55");
     expect(screen.getByLabelText(/^senha$/i)).toHaveClass("border-cacao/55");

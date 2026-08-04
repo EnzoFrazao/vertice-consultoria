@@ -1,18 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type {
-  Case,
-  CaseDocument,
-  CaseStatus,
-  Notification,
-  User,
-  UserRole,
-} from "@/domain/types";
-import type {
-  CreateCaseInput,
-  PortalRepository,
-  ProfileUpdates,
-} from "@/features/portal-data/PortalRepository";
+import type { Case, CaseDocument, Notification, User } from "@/domain/types";
+import type { PortalRepository } from "@/features/portal-data/PortalRepository";
 import { selectPrimaryRole } from "@/features/auth/auth";
 
 interface ProfileRow {
@@ -24,10 +13,7 @@ interface ProfileRow {
 }
 
 interface RoleRow {
-  roles:
-    | { code: string }
-    | Array<{ code: string }>
-    | null;
+  roles: { code: string } | Array<{ code: string }> | null;
 }
 
 function extractRoleCodes(rows: RoleRow[]): string[] {
@@ -54,10 +40,7 @@ export class SupabasePortalRepository implements PortalRepository {
         .select("id,name,email,phone,created_at")
         .eq("id", userId)
         .maybeSingle(),
-      this.client
-        .from("user_roles")
-        .select("roles(code)")
-        .eq("user_id", userId),
+      this.client.from("user_roles").select("roles(code)").eq("user_id", userId)
     ]);
 
     if (profileResult.error) {
@@ -73,9 +56,7 @@ export class SupabasePortalRepository implements PortalRepository {
       return null;
     }
 
-    const role = selectPrimaryRole(
-      extractRoleCodes(rolesResult.data as RoleRow[]),
-    );
+    const role = selectPrimaryRole(extractRoleCodes(rolesResult.data as RoleRow[]));
     if (!role) {
       return null;
     }
@@ -88,52 +69,47 @@ export class SupabasePortalRepository implements PortalRepository {
       cpf: "",
       phone: profile.phone ?? "",
       address: "",
-      createdAt: profile.created_at,
+      createdAt: profile.created_at
     };
   }
 
-  listCases(userId: string, role: UserRole): Promise<Case[]> {
+  listCases(): Promise<Case[]> {
     throw new Error("Not implemented");
   }
 
-  getCaseById(caseId: string): Promise<Case | null> {
+  getCaseById(): Promise<Case | null> {
     throw new Error("Not implemented");
   }
 
-  createCase(input: CreateCaseInput): Promise<Case> {
+  createCase(): Promise<Case> {
     throw new Error("Not implemented");
   }
 
-  updateCaseStatus(caseId: string, status: CaseStatus): Promise<void> {
+  updateCaseStatus(): Promise<void> {
     throw new Error("Not implemented");
   }
 
-  listDocuments(caseId: string): Promise<CaseDocument[]> {
+  listDocuments(): Promise<CaseDocument[]> {
     throw new Error("Not implemented");
   }
 
-  listNotifications(userId: string): Promise<Notification[]> {
+  listNotifications(): Promise<Notification[]> {
     throw new Error("Not implemented");
   }
 
-  markNotificationRead(notificationId: string): Promise<void> {
+  markNotificationRead(): Promise<void> {
     throw new Error("Not implemented");
   }
 
-  markAllNotificationsRead(userId: string): Promise<void> {
+  markAllNotificationsRead(): Promise<void> {
     throw new Error("Not implemented");
   }
 
-  updateUserProfile(
-    userId: string,
-    updates: ProfileUpdates,
-  ): Promise<User> {
+  updateUserProfile(): Promise<User> {
     throw new Error("Not implemented");
   }
 }
 
-export function createSupabasePortalRepository(
-  client: SupabaseClient,
-): PortalRepository {
+export function createSupabasePortalRepository(client: SupabaseClient): PortalRepository {
   return new SupabasePortalRepository(client);
 }

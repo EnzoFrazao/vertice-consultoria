@@ -1,8 +1,8 @@
 import { getServiceById } from "@/domain/catalog";
 import { CASE_STATUSES } from "@/domain/types";
 import type { Case, CaseDocument, CaseStatus } from "@/domain/types";
-import type { CreateCaseInput } from "@/infrastructure/demo/contracts";
-import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
+import type { CreateCaseInput } from "@/infrastructure/contracts";
+import type { DemoActionContext } from "@/infrastructure/actions/context";
 
 export function createCaseActions(context: DemoActionContext) {
   function updateUserProfile(userId: string, updates: { phone: string; address: string }) {

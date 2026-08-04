@@ -1,4 +1,4 @@
-import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
+import type { DemoActionContext } from "@/infrastructure/actions/context";
 
 export function createNotificationActions(context: DemoActionContext) {
   function markNotificationRead(notificationId: string, userId: string) {

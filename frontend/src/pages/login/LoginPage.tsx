@@ -11,18 +11,11 @@ import {
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
-import type {
-  AuthenticatedUser,
-  AuthErrorCode,
-  AuthResult,
-} from "@/features/auth/auth";
+import type { AuthenticatedUser, AuthErrorCode, AuthResult } from "@/features/auth/auth";
 
 export type LoginPageProps = {
   pendingServiceName?: string;
-  onLogin: (
-    email: string,
-    password: string,
-  ) => Promise<AuthResult<AuthenticatedUser>>;
+  onLogin: (email: string, password: string) => Promise<AuthResult<AuthenticatedUser>>;
   onResetDemo: () => void;
 };
 

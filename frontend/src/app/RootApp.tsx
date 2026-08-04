@@ -63,7 +63,11 @@ function DemoWarnings() {
 }
 
 function ProtectedRoute({ role, children }: { role: "client" | "admin"; children: ReactElement }) {
-  const { session } = usePortalData();
+  const { authStatus, session } = usePortalData();
+
+  if (authStatus === "loading") {
+    return <p role="status">Carregando sessão…</p>;
+  }
 
   if (!session) return <Navigate to="/login" replace />;
   if (session.role !== role) {
@@ -108,7 +112,7 @@ function PublicLandingRoute() {
 }
 
 function LoginRoute() {
-  const { session, pendingServiceId, login, resetDemo } = usePortalData();
+  const { authStatus, session, pendingServiceId, login, resetDemo } = usePortalData();
   const navigate = useNavigate();
 
   const destination =
@@ -117,6 +121,10 @@ function LoginRoute() {
       : pendingServiceId
         ? "/cliente/nova-solicitacao"
         : "/cliente";
+
+  if (authStatus === "loading") {
+    return <p role="status">Carregando sessão…</p>;
+  }
 
   if (session) return <Navigate to={destination} replace />;
 

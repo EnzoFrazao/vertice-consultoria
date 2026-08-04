@@ -1,11 +1,4 @@
-import type {
-  Case,
-  CaseDocument,
-  CaseStatus,
-  Notification,
-  User,
-  UserRole,
-} from "@/domain/types";
+import type { Case, CaseDocument, CaseStatus, Notification, User, UserRole } from "@/domain/types";
 
 export type ProfileUpdates = Pick<User, "phone" | "address">;
 

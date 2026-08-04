@@ -1,6 +1,6 @@
 import type { Case, CaseDocument } from "@/domain/types";
-import type { DemoActionContext } from "@/infrastructure/demo/actions/context";
-import type { DocumentReview } from "@/infrastructure/demo/contracts";
+import type { DemoActionContext } from "@/infrastructure/actions/context";
+import type { DocumentReview } from "@/infrastructure/contracts";
 
 export function createDocumentActions(context: DemoActionContext) {
   function startDocumentReview(caseId: string, documentId: string, actorId: string) {

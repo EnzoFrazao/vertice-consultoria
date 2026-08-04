@@ -15,8 +15,8 @@ const SESSION: Session = {
     user_metadata: {},
     aud: "authenticated",
     created_at: "2026-07-01T10:00:00.000Z",
-    email: "cliente@example.com",
-  },
+    email: "cliente@example.com"
+  }
 };
 
 function createClient(): SupabaseClient {
@@ -26,31 +26,31 @@ function createClient(): SupabaseClient {
       name: "Cliente Teste",
       email: "cliente@example.com",
       phone: null,
-      created_at: "2026-07-01T10:00:00.000Z",
+      created_at: "2026-07-01T10:00:00.000Z"
     },
-    error: null,
+    error: null
   };
   const rolesResult = {
     data: [{ roles: { code: "client" } }],
-    error: null,
+    error: null
   };
 
   const client = {
     auth: {
       getSession: vi.fn().mockResolvedValue({
         data: { session: SESSION },
-        error: null,
-      }),
+        error: null
+      })
     },
     from: vi.fn((table: string) => ({
       select: vi.fn(() => ({
         eq: vi.fn(() =>
           table === "profiles"
             ? { single: vi.fn().mockResolvedValue(profileResult) }
-            : Promise.resolve(rolesResult),
-        ),
-      })),
-    })),
+            : Promise.resolve(rolesResult)
+        )
+      }))
+    }))
   };
 
   return client as unknown as SupabaseClient;
@@ -75,7 +75,7 @@ describe("SupabaseAuthRepository", () => {
       cpf: "",
       phone: "",
       address: "",
-      createdAt: "2026-07-01T10:00:00.000Z",
+      createdAt: "2026-07-01T10:00:00.000Z"
     });
   });
 });

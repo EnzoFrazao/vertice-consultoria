@@ -7,9 +7,10 @@ import {
   createDemoRepository,
   type DemoRepository,
   type StorageLike
-} from "@/infrastructure/demo/repository";
-import { DEMO_ADMIN_ID, DEMO_CLIENT_ID, createDemoSeed } from "@/infrastructure/demo/seed";
+} from "@/infrastructure/repository";
+import { DEMO_ADMIN_ID, DEMO_CLIENT_ID, createDemoSeed } from "@/infrastructure/seed";
 import { ClientPortal } from "@/pages/client/ClientPortal";
+import { createDemoAuthRepository } from "@/test/demoAuthRepository";
 
 function createMemoryStorage(initial: Record<string, string> = {}): StorageLike {
   const values = new Map(Object.entries(initial));
@@ -29,18 +30,24 @@ function createIsolatedRepository(initialState = createDemoSeed()) {
   });
 }
 
-function renderClient(path = "/cliente", repository: DemoRepository = createIsolatedRepository()) {
+async function renderClient(
+  path = "/cliente",
+  repository: DemoRepository = createIsolatedRepository()
+) {
   repository.setSession({
     userId: DEMO_CLIENT_ID,
     role: "client",
     signedInAt: "2026-07-11T12:00:00.000Z"
   });
 
-  return {
+  const result = {
     repository,
     ...render(
       <MemoryRouter initialEntries={[path]}>
-        <PortalDataProvider repository={repository}>
+        <PortalDataProvider
+          repository={repository}
+          authRepository={createDemoAuthRepository(repository)}
+        >
           <Routes>
             <Route path="/cliente/*" element={<ClientPortal />} />
             <Route path="/login" element={<h1>Entrar na conta</h1>} />
@@ -49,11 +56,17 @@ function renderClient(path = "/cliente", repository: DemoRepository = createIsol
       </MemoryRouter>
     )
   };
+
+  await waitFor(() => {
+    expect(screen.queryByText("Carregando sessão…")).not.toBeInTheDocument();
+  });
+
+  return result;
 }
 
 describe("ClientPortal", () => {
-  it("abre o processo com ação mais recente como fólio ativo", () => {
-    renderClient();
+  it("abre o processo com ação mais recente como fólio ativo", async () => {
+    await renderClient();
 
     const activeFolio = screen.getByRole("article", { name: "Fólio RV-2026-0001" });
     const coverHeading = within(activeFolio).getByRole("heading", {
@@ -84,7 +97,7 @@ describe("ClientPortal", () => {
     ).toHaveTextContent("EntradaDocumentaçãoAnálise técnicaÓrgãosConclusão");
   });
 
-  it("explicita quando nada depende do cliente", () => {
+  it("explicita quando nada depende do cliente", async () => {
     const state = createDemoSeed();
     state.cases
       .filter((item) => item.clientId === DEMO_CLIENT_ID)
@@ -97,7 +110,7 @@ describe("ClientPortal", () => {
       });
     const repository = createIsolatedRepository(state);
 
-    renderClient("/cliente", repository);
+    await renderClient("/cliente", repository);
 
     expect(screen.getByRole("heading", { name: "Agora" })).toBeInTheDocument();
     expect(screen.getByText("Nada precisa de você agora")).toBeInTheDocument();
@@ -105,7 +118,7 @@ describe("ClientPortal", () => {
     expect(screen.queryByText(/mais \d+ ações/i)).not.toBeInTheDocument();
   });
 
-  it("abre uma resposta real quando o processo aguarda o cliente sem documento", () => {
+  it("abre uma resposta real quando o processo aguarda o cliente sem documento", async () => {
     const state = createDemoSeed();
     const item = state.cases.find((candidate) => candidate.id === "case-0001")!;
     item.status = "Aguardando cliente";
@@ -115,7 +128,7 @@ describe("ClientPortal", () => {
     });
     const repository = createIsolatedRepository(state);
 
-    renderClient("/cliente", repository);
+    await renderClient("/cliente", repository);
 
     expect(screen.getByText("Fase em pausa")).toBeInTheDocument();
     const response = screen.getByRole("link", { name: "Responder à orientação recebida" });
@@ -130,7 +143,7 @@ describe("ClientPortal", () => {
   });
 
   it("leva a pendência ao documento correspondente e move o foco", async () => {
-    renderClient();
+    await renderClient();
 
     const action = screen.getByRole("link", { name: /Adicionar Matrícula do imóvel/i });
     expect(action).toHaveAttribute(
@@ -144,8 +157,8 @@ describe("ClientPortal", () => {
     await waitFor(() => expect(documentHeading).toHaveFocus());
   });
 
-  it("mantém uma única ação dominante visível em cada breakpoint do detalhe", () => {
-    renderClient("/cliente/processos/case-0001");
+  it("mantém uma única ação dominante visível em cada breakpoint do detalhe", async () => {
+    await renderClient("/cliente/processos/case-0001");
 
     const actions = screen.getAllByRole("link", { name: /Adicionar Matrícula do imóvel/i });
     expect(actions).toHaveLength(2);
@@ -162,8 +175,8 @@ describe("ClientPortal", () => {
     ).toBe(true);
   });
 
-  it("lista somente os processos do cliente e abre seus detalhes", () => {
-    renderClient("/cliente/processos");
+  it("lista somente os processos do cliente e abre seus detalhes", async () => {
+    await renderClient("/cliente/processos");
 
     expect(screen.getByRole("heading", { name: "Meus processos" })).toBeInTheDocument();
     expect(screen.getByText("RV-2026-0001")).toBeInTheDocument();
@@ -194,7 +207,7 @@ describe("ClientPortal", () => {
       { decision: "reject", reason: "A imagem está cortada." },
       DEMO_ADMIN_ID
     );
-    renderClient("/cliente/processos/case-0001", repository);
+    await renderClient("/cliente/processos/case-0001", repository);
 
     const pendingDocument = screen.getByTestId("document-matricula-imovel");
     expect(within(pendingDocument).getByText("Pendente")).toBeInTheDocument();
@@ -216,7 +229,7 @@ describe("ClientPortal", () => {
     expect(repository.getState().cases[0].timeline.at(-1)?.title).toMatch(/reenviado/i);
   });
 
-  it("mostra um início e um índice vazios com caminho para o primeiro imóvel", () => {
+  it("mostra um início e um índice vazios com caminho para o primeiro imóvel", async () => {
     const state = createDemoSeed();
     state.cases = state.cases.filter((item) => item.clientId !== DEMO_CLIENT_ID);
     state.notifications = state.notifications.filter(
@@ -225,7 +238,7 @@ describe("ClientPortal", () => {
     );
     const repository = createIsolatedRepository(state);
 
-    const dashboard = renderClient("/cliente", repository);
+    const dashboard = await renderClient("/cliente", repository);
     expect(
       screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })
     ).toBeInTheDocument();
@@ -235,7 +248,7 @@ describe("ClientPortal", () => {
     );
     dashboard.unmount();
 
-    renderClient("/cliente/processos", repository);
+    await renderClient("/cliente/processos", repository);
     expect(
       screen.getByRole("heading", { name: "Este espaço começa com o seu imóvel" })
     ).toBeInTheDocument();
@@ -245,15 +258,15 @@ describe("ClientPortal", () => {
     );
   });
 
-  it("explicita quando o processo solicitado não existe", () => {
-    renderClient("/cliente/processos/processo-inexistente");
+  it("explicita quando o processo solicitado não existe", async () => {
+    await renderClient("/cliente/processos/processo-inexistente");
 
     expect(screen.getByRole("heading", { name: "Processo não encontrado" })).toBeInTheDocument();
     expect(screen.getByText(/não existe ou não pertence à sua conta/i)).toBeInTheDocument();
   });
 
-  it("registra o contato de WhatsApp com serviço e protocolo", () => {
-    const { repository } = renderClient("/cliente/processos/case-0001");
+  it("registra o contato de WhatsApp com serviço e protocolo", async () => {
+    const { repository } = await renderClient("/cliente/processos/case-0001");
     const link = screen.getByRole("link", { name: /falar sobre este processo no whatsapp/i });
 
     expect(link).toHaveAttribute("href", expect.stringContaining("RV-2026-0001"));
@@ -263,10 +276,10 @@ describe("ClientPortal", () => {
     expect(repository.getState().cases[0].timeline.at(-1)?.type).toBe("whatsapp-started");
   });
 
-  it("mantém um processo concluído somente para consulta", () => {
+  it("mantém um processo concluído somente para consulta", async () => {
     const repository = createIsolatedRepository();
     repository.updateCaseStatus("case-0001", "Concluído", DEMO_ADMIN_ID);
-    renderClient("/cliente/processos/case-0001", repository);
+    await renderClient("/cliente/processos/case-0001", repository);
 
     expect(
       screen.getByText(/processo concluído e disponível somente para consulta/i)
@@ -276,10 +289,10 @@ describe("ClientPortal", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("cria uma solicitação em quatro passos sem exigir todos os documentos", () => {
+  it("cria uma solicitação em quatro passos sem exigir todos os documentos", async () => {
     const repository = createIsolatedRepository();
     repository.setPendingServiceId("usucapiao");
-    renderClient("/cliente/nova-solicitacao", repository);
+    await renderClient("/cliente/nova-solicitacao", repository);
 
     expect(screen.getByText("Etapa 1 de 4")).toBeInTheDocument();
     expect(screen.getByLabelText("Serviço")).toHaveValue("usucapiao");
@@ -325,8 +338,8 @@ describe("ClientPortal", () => {
     ).toHaveLength(2);
   });
 
-  it("moves focus to the current step heading when returning to the first step", () => {
-    renderClient("/cliente/nova-solicitacao");
+  it("moves focus to the current step heading when returning to the first step", async () => {
+    await renderClient("/cliente/nova-solicitacao");
 
     fireEvent.change(screen.getByLabelText("Objetivo da solicitação"), {
       target: { value: "Regularizar a posse do imóvel." }
@@ -339,8 +352,8 @@ describe("ClientPortal", () => {
     expect(screen.getByRole("heading", { name: "Serviço e objetivo" })).toHaveFocus();
   });
 
-  it("atualiza telefone e endereço sem liberar e-mail e CPF", () => {
-    const { repository } = renderClient("/cliente/perfil");
+  it("atualiza telefone e endereço sem liberar e-mail e CPF", async () => {
+    const { repository } = await renderClient("/cliente/perfil");
 
     expect(screen.getByLabelText("E-mail")).toBeDisabled();
     expect(screen.getByLabelText("CPF")).toBeDisabled();
@@ -356,8 +369,8 @@ describe("ClientPortal", () => {
     );
   });
 
-  it("permite ler notificações e encerrar a sessão", () => {
-    const { repository } = renderClient();
+  it("permite ler notificações e encerrar a sessão", async () => {
+    const { repository } = await renderClient();
 
     fireEvent.click(screen.getByRole("button", { name: /notificações, 1 não lida/i }));
     expect(screen.getByText("Processo em análise técnica")).toBeInTheDocument();

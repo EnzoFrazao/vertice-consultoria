@@ -3,7 +3,7 @@ import type { AuthSession, User } from "@/domain/types";
 /** @deprecated Compatibilidade temporária até a migração dos consumidores. */
 export const DEMO_CREDENTIALS = [
   { email: "cliente@demo.com", password: "cliente123" },
-  { email: "admin@demo.com", password: "admin123" },
+  { email: "admin@demo.com", password: "admin123" }
 ] as const;
 
 /** @deprecated Compatibilidade temporária até a migração dos consumidores. */
@@ -11,12 +11,11 @@ export function authenticateDemoUser(
   email: string,
   password: string,
   users: ReadonlyArray<User>,
-  now: () => Date = () => new Date(),
+  now: () => Date = () => new Date()
 ): AuthSession | null {
   const normalizedEmail = email.trim().toLocaleLowerCase("pt-BR");
   const hasValidCredential = DEMO_CREDENTIALS.some(
-    (credential) =>
-      credential.email === normalizedEmail && credential.password === password,
+    (credential) => credential.email === normalizedEmail && credential.password === password
   );
 
   if (!hasValidCredential) {
@@ -24,8 +23,7 @@ export function authenticateDemoUser(
   }
 
   const user = users.find(
-    (candidate) =>
-      candidate.email.toLocaleLowerCase("pt-BR") === normalizedEmail,
+    (candidate) => candidate.email.toLocaleLowerCase("pt-BR") === normalizedEmail
   );
 
   if (!user) {
@@ -35,7 +33,7 @@ export function authenticateDemoUser(
   return {
     userId: user.id,
     role: user.role,
-    signedInAt: now().toISOString(),
+    signedInAt: now().toISOString()
   };
 }
 
@@ -71,18 +69,12 @@ export interface SignUpInput {
   password: string;
 }
 
-export type AuthEvent =
-  | "signed-in"
-  | "signed-out"
-  | "token-refreshed";
+export type AuthEvent = "signed-in" | "signed-out" | "token-refreshed";
 
 export interface AuthRepository {
   restoreSession(): Promise<AuthResult<AuthenticatedUser | null>>;
 
-  login(
-    email: string,
-    password: string,
-  ): Promise<AuthResult<AuthenticatedUser>>;
+  login(email: string, password: string): Promise<AuthResult<AuthenticatedUser>>;
 
   signUp(input: SignUpInput): Promise<AuthResult<void>>;
 
@@ -91,9 +83,7 @@ export interface AuthRepository {
   subscribe(listener: (event: AuthEvent) => void): () => void;
 }
 
-export function selectPrimaryRole(
-  roles: readonly string[],
-): UserRole | null {
+export function selectPrimaryRole(roles: readonly string[]): UserRole | null {
   if (roles.includes("admin")) {
     return "admin";
   }

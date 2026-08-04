@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { Link, MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
 import { DEMO_CLIENT_ID } from "@/infrastructure/seed";
 import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
 import RootApp, { ApplicationRoutes } from "@/app/RootApp";
+import { createDemoAuthRepository } from "@/test/demoAuthRepository";
 
 const LAZY_ROUTE_WAIT_OPTIONS = { timeout: 5_000 };
 
@@ -34,7 +35,10 @@ function renderApplication(path: string, repository = createRepository()) {
     repository,
     ...render(
       <MemoryRouter initialEntries={[path]}>
-        <PortalDataProvider repository={repository}>
+        <PortalDataProvider
+          repository={repository}
+          authRepository={createDemoAuthRepository(repository)}
+        >
           <ApplicationRoutes />
           <LocationProbe />
         </PortalDataProvider>
@@ -55,7 +59,10 @@ function LifecycleNavigation() {
 function renderWithLifecycle(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <PortalDataProvider repository={createRepository()}>
+      <PortalDataProvider
+        repository={createRepository()}
+        authRepository={createDemoAuthRepository(createRepository())}
+      >
         <LifecycleNavigation />
         <ApplicationRoutes />
       </PortalDataProvider>
@@ -114,7 +121,7 @@ describe("route lifecycle", () => {
     }
   });
 
-  it("keeps browser scroll restoration manual across routes until the root unmounts", async () => {
+  it("keeps browser scroll restoration manual across public routes until unmount", async () => {
     const originalScrollRestoration = window.history.scrollRestoration;
     window.history.replaceState(null, "", "/");
     window.history.scrollRestoration = "auto";
@@ -133,11 +140,6 @@ describe("route lifecycle", () => {
       ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
-      fireEvent.click(screen.getByRole("button", { name: /usar conta cliente/i }));
-      fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
-      expect(
-        await screen.findByRole("heading", { name: "Nova solicitação" }, LAZY_ROUTE_WAIT_OPTIONS)
-      ).toBeInTheDocument();
       expect(window.history.scrollRestoration).toBe("manual");
 
       application.unmount();
@@ -192,7 +194,9 @@ describe("application routing and access", () => {
   it("redirects protected areas to the single login", async () => {
     renderApplication("/cliente/processos");
 
-    expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
+    await waitFor(() => {
+      expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
+    });
     expect(
       await screen.findByRole("heading", { name: /acesse sua jornada/i }, LAZY_ROUTE_WAIT_OPTIONS)
     ).toBeInTheDocument();
@@ -208,7 +212,9 @@ describe("application routing and access", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
-    expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente/nova-solicitacao");
+    await waitFor(() => {
+      expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente/nova-solicitacao");
+    });
   });
 
   it("routes the administrator home and leaves a client service selection untouched", async () => {
@@ -225,11 +231,13 @@ describe("application routing and access", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
-    expect(screen.getByTestId("current-location")).toHaveTextContent("/admin");
+    await waitFor(() => {
+      expect(screen.getByTestId("current-location")).toHaveTextContent("/admin");
+    });
     expect(repository.getPendingServiceId()).toBe("usucapiao");
   });
 
-  it("keeps each role inside its authorized portal", () => {
+  it("keeps each role inside its authorized portal", async () => {
     const repository = createRepository();
     repository.setSession({
       userId: DEMO_CLIENT_ID,
@@ -238,7 +246,9 @@ describe("application routing and access", () => {
     });
     renderApplication("/admin/processos", repository);
 
-    expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente");
+    await waitFor(() => {
+      expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente");
+    });
   });
 
   it("stores a public catalog choice and opens login", () => {

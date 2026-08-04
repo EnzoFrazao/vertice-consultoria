@@ -36,11 +36,13 @@
 ### Task 1: Semântica de cadastro no contrato e no Supabase
 
 **Files:**
+
 - Modify: `frontend/src/features/auth/auth.ts`
 - Modify: `frontend/src/infrastructure/supabase/SupabaseAuthRepository.ts`
 - Modify: `frontend/src/infrastructure/supabase/SupabaseAuthRepository.test.ts`
 
 **Interfaces:**
+
 - Consumes: `SupabaseClient.auth.signUp(credentials)` e `hydrateAuthenticatedUser(session)`.
 - Produces: `AuthRepository.signUp(input: SignUpInput): Promise<AuthResult<AuthenticatedUser | null>>` e `AuthErrorCode` com `weak_password`.
 
@@ -52,13 +54,15 @@ Adicionar fábricas de cliente que exponham `signUp` e, no caso autenticado, as 
 expect(client.auth.signUp).toHaveBeenCalledWith({
   email: "cliente@example.com",
   password: "senha-segura",
-  options: { data: { name: "Cliente Teste" } },
+  options: { data: { name: "Cliente Teste" } }
 });
-expect(await repository.signUp({
-  name: "  Cliente Teste  ",
-  email: "  CLIENTE@EXAMPLE.COM  ",
-  password: "senha-segura",
-})).toEqual({ ok: true, data: null });
+expect(
+  await repository.signUp({
+    name: "  Cliente Teste  ",
+    email: "  CLIENTE@EXAMPLE.COM  ",
+    password: "senha-segura"
+  })
+).toEqual({ ok: true, data: null });
 ```
 
 Para `signUp` com `data.session: SESSION`, esperar `ok: true` e o mesmo `AuthenticatedUser` já validado por `restoreSession`. Para `{ code: "weak_password" }`, esperar `{ ok: false, error: "weak_password" }`.
@@ -94,11 +98,11 @@ No adaptador, capturar `data.session` e retornar:
 ```ts
 const {
   data: { session },
-  error,
+  error
 } = await this.client.auth.signUp({
   email: input.email.trim().toLowerCase(),
   password: input.password,
-  options: { data: { name: input.name.trim() } },
+  options: { data: { name: input.name.trim() } }
 });
 
 if (error) return failure(mapAuthError(error));
@@ -124,10 +128,12 @@ rtk git commit -m "feat(auth): representar sessão criada no cadastro"
 ### Task 2: Atualização reativa da autenticação após cadastro
 
 **Files:**
+
 - Modify: `frontend/src/features/portal-data/PortalDataProvider.tsx`
 - Modify: `frontend/src/features/portal-data/PortalDataProvider.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AuthRepository.signUp(input): Promise<AuthResult<AuthenticatedUser | null>>` da Task 1.
 - Produces: `PortalDataContextValue.signUp` com a mesma assinatura e atualização imediata de `session`, `currentUser` e `authStatus` quando `result.data` existir.
 
@@ -139,7 +145,7 @@ Criar um `AuthRepository` falso explícito, injetá-lo no provider e adicionar a
 void app.signUp({
   name: "Nova Cliente",
   email: "nova@example.com",
-  password: "senha-segura",
+  password: "senha-segura"
 });
 ```
 
@@ -167,7 +173,7 @@ const signUp = useCallback(
     setAuthStatus("authenticated");
     return result;
   },
-  [authRepository],
+  [authRepository]
 );
 ```
 
@@ -188,10 +194,12 @@ rtk git commit -m "feat(auth): refletir sessão após cadastro"
 ### Task 3: Página de cadastro acessível e validada
 
 **Files:**
+
 - Create: `frontend/src/pages/register/RegisterPage.tsx`
 - Create: `frontend/src/pages/register/RegisterPage.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `onSignUp(input: SignUpInput): Promise<AuthResult<AuthenticatedUser | null>>` e `pendingServiceName?: string`.
 - Produces: `RegisterPage`, mensagem de confirmação sem sessão e formulário acessível.
 
@@ -215,7 +223,7 @@ Com dados válidos, esperar a chamada normalizada:
 expect(onSignUp).toHaveBeenCalledWith({
   name: "Cliente Teste",
   email: "cliente@example.com",
-  password: "senha-segura",
+  password: "senha-segura"
 });
 ```
 
@@ -249,12 +257,14 @@ rtk git commit -m "feat(auth): criar página de cadastro de clientes"
 ### Task 4: Rota de cadastro, redirecionamento e login sem preenchimento demo
 
 **Files:**
+
 - Modify: `frontend/src/app/RootApp.tsx`
 - Modify: `frontend/src/app/RootApp.test.tsx`
 - Modify: `frontend/src/pages/login/LoginPage.tsx`
 - Modify: `frontend/src/pages/login/LoginPage.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `RegisterPage` e `usePortalData().signUp` das Tasks 2 e 3.
 - Produces: rota pública `/cadastro`, navegação pós-cadastro e link de cadastro no login.
 
@@ -310,10 +320,7 @@ Adicionar import dinâmico para `RegisterPage`. `RegisterRoute` usa `session`, `
 const result = await signUp(input);
 if (!result.ok || !result.data) return result;
 
-navigate(
-  pendingServiceId ? "/cliente/nova-solicitacao" : "/cliente",
-  { replace: true },
-);
+navigate(pendingServiceId ? "/cliente/nova-solicitacao" : "/cliente", { replace: true });
 return result;
 ```
 
@@ -335,12 +342,14 @@ rtk git commit -m "feat(auth): integrar cadastro ao fluxo público"
 ### Task 5: Garantia do chunk lazy e documentação
 
 **Files:**
+
 - Modify: `frontend/vite.config.ts`
 - Modify: `frontend/scripts/bundle-checker.mjs`
 - Modify: `frontend/scripts/bundle-checker.node-test.mjs`
 - Modify: `README.md`
 
 **Interfaces:**
+
 - Consumes: entry `src/pages/register/RegisterPage.tsx` criada na Task 3.
 - Produces: chunk `register` lazy e documentação da rota `/cadastro`.
 
@@ -354,7 +363,7 @@ assert.deepEqual(result.areaFiles, {
   login: "assets/login-fixture.js",
   register: "assets/register-fixture.js",
   client: "assets/client-fixture.js",
-  admin: "assets/admin-fixture.js",
+  admin: "assets/admin-fixture.js"
 });
 ```
 
@@ -394,10 +403,12 @@ rtk git commit -m "chore(auth): validar bundle do cadastro"
 ### Task 6: Revisão final contra a especificação
 
 **Files:**
+
 - Review: `docs/superpowers/specs/2026-08-04-cadastro-clientes-design.md`
 - Review: todos os arquivos alterados nas Tasks 1–5.
 
 **Interfaces:**
+
 - Consumes: entregas testadas das Tasks 1–5.
 - Produces: evidência final de requisitos, testes e build.
 

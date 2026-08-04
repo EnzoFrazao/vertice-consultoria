@@ -1,8 +1,4 @@
-import type {
-  AuthChangeEvent,
-  Session,
-  SupabaseClient,
-} from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session, SupabaseClient } from "@supabase/supabase-js";
 
 import type {
   AuthenticatedUser,
@@ -10,7 +6,7 @@ import type {
   AuthEvent,
   AuthRepository,
   AuthResult,
-  SignUpInput,
+  SignUpInput
 } from "@/features/auth/auth";
 
 import { selectPrimaryRole } from "@/features/auth/auth";
@@ -38,14 +34,14 @@ interface RoleRow {
 function success<T>(data: T): AuthResult<T> {
   return {
     ok: true,
-    data,
+    data
   };
 }
 
 function failure<T>(error: AuthErrorCode): AuthResult<T> {
   return {
     ok: false,
-    error,
+    error
   };
 }
 
@@ -58,10 +54,7 @@ function mapAuthError(error: unknown): AuthErrorCode {
     return "unexpected_error";
   }
 
-  const code =
-    "code" in error && typeof error.code === "string"
-      ? error.code
-      : null;
+  const code = "code" in error && typeof error.code === "string" ? error.code : null;
 
   switch (code) {
     case "invalid_credentials":
@@ -93,10 +86,7 @@ function extractRoleCodes(rows: RoleRow[]): string[] {
   });
 }
 
-function createDomainUser(
-  profile: ProfileRow,
-  roles: string[],
-): User | null {
+function createDomainUser(profile: ProfileRow, roles: string[]): User | null {
   const primaryRole = selectPrimaryRole(roles);
 
   if (!primaryRole) {
@@ -111,27 +101,22 @@ function createDomainUser(
     cpf: "",
     phone: profile.phone ?? "",
     address: "",
-    createdAt: profile.created_at,
+    createdAt: profile.created_at
   };
 }
 
-function createAuthenticatedUser(
-  authSession: Session,
-  user: User,
-): AuthenticatedUser {
+function createAuthenticatedUser(authSession: Session, user: User): AuthenticatedUser {
   return {
     session: {
       userId: authSession.user.id,
       role: user.role,
-      signedInAt: new Date().toISOString(),
+      signedInAt: new Date().toISOString()
     },
-    user,
+    user
   };
 }
 
-function translateAuthEvent(
-  event: AuthChangeEvent,
-): AuthEvent | null {
+function translateAuthEvent(event: AuthChangeEvent): AuthEvent | null {
   switch (event) {
     case "SIGNED_IN":
       return "signed-in";
@@ -150,13 +135,11 @@ function translateAuthEvent(
 export class SupabaseAuthRepository implements AuthRepository {
   constructor(private readonly client: SupabaseClient) {}
 
-  async restoreSession(): Promise<
-    AuthResult<AuthenticatedUser | null>
-  > {
+  async restoreSession(): Promise<AuthResult<AuthenticatedUser | null>> {
     try {
       const {
         data: { session },
-        error,
+        error
       } = await this.client.auth.getSession();
 
       if (error) {
@@ -173,17 +156,14 @@ export class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  async login(
-    email: string,
-    password: string,
-  ): Promise<AuthResult<AuthenticatedUser>> {
+  async login(email: string, password: string): Promise<AuthResult<AuthenticatedUser>> {
     try {
       const {
         data: { session },
-        error,
+        error
       } = await this.client.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
-        password,
+        password
       });
 
       if (error) {
@@ -200,18 +180,16 @@ export class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  async signUp(
-    input: SignUpInput,
-  ): Promise<AuthResult<void>> {
+  async signUp(input: SignUpInput): Promise<AuthResult<void>> {
     try {
       const { error } = await this.client.auth.signUp({
         email: input.email.trim().toLowerCase(),
         password: input.password,
         options: {
           data: {
-            name: input.name.trim(),
-          },
-        },
+            name: input.name.trim()
+          }
+        }
       });
 
       if (error) {
@@ -227,7 +205,7 @@ export class SupabaseAuthRepository implements AuthRepository {
   async logout(): Promise<AuthResult<void>> {
     try {
       const { error } = await this.client.auth.signOut({
-        scope: "local",
+        scope: "local"
       });
 
       if (error) {
@@ -240,11 +218,9 @@ export class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  subscribe(
-    listener: (event: AuthEvent) => void,
-  ): () => void {
+  subscribe(listener: (event: AuthEvent) => void): () => void {
     const {
-      data: { subscription },
+      data: { subscription }
     } = this.client.auth.onAuthStateChange((event) => {
       const translatedEvent = translateAuthEvent(event);
 
@@ -258,9 +234,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     };
   }
 
-  private async hydrateAuthenticatedUser(
-    session: Session,
-  ): Promise<AuthResult<AuthenticatedUser>> {
+  private async hydrateAuthenticatedUser(session: Session): Promise<AuthResult<AuthenticatedUser>> {
     const userId = session.user.id;
 
     const [profileResult, rolesResult] = await Promise.all([
@@ -270,17 +244,10 @@ export class SupabaseAuthRepository implements AuthRepository {
         .eq("id", userId)
         .single(),
 
-      this.client
-        .from("user_roles")
-        .select("roles(code)")
-        .eq("user_id", userId),
+      this.client.from("user_roles").select("roles(code)").eq("user_id", userId)
     ]);
 
-    if (
-      profileResult.error ||
-      rolesResult.error ||
-      !profileResult.data
-    ) {
+    if (profileResult.error || rolesResult.error || !profileResult.data) {
       return failure("profile_unavailable");
     }
 
@@ -294,14 +261,10 @@ export class SupabaseAuthRepository implements AuthRepository {
       return failure("profile_unavailable");
     }
 
-    return success(
-      createAuthenticatedUser(session, user),
-    );
+    return success(createAuthenticatedUser(session, user));
   }
 }
 
-export function createSupabaseAuthRepository(
-  client: SupabaseClient,
-): AuthRepository {
+export function createSupabaseAuthRepository(client: SupabaseClient): AuthRepository {
   return new SupabaseAuthRepository(client);
 }

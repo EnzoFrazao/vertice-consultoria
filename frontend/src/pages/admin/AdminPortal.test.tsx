@@ -6,9 +6,10 @@ import {
   createDemoRepository,
   type DemoRepository,
   type StorageLike
-} from "@/infrastructure/demo/repository";
-import { DEMO_ADMIN_ID } from "@/infrastructure/demo/seed";
+} from "@/infrastructure/repository";
+import { DEMO_ADMIN_ID } from "@/infrastructure/seed";
 import { AdminPortal } from "@/pages/admin/AdminPortal";
+import { createDemoAuthRepository } from "@/test/demoAuthRepository";
 
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
@@ -33,10 +34,13 @@ function createAdminRepository() {
   return repository;
 }
 
-function renderAdmin(path = "/admin", repository: DemoRepository = createAdminRepository()) {
+async function renderAdmin(path = "/admin", repository: DemoRepository = createAdminRepository()) {
   render(
     <MemoryRouter initialEntries={[path]}>
-      <PortalDataProvider repository={repository}>
+      <PortalDataProvider
+        repository={repository}
+        authRepository={createDemoAuthRepository(repository)}
+      >
         <Routes>
           <Route path="/admin/*" element={<AdminPortal />} />
           <Route path="/login" element={<h1>Login da demonstração</h1>} />
@@ -44,12 +48,16 @@ function renderAdmin(path = "/admin", repository: DemoRepository = createAdminRe
       </PortalDataProvider>
     </MemoryRouter>
   );
+  await waitFor(() => {
+    expect(screen.queryByText("Carregando sessão…")).not.toBeInTheDocument();
+  });
+
   return repository;
 }
 
 describe("AdminPortal", () => {
   it("organiza a Mesa de Operações em pauta, fólio ativo e despacho contextual", async () => {
-    renderAdmin();
+    await renderAdmin();
 
     expect(
       screen.getByRole("heading", { name: "Mesa de Operações", level: 1 })
@@ -82,8 +90,8 @@ describe("AdminPortal", () => {
     expect(screen.getByRole("heading", { name: "Login da demonstração" })).toBeInTheDocument();
   });
 
-  it("busca e filtra processos por status, serviço e cliente", () => {
-    renderAdmin("/admin/processos");
+  it("busca e filtra processos por status, serviço e cliente", async () => {
+    await renderAdmin("/admin/processos");
 
     expect(screen.getByRole("heading", { name: "Processos", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /RV-2026-0001/i })).toBeInTheDocument();
@@ -119,9 +127,9 @@ describe("AdminPortal", () => {
     expect(screen.queryByRole("link", { name: /RV-2026-0003/i })).not.toBeInTheDocument();
   });
 
-  it("atualiza o status, confirma a conclusão e torna o processo concluído somente leitura", () => {
+  it("atualiza o status, confirma a conclusão e torna o processo concluído somente leitura", async () => {
     const repository = createAdminRepository();
-    renderAdmin("/admin/processos/case-0002", repository);
+    await renderAdmin("/admin/processos/case-0002", repository);
 
     expect(screen.getByRole("heading", { name: "RV-2026-0002", level: 1 })).toBeInTheDocument();
     expect(screen.getByText("Análise de Valor de Mercado")).toBeInTheDocument();
@@ -189,7 +197,7 @@ describe("AdminPortal", () => {
 
     try {
       const repository = createAdminRepository();
-      renderAdmin("/admin/processos/case-0002", repository);
+      await renderAdmin("/admin/processos/case-0002", repository);
       fireEvent.change(screen.getByLabelText("Novo status do processo"), {
         target: { value: "Prefeitura/cartório" }
       });
@@ -217,9 +225,9 @@ describe("AdminPortal", () => {
     }
   });
 
-  it("registra o contato por WhatsApp com serviço e protocolo", () => {
+  it("registra o contato por WhatsApp com serviço e protocolo", async () => {
     const repository = createAdminRepository();
-    renderAdmin("/admin/processos/case-0003", repository);
+    await renderAdmin("/admin/processos/case-0003", repository);
     const before = repository.getState().cases.find((item) => item.id === "case-0003")!.timeline
       .length;
 
@@ -233,9 +241,9 @@ describe("AdminPortal", () => {
     expect(item.timeline[item.timeline.length - 1]?.type).toBe("whatsapp-started");
   });
 
-  it("inicia a análise, aprova documentos e exige motivo próximo ao campo de rejeição", () => {
+  it("inicia a análise, aprova documentos e exige motivo próximo ao campo de rejeição", async () => {
     const repository = createAdminRepository();
-    renderAdmin("/admin/documentos", repository);
+    await renderAdmin("/admin/documentos", repository);
 
     expect(screen.getByRole("heading", { name: "Documentos", level: 1 })).toBeInTheDocument();
     expect(
@@ -306,7 +314,7 @@ describe("AdminPortal", () => {
   });
 
   it("abre o diálogo de rejeição a partir do despacho contextual por hash", async () => {
-    renderAdmin("/admin/documentos#documento-case-0003-doc-rg-cpf");
+    await renderAdmin("/admin/documentos#documento-case-0003-doc-rg-cpf");
 
     const dialog = await screen.findByRole("dialog", { name: "Registrar ajuste necessário" });
     const reason = within(dialog).getByLabelText(
@@ -315,8 +323,8 @@ describe("AdminPortal", () => {
     await waitFor(() => expect(reason).toHaveFocus());
   });
 
-  it("mantém o diretório de clientes somente leitura e integra o filtro de processos", () => {
-    renderAdmin("/admin/clientes");
+  it("mantém o diretório de clientes somente leitura e integra o filtro de processos", async () => {
+    await renderAdmin("/admin/clientes");
 
     expect(screen.getByRole("heading", { name: "Clientes", level: 1 })).toBeInTheDocument();
     expect(screen.getByText("Marina Oliveira")).toBeInTheDocument();
@@ -330,9 +338,9 @@ describe("AdminPortal", () => {
     );
   });
 
-  it("permite marcar as notificações administrativas como lidas", () => {
+  it("permite marcar as notificações administrativas como lidas", async () => {
     const repository = createAdminRepository();
-    renderAdmin("/admin", repository);
+    await renderAdmin("/admin", repository);
 
     fireEvent.click(screen.getByRole("button", { name: "Notificações, 1 não lida" }));
     fireEvent.click(screen.getByRole("button", { name: "Marcar todas como lidas" }));

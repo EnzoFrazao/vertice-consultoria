@@ -20,14 +20,14 @@ function createClient({
     name: "Cliente Teste",
     email: "cliente@example.com",
     phone: "91999999999",
-    created_at: "2026-07-01T10:00:00.000Z",
+    created_at: "2026-07-01T10:00:00.000Z"
   },
-  roles = ["client"],
+  roles = ["client"]
 }: ClientOptions = {}): SupabaseClient {
   const profileResult = { data: profile, error: null };
   const rolesResult = {
     data: roles.map((code) => ({ roles: { code } })),
-    error: null,
+    error: null
   };
 
   const client = {
@@ -36,10 +36,10 @@ function createClient({
         eq: vi.fn(() =>
           table === "profiles"
             ? { maybeSingle: vi.fn().mockResolvedValue(profileResult) }
-            : Promise.resolve(rolesResult),
-        ),
-      })),
-    })),
+            : Promise.resolve(rolesResult)
+        )
+      }))
+    }))
   };
 
   return client as unknown as SupabaseClient;
@@ -47,9 +47,7 @@ function createClient({
 
 describe("SupabasePortalRepository", () => {
   it("carrega o usuário com papel administrativo prioritário", async () => {
-    const repository = new SupabasePortalRepository(
-      createClient({ roles: ["client", "admin"] }),
-    );
+    const repository = new SupabasePortalRepository(createClient({ roles: ["client", "admin"] }));
 
     await expect(repository.getCurrentUser("user-1")).resolves.toEqual({
       id: "user-1",
@@ -59,22 +57,18 @@ describe("SupabasePortalRepository", () => {
       cpf: "",
       phone: "91999999999",
       address: "",
-      createdAt: "2026-07-01T10:00:00.000Z",
+      createdAt: "2026-07-01T10:00:00.000Z"
     });
   });
 
   it("retorna null quando o perfil não existe", async () => {
-    const repository = new SupabasePortalRepository(
-      createClient({ profile: null }),
-    );
+    const repository = new SupabasePortalRepository(createClient({ profile: null }));
 
     await expect(repository.getCurrentUser("user-1")).resolves.toBeNull();
   });
 
   it("retorna null quando o usuário não possui papel válido", async () => {
-    const repository = new SupabasePortalRepository(
-      createClient({ roles: [] }),
-    );
+    const repository = new SupabasePortalRepository(createClient({ roles: [] }));
 
     await expect(repository.getCurrentUser("user-1")).resolves.toBeNull();
   });

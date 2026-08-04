@@ -6,14 +6,14 @@ import {
   DEMO_CLIENT_ID,
   DEMO_STATE_VERSION,
   createDemoSeed
-} from "@/infrastructure/demo/seed";
+} from "@/infrastructure/seed";
 import {
   DEMO_SESSION_STORAGE_KEY,
   DEMO_STATE_STORAGE_KEY,
   createDemoRepository,
   type StorageLike
-} from "@/infrastructure/demo/repository";
-import { isAuthSession, isDemoState } from "@/infrastructure/demo/validation";
+} from "@/infrastructure/repository";
+import { isAuthSession, isDemoState } from "@/infrastructure/validation";
 
 function cloneSeed(): DemoState {
   return JSON.parse(JSON.stringify(createDemoSeed())) as DemoState;

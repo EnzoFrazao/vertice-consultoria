@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
 import { PortalDataProvider, usePortalData } from "@/features/portal-data/PortalDataProvider";
+import { createDemoAuthRepository } from "@/test/demoAuthRepository";
 
 function createStorage(): StorageLike {
   const values = new Map<string, string>();
@@ -49,14 +50,17 @@ function Probe() {
 }
 
 describe("PortalDataProvider", () => {
-  it("keeps authentication and pending service reactive around one repository", () => {
+  it("keeps authentication and pending service reactive around one repository", async () => {
     const repository = createDemoRepository({
       localStorage: createStorage(),
       sessionStorage: createStorage()
     });
 
     render(
-      <PortalDataProvider repository={repository}>
+      <PortalDataProvider
+        repository={repository}
+        authRepository={createDemoAuthRepository(repository)}
+      >
         <Probe />
       </PortalDataProvider>
     );
@@ -67,7 +71,9 @@ describe("PortalDataProvider", () => {
     expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
 
     fireEvent.click(screen.getByRole("button", { name: "Login cliente" }));
-    expect(screen.getByTestId("session-role")).toHaveTextContent("client");
+    await waitFor(() => {
+      expect(screen.getByTestId("session-role")).toHaveTextContent("client");
+    });
     expect(screen.getByTestId("user-name")).toHaveTextContent("Marina Oliveira");
 
     fireEvent.click(screen.getByRole("button", { name: "Selecionar escritura" }));
@@ -77,6 +83,8 @@ describe("PortalDataProvider", () => {
     expect(screen.getByTestId("user-phone")).toHaveTextContent("(85) 98888-0000");
 
     fireEvent.click(screen.getByRole("button", { name: "Sair" }));
-    expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
+    await waitFor(() => {
+      expect(screen.getByTestId("session-role")).toHaveTextContent("sem sessão");
+    });
   });
 });
