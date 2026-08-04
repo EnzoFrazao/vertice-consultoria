@@ -25,7 +25,7 @@ function createRepository(): AuthRepository {
   return {
     restoreSession: vi.fn().mockResolvedValue({ ok: true, data: null }),
     login: vi.fn().mockResolvedValue({ ok: true, data: AUTHENTICATED_USER }),
-    signUp: vi.fn().mockResolvedValue({ ok: true, data: undefined }),
+    signUp: vi.fn().mockResolvedValue({ ok: true, data: null }),
     logout: vi.fn().mockResolvedValue({ ok: true, data: undefined }),
     subscribe: vi.fn(() => () => {})
   };

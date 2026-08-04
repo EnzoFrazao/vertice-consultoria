@@ -33,6 +33,8 @@ function getLoginErrorMessage(error: AuthErrorCode): string {
       return "O acesso está temporariamente indisponível.";
     case "email_already_registered":
       return "Este e-mail já está cadastrado.";
+    case "weak_password":
+      return "A senha informada não atende aos requisitos de segurança.";
     case "unexpected_error":
       return "Não foi possível entrar. Tente novamente.";
   }

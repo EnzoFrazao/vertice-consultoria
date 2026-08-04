@@ -43,6 +43,7 @@ export type AuthErrorCode =
   | "invalid_credentials"
   | "email_not_confirmed"
   | "email_already_registered"
+  | "weak_password"
   | "network_error"
   | "profile_unavailable"
   | "configuration_error"
@@ -76,7 +77,7 @@ export interface AuthRepository {
 
   login(email: string, password: string): Promise<AuthResult<AuthenticatedUser>>;
 
-  signUp(input: SignUpInput): Promise<AuthResult<void>>;
+  signUp(input: SignUpInput): Promise<AuthResult<AuthenticatedUser | null>>;
 
   logout(): Promise<AuthResult<void>>;
 

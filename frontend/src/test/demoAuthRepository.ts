@@ -25,7 +25,7 @@ export function createDemoAuthRepository(repository: DemoRepository): AuthReposi
       return data ? { ok: true, data } : { ok: false, error: "profile_unavailable" };
     },
 
-    async signUp(): Promise<AuthResult<void>> {
+    async signUp(): Promise<AuthResult<AuthenticatedUser | null>> {
       return { ok: false, error: "unexpected_error" };
     },
 

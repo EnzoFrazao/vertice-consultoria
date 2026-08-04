@@ -67,6 +67,9 @@ function mapAuthError(error: unknown): AuthErrorCode {
     case "email_exists":
       return "email_already_registered";
 
+    case "weak_password":
+      return "weak_password";
+
     default:
       return "unexpected_error";
   }
@@ -180,9 +183,12 @@ export class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  async signUp(input: SignUpInput): Promise<AuthResult<void>> {
+  async signUp(input: SignUpInput): Promise<AuthResult<AuthenticatedUser | null>> {
     try {
-      const { error } = await this.client.auth.signUp({
+      const {
+        data: { session },
+        error
+      } = await this.client.auth.signUp({
         email: input.email.trim().toLowerCase(),
         password: input.password,
         options: {
@@ -196,7 +202,11 @@ export class SupabaseAuthRepository implements AuthRepository {
         return failure(mapAuthError(error));
       }
 
-      return success(undefined);
+      if (!session) {
+        return success(null);
+      }
+
+      return this.hydrateAuthenticatedUser(session);
     } catch (error) {
       return failure(mapAuthError(error));
     }
