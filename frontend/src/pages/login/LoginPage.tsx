@@ -40,21 +40,6 @@ function getLoginErrorMessage(error: AuthErrorCode): string {
   }
 }
 
-const demoAccounts = [
-  {
-    role: "Cliente",
-    email: "cliente@demo.com",
-    password: "cliente123",
-    description: "Acompanhe processos, documentos e pendências."
-  },
-  {
-    role: "Administrador",
-    email: "admin@demo.com",
-    password: "admin123",
-    description: "Analise solicitações e organize a fila de trabalho."
-  }
-] as const;
-
 export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -86,13 +71,6 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const fillDemoAccount = (account: (typeof demoAccounts)[number]) => {
-    setEmail(account.email);
-    setPassword(account.password);
-    setError("");
-    setNotice(`Conta ${account.role.toLocaleLowerCase("pt-BR")} preenchida.`);
   };
 
   const resetDemo = () => {
@@ -169,8 +147,8 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
               Acesse sua jornada
             </h1>
             <p className="mt-4 max-w-xl leading-7 text-cacao/[0.72]">
-              Entre com uma conta demonstrativa para conhecer a experiência do cliente ou a rotina
-              administrativa.
+              Entre com seu e-mail e senha para acompanhar solicitações, documentos e o andamento do
+              atendimento.
             </p>
           </div>
 
@@ -277,26 +255,15 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
             </button>
           </form>
 
-          <div className="mt-6">
-            <p className="text-sm font-semibold text-espresso">Preencher uma conta demo</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.role}
-                  type="button"
-                  onClick={() => fillDemoAccount(account)}
-                  aria-label={`Usar conta ${account.role}`}
-                  className="min-h-28 cursor-pointer rounded-xl border border-cacao/25 bg-white p-4 text-left outline-none transition-colors duration-200 hover:border-bronze/60 hover:bg-champagne/[0.35] focus-visible:ring-2 focus-visible:ring-bronze"
-                >
-                  <span className="block text-sm font-semibold text-espresso">{account.role}</span>
-                  <span className="mt-1 block text-sm text-tealTech">{account.email}</span>
-                  <span className="mt-2 block text-xs leading-5 text-cacao/75">
-                    {account.description}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="mt-5 text-center text-sm text-cacao/75">
+            Ainda não tem uma conta?{" "}
+            <Link
+              to="/cadastro"
+              className="font-semibold text-tealTech outline-none hover:text-espresso focus-visible:ring-2 focus-visible:ring-bronze"
+            >
+              Criar conta
+            </Link>
+          </p>
 
           <button
             type="button"

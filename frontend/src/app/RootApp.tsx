@@ -8,6 +8,9 @@ import { LazyRouteErrorBoundary } from "@/app/LazyRouteErrorBoundary";
 const LoginPage = lazy(() =>
   import("@/pages/login/LoginPage").then((module) => ({ default: module.LoginPage }))
 );
+const RegisterPage = lazy(() =>
+  import("@/pages/register/RegisterPage").then((module) => ({ default: module.RegisterPage }))
+);
 const ClientPortal = lazy(() =>
   import("@/pages/client/ClientPortal").then((module) => ({ default: module.ClientPortal }))
 );
@@ -147,6 +150,35 @@ function LoginRoute() {
   );
 }
 
+function RegisterRoute() {
+  const { authStatus, session, pendingServiceId, signUp } = usePortalData();
+  const navigate = useNavigate();
+  const clientDestination = pendingServiceId ? "/cliente/nova-solicitacao" : "/cliente";
+
+  if (authStatus === "loading") {
+    return <p role="status">Carregando sessão…</p>;
+  }
+
+  if (session) {
+    return <Navigate to={session.role === "admin" ? "/admin" : clientDestination} replace />;
+  }
+
+  return (
+    <RegisterPage
+      pendingServiceName={pendingServiceId ? getServiceById(pendingServiceId)?.name : undefined}
+      onSignUp={async (input) => {
+        const result = await signUp(input);
+
+        if (result.ok && result.data) {
+          navigate(clientDestination, { replace: true });
+        }
+
+        return result;
+      }}
+    />
+  );
+}
+
 export function ApplicationRoutes() {
   return (
     <>
@@ -159,6 +191,14 @@ export function ApplicationRoutes() {
           element={
             <LazyRoute>
               <LoginRoute />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/cadastro"
+          element={
+            <LazyRoute>
+              <RegisterRoute />
             </LazyRoute>
           }
         />

@@ -1,9 +1,4 @@
-import type {
-  AuthEvent,
-  AuthRepository,
-  AuthResult,
-  SignUpInput
-} from "@/features/auth/auth";
+import type { AuthEvent, AuthRepository, AuthResult, SignUpInput } from "@/features/auth/auth";
 
 export type AuthRepositoryLoader = () => Promise<AuthRepository>;
 

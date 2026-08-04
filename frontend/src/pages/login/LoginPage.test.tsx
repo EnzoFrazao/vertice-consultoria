@@ -1,4 +1,4 @@
-import { fireEvent, render as renderTestingLibrary, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render as renderTestingLibrary, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
@@ -10,33 +10,12 @@ const INVALID_LOGIN: AuthResult<AuthenticatedUser> = {
   error: "invalid_credentials"
 };
 
-const SUCCESSFUL_LOGIN: AuthResult<AuthenticatedUser> = {
-  ok: true,
-  data: {
-    session: {
-      userId: "user-1",
-      role: "client",
-      signedInAt: "2026-08-03T20:00:00.000Z"
-    },
-    user: {
-      id: "user-1",
-      role: "client",
-      name: "Cliente",
-      email: "cliente@example.com",
-      cpf: "",
-      phone: "",
-      address: "",
-      createdAt: "2026-08-03T20:00:00.000Z"
-    }
-  }
-};
-
 function render(ui: ReactElement) {
   return renderTestingLibrary(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
 describe("LoginPage", () => {
-  it("explains the demo accounts and preserves the selected service context", () => {
+  it("preserva o serviço e oferece cadastro sem atalhos de conta demo", () => {
     render(
       <LoginPage
         pendingServiceName="Escritura"
@@ -47,8 +26,9 @@ describe("LoginPage", () => {
 
     expect(screen.getByRole("heading", { name: /acesse sua jornada/i })).toBeInTheDocument();
     expect(screen.getByText(/escritura/i)).toBeInTheDocument();
-    expect(screen.getByText("cliente@demo.com")).toBeInTheDocument();
-    expect(screen.getByText("admin@demo.com")).toBeInTheDocument();
+    expect(screen.queryByText(/preencher uma conta demo/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /usar conta/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /criar conta/i })).toHaveAttribute("href", "/cadastro");
     expect(
       screen.getAllByRole("img", { name: "Vértice Consultoria" }).length
     ).toBeGreaterThanOrEqual(2);
@@ -95,20 +75,9 @@ describe("LoginPage", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("E-mail ou senha incorretos.");
   });
 
-  it("can fill either demo account and reset the shared demonstration", async () => {
-    const onLogin = vi.fn(() => Promise.resolve(SUCCESSFUL_LOGIN));
+  it("mantém a ação separada de reiniciar a demonstração", () => {
     const onResetDemo = vi.fn();
-    render(<LoginPage onLogin={onLogin} onResetDemo={onResetDemo} />);
-
-    fireEvent.click(screen.getByRole("button", { name: /usar conta cliente/i }));
-    expect(screen.getByLabelText(/e-mail/i)).toHaveValue("cliente@demo.com");
-    expect(screen.getByLabelText(/^senha$/i)).toHaveValue("cliente123");
-
-    fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
-    expect(onLogin).toHaveBeenCalledWith("cliente@demo.com", "cliente123");
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^entrar$/i })).toBeEnabled();
-    });
+    render(<LoginPage onLogin={() => Promise.resolve(INVALID_LOGIN)} onResetDemo={onResetDemo} />);
 
     fireEvent.click(screen.getByRole("button", { name: /reiniciar demonstração/i }));
     expect(onResetDemo).toHaveBeenCalledTimes(1);
@@ -119,8 +88,6 @@ describe("LoginPage", () => {
 
     expect(screen.getByLabelText(/e-mail/i)).toHaveClass("border-cacao/55");
     expect(screen.getByLabelText(/^senha$/i)).toHaveClass("border-cacao/55");
-    expect(screen.getByText("Acompanhe processos, documentos e pendências.")).toHaveClass(
-      "text-cacao/75"
-    );
+    expect(screen.getByText(/ainda não tem uma conta/i)).toHaveClass("text-cacao/75");
   });
 });

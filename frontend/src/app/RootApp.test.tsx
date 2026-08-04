@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { Link, MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
+import type { AuthRepository, AuthenticatedUser } from "@/features/auth/auth";
 import { createDemoRepository, type StorageLike } from "@/infrastructure/repository";
 import { DEMO_CLIENT_ID } from "@/infrastructure/seed";
 import { PortalDataProvider } from "@/features/portal-data/PortalDataProvider";
@@ -30,15 +31,16 @@ function LocationProbe() {
   return <output data-testid="current-location">{location.pathname}</output>;
 }
 
-function renderApplication(path: string, repository = createRepository()) {
+function renderApplication(
+  path: string,
+  repository = createRepository(),
+  authRepository: AuthRepository = createDemoAuthRepository(repository)
+) {
   return {
     repository,
     ...render(
       <MemoryRouter initialEntries={[path]}>
-        <PortalDataProvider
-          repository={repository}
-          authRepository={createDemoAuthRepository(repository)}
-        >
+        <PortalDataProvider repository={repository} authRepository={authRepository}>
           <ApplicationRoutes />
           <LocationProbe />
         </PortalDataProvider>
@@ -166,10 +168,17 @@ describe("application routing and access", () => {
     expect(screen.queryByRole("status", { name: /carregando área/i })).not.toBeInTheDocument();
 
     landing.unmount();
-    renderApplication("/login");
+    const login = renderApplication("/login");
 
     expect(
       await screen.findByRole("heading", { name: /acesse sua jornada/i }, LAZY_ROUTE_WAIT_OPTIONS)
+    ).toBeInTheDocument();
+
+    login.unmount();
+    renderApplication("/cadastro");
+
+    expect(
+      await screen.findByRole("heading", { name: /crie sua conta/i }, LAZY_ROUTE_WAIT_OPTIONS)
     ).toBeInTheDocument();
   });
 
@@ -207,9 +216,10 @@ describe("application routing and access", () => {
     repository.setPendingServiceId("escritura");
     renderApplication("/login", repository);
 
-    fireEvent.click(
-      await screen.findByRole("button", { name: /usar conta cliente/i }, LAZY_ROUTE_WAIT_OPTIONS)
-    );
+    fireEvent.change(await screen.findByLabelText(/e-mail/i, {}, LAZY_ROUTE_WAIT_OPTIONS), {
+      target: { value: "cliente@demo.com" }
+    });
+    fireEvent.change(screen.getByLabelText(/^senha$/i), { target: { value: "cliente123" } });
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     await waitFor(() => {
@@ -222,13 +232,10 @@ describe("application routing and access", () => {
     repository.setPendingServiceId("usucapiao");
     renderApplication("/login", repository);
 
-    fireEvent.click(
-      await screen.findByRole(
-        "button",
-        { name: /usar conta administrador/i },
-        LAZY_ROUTE_WAIT_OPTIONS
-      )
-    );
+    fireEvent.change(await screen.findByLabelText(/e-mail/i, {}, LAZY_ROUTE_WAIT_OPTIONS), {
+      target: { value: "admin@demo.com" }
+    });
+    fireEvent.change(screen.getByLabelText(/^senha$/i), { target: { value: "admin123" } });
     fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     await waitFor(() => {
@@ -260,5 +267,77 @@ describe("application routing and access", () => {
 
     expect(screen.getByTestId("current-location")).toHaveTextContent("/login");
     expect(repository.getPendingServiceId()).toBe("escritura");
+  });
+
+  it("entra no fluxo pendente quando o cadastro retorna uma sessão", async () => {
+    const repository = createRepository();
+    repository.setPendingServiceId("escritura");
+    const authenticatedUser: AuthenticatedUser = {
+      session: {
+        userId: "new-user",
+        role: "client",
+        signedInAt: "2026-08-04T12:00:00.000Z"
+      },
+      user: {
+        id: "new-user",
+        role: "client",
+        name: "Nova Cliente",
+        email: "nova@example.com",
+        cpf: "",
+        phone: "",
+        address: "",
+        createdAt: "2026-08-04T12:00:00.000Z"
+      }
+    };
+    const authRepository = {
+      ...createDemoAuthRepository(repository),
+      signUp: vi.fn().mockResolvedValue({ ok: true, data: authenticatedUser })
+    };
+    renderApplication("/cadastro", repository, authRepository);
+
+    fireEvent.change(await screen.findByLabelText(/^nome completo$/i), {
+      target: { value: "Nova Cliente" }
+    });
+    fireEvent.change(screen.getByLabelText(/^e-mail$/i), {
+      target: { value: "nova@example.com" }
+    });
+    fireEvent.change(screen.getByLabelText(/^senha$/i), {
+      target: { value: "senha-segura" }
+    });
+    fireEvent.change(screen.getByLabelText(/confirmar senha/i), {
+      target: { value: "senha-segura" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /criar conta/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("current-location")).toHaveTextContent("/cliente/nova-solicitacao");
+    });
+    expect(repository.getPendingServiceId()).toBe("escritura");
+  });
+
+  it("permanece no cadastro quando a conta exige confirmação de e-mail", async () => {
+    const repository = createRepository();
+    const authRepository = {
+      ...createDemoAuthRepository(repository),
+      signUp: vi.fn().mockResolvedValue({ ok: true, data: null })
+    };
+    renderApplication("/cadastro", repository, authRepository);
+
+    fireEvent.change(await screen.findByLabelText(/^nome completo$/i), {
+      target: { value: "Nova Cliente" }
+    });
+    fireEvent.change(screen.getByLabelText(/^e-mail$/i), {
+      target: { value: "nova@example.com" }
+    });
+    fireEvent.change(screen.getByLabelText(/^senha$/i), {
+      target: { value: "senha-segura" }
+    });
+    fireEvent.change(screen.getByLabelText(/confirmar senha/i), {
+      target: { value: "senha-segura" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /criar conta/i }));
+
+    expect(await screen.findByText(/verifique seu e-mail/i)).toBeInTheDocument();
+    expect(screen.getByTestId("current-location")).toHaveTextContent("/cadastro");
   });
 });
