@@ -73,12 +73,6 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
     }
   };
 
-  const resetDemo = () => {
-    onResetDemo();
-    setError("");
-    setNotice("Demonstração reiniciada com os dados originais.");
-  };
-
   return (
     <main className="min-h-screen bg-mist text-cacao lg:grid lg:grid-cols-[0.9fr_1.1fr]">
       <section className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#20130d_0%,#0d2926_100%)] p-12 text-ivory lg:flex lg:min-h-screen lg:flex-col lg:justify-between xl:p-16">
@@ -96,9 +90,6 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
           />
         </Link>
         <div className="relative z-10 max-w-xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-bronze">
-            Ambiente demonstrativo
-          </p>
           <h2 className="mt-5 font-display text-5xl font-semibold leading-[1.05] xl:text-6xl">
             Acompanhe cada decisão sem perder o contexto.
           </h2>
@@ -256,23 +247,15 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-sm text-cacao/75">Ainda não tem uma conta?</p>
-            <Link
-              to="/cadastro"
-              className="mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-full border border-espresso px-6 font-semibold text-espresso outline-none transition-colors hover:bg-espresso hover:text-ivory focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
-            >
-              Cadastre-se
-            </Link>
+            <p className="text-sm text-cacao/75">Ainda não tem uma conta? 
+              <Link
+                to="/cadastro"
+                className="mx-1 min-h-1 items-center justify-center font-semibold text-espresso outline-none transition-colors hover:text-cacao/75 focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
+              >
+                Cadastre-se
+              </Link>
+            </p>
           </div>
-
-          <button
-            type="button"
-            onClick={resetDemo}
-            className="mt-6 inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-cacao/[0.65] outline-none transition-colors hover:text-espresso focus-visible:ring-2 focus-visible:ring-bronze"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-            Reiniciar demonstração
-          </button>
         </div>
       </section>
     </main>
