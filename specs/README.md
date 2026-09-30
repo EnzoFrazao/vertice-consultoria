@@ -13,27 +13,27 @@ Vértice Consultoria: landing pública e portais (cliente e administrador) para 
 
 ## Autoridade
 
-| Documento | Autoridade |
-|---|---|
-| `capabilities/*.md` | Contrato e estado de entrega |
-| `system.md` | Arquitetura realmente implementada |
-| `testing.md` | Estratégia e mapa de evidências |
-| `open-decisions.md` | Questões que não podem ser inventadas |
-| `history.md` | Marcos; Git preserva o detalhe |
+| Documento                  | Autoridade                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `capabilities/*.md`        | Contrato e estado de entrega                                                   |
+| `system.md`                | Arquitetura realmente implementada                                             |
+| `testing.md`               | Estratégia e mapa de evidências                                                |
+| `open-decisions.md`        | Questões que não podem ser inventadas                                          |
+| `history.md`               | Marcos; Git preserva o detalhe                                                 |
 | `docs/superpowers/specs/*` | Designs datados que originaram as capabilities (contexto, não autoridade viva) |
 
 ## Roteamento por tarefa
 
-| Tema | Ler |
-|---|---|
-| Landing, catálogo de serviços, CTA | `capabilities/landing-catalogo.md` |
-| Login, sessão, papéis, Supabase Auth | `capabilities/acesso.md` |
-| Portal do cliente (Dossiê Vivo) | `capabilities/portal-cliente.md` |
-| Portal administrativo (Mesa de Operações) | `capabilities/portal-admin.md` |
+| Tema                                                      | Ler                                       |
+| --------------------------------------------------------- | ----------------------------------------- |
+| Landing, catálogo de serviços, CTA                        | `capabilities/landing-catalogo.md`        |
+| Login, sessão, papéis, Supabase Auth                      | `capabilities/acesso.md`                  |
+| Portal do cliente (Dossiê Vivo)                           | `capabilities/portal-cliente.md`          |
+| Portal administrativo (Mesa de Operações)                 | `capabilities/portal-admin.md`            |
 | Notificações, WhatsApp, lembretes, IA e demais automações | `capabilities/notificacoes-automacoes.md` |
-| Banco, RLS, storage | `capabilities/backend-supabase.md` |
-| Arquitetura, build, deploy | `system.md` |
-| Testes | `testing.md` |
+| Banco, RLS, storage                                       | `capabilities/backend-supabase.md`        |
+| Arquitetura, build, deploy                                | `system.md`                               |
+| Testes                                                    | `testing.md`                              |
 
 ## Manutenção
 

@@ -22,13 +22,13 @@ Avisar as pessoas certas quando algo muda em um processo e, no futuro, automatiz
 
 ### Confirmado (existe na demonstração e deve ser preservado)
 
-| Evento | Destinatário | Tipo |
-|---|---|---|
-| Solicitação criada | Todos os admins | `new-case` |
-| Documento enviado ou reenviado | Todos os admins | `document-submitted` |
-| Documento aprovado ou rejeitado | Cliente do processo | `document-approved` / `document-rejected` |
-| Status do processo alterado | Cliente do processo | `status-changed` |
-| Clique em WhatsApp | Histórico do processo | `whatsapp-started` |
+| Evento                          | Destinatário          | Tipo                                      |
+| ------------------------------- | --------------------- | ----------------------------------------- |
+| Solicitação criada              | Todos os admins       | `new-case`                                |
+| Documento enviado ou reenviado  | Todos os admins       | `document-submitted`                      |
+| Documento aprovado ou rejeitado | Cliente do processo   | `document-approved` / `document-rejected` |
+| Status do processo alterado     | Cliente do processo   | `status-changed`                          |
+| Clique em WhatsApp              | Histórico do processo | `whatsapp-started`                        |
 
 - Cada ação relevante gera também um evento no histórico do processo.
 - Notificação pode ser marcada como lida, individualmente ou em massa.
