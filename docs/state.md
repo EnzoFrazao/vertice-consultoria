@@ -6,6 +6,9 @@ Monorepo npm da Vértice Consultoria com frontend React + Vite + TypeScript + Ta
 
 ## Pendências
 
+- [ ] Resolver P-001 (Laravel x Supabase) e corrigir `README.md` e `docs/backend.md` (sem "Executar localmente").
+- [ ] Implementar Supabase Auth conforme `specs/capabilities/acesso.md`.
+- [ ] Decidir P-004/P-005 e executar as automações planejadas em `specs/capabilities/notificacoes-automacoes.md`.
 - [ ] Conectar o repositório ao Netlify, validar a prévia e testar refresh direto nas rotas protegidas no domínio publicado.
 - [ ] Trocar o WhatsApp placeholder (`5500000000000`) pelo número real.
 - [ ] Definir os destinos operacionais dos CTAs quando houver atendimento/backend reais.
@@ -24,8 +27,12 @@ Monorepo npm da Vértice Consultoria com frontend React + Vite + TypeScript + Ta
 - IA, banco, segredos e serviços externos pertencerão ao backend; `packages/contracts` só deve surgir com o primeiro endpoint real.
 - Login, cliente e administração usam chunks lazy separados; a landing permanece no carregamento inicial.
 
-## Última sessão (2026-07-18, Codex)
+## Última sessão (2026-09-30, Claude)
 
-- Movidas as configurações compartilhadas de ESLint e Prettier para `config/`, com caminhos explícitos nos scripts da raiz e no VS Code.
-- Ampliados os ignorados locais e confirmado que `frontend/dist` continua reproduzível, ignorado e contém o fallback SPA.
-- `npm run check` passou localmente; o Netlify continua pendente de vínculo/validação do ambiente publicado.
+- Criados `specs/` (índice, system, testing, open-decisions, history, 5 capabilities) e `AGENTS.md`; `validate_specs.py` passou. Gates do projeto não foram reexecutados (só documentação).
+- Descoberto: README cita `backend/` Laravel inexistente, e o design Supabase Auth (2026-07-29) não está implementado no frontend. Ver `specs/open-decisions.md` P-001.
+- Próxima ação: confirmar P-001 e corrigir README/`docs/backend.md`; depois implementar Supabase Auth.
+
+## Histórico
+
+- 2026-07-18 (Codex): configs de ESLint/Prettier movidas para `config/`; `npm run check` passou; Netlify pendente.
