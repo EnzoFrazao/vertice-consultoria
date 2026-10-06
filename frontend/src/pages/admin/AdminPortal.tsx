@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
+import { useRemoteNotifications } from "@/features/portal-data/useRemoteNotifications";
 import { AdminClientsPage } from "@/pages/admin/AdminClientsPage";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { AdminDocumentsPage } from "@/pages/admin/AdminDocumentsPage";
@@ -25,6 +26,8 @@ export function AdminPortal() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const remote = useRemoteNotifications(currentUser?.id);
+
   if (authStatus === "loading") {
     return <p role="status">Carregando sessão…</p>;
   }
@@ -32,8 +35,11 @@ export function AdminPortal() {
   if (!currentUser) return <Navigate to="/login" replace />;
   if (currentUser.role !== "admin") return <Navigate to="/cliente" replace />;
 
-  const notifications: PortalNotification[] = state.notifications
-    .filter((notification) => notification.userId === currentUser.id)
+  const remoteIds = new Set(remote.notifications.map((notification) => notification.id));
+  const notifications: PortalNotification[] = [
+    ...state.notifications.filter((notification) => notification.userId === currentUser.id),
+    ...remote.notifications
+  ]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .map((notification) => ({
       id: notification.id,
@@ -55,8 +61,17 @@ export function AdminPortal() {
         logout();
         navigate("/login", { replace: true });
       }}
-      onMarkNotification={(notificationId) => markNotificationRead(notificationId, currentUser.id)}
-      onMarkAllNotifications={() => markAllNotificationsRead(currentUser.id)}
+      onMarkNotification={(notificationId) => {
+        if (remoteIds.has(notificationId)) {
+          remote.markRead(notificationId);
+          return;
+        }
+        markNotificationRead(notificationId, currentUser.id);
+      }}
+      onMarkAllNotifications={() => {
+        remote.markAllRead();
+        markAllNotificationsRead(currentUser.id);
+      }}
     >
       <Routes>
         <Route index element={<AdminDashboard />} />

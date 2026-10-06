@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Case, CaseDocument, Notification, User } from "@/domain/types";
+import type { Case, CaseDocument, Notification, NotificationType, User } from "@/domain/types";
 import type { PortalRepository } from "@/features/portal-data/PortalRepository";
 import { selectPrimaryRole } from "@/features/auth/auth";
 
@@ -28,6 +28,44 @@ function extractRoleCodes(rows: RoleRow[]): string[] {
 
     return [row.roles.code];
   });
+}
+
+interface NotificationRow {
+  id: string;
+  user_id: string;
+  case_id: string | null;
+  case_document_id: string | null;
+  type: string;
+  title: string;
+  message: string;
+  data: Record<string, unknown> | null;
+  created_at: string;
+  read_at: string | null;
+}
+
+function mapNotificationType(row: NotificationRow): NotificationType {
+  switch (row.type) {
+    case "document_submitted":
+      return "document-submitted";
+    case "document_reviewed":
+      return row.data?.decision === "approved" ? "document-approved" : "document-rejected";
+    default:
+      return "status-changed";
+  }
+}
+
+export function mapNotificationRow(row: NotificationRow): Notification {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    type: mapNotificationType(row),
+    title: row.title,
+    message: row.message,
+    caseId: row.case_id ?? undefined,
+    documentId: row.case_document_id ?? undefined,
+    createdAt: row.created_at,
+    readAt: row.read_at ?? undefined
+  };
 }
 
 export class SupabasePortalRepository implements PortalRepository {
@@ -93,16 +131,43 @@ export class SupabasePortalRepository implements PortalRepository {
     throw new Error("Not implemented");
   }
 
-  listNotifications(): Promise<Notification[]> {
-    throw new Error("Not implemented");
+  async listNotifications(userId: string): Promise<Notification[]> {
+    const { data, error } = await this.client
+      .from("notifications")
+      .select("id,user_id,case_id,case_document_id,type,title,message,data,created_at,read_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as NotificationRow[]).map(mapNotificationRow);
   }
 
-  markNotificationRead(): Promise<void> {
-    throw new Error("Not implemented");
+  async markNotificationRead(notificationId: string): Promise<void> {
+    const { error } = await this.client
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("id", notificationId)
+      .is("read_at", null);
+
+    if (error) {
+      throw error;
+    }
   }
 
-  markAllNotificationsRead(): Promise<void> {
-    throw new Error("Not implemented");
+  async markAllNotificationsRead(userId: string): Promise<void> {
+    const { error } = await this.client
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("user_id", userId)
+      .is("read_at", null);
+
+    if (error) {
+      throw error;
+    }
   }
 
   updateUserProfile(): Promise<User> {

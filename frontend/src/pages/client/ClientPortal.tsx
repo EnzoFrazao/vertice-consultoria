@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { usePortalData } from "@/features/portal-data/PortalDataProvider";
+import { useRemoteNotifications } from "@/features/portal-data/useRemoteNotifications";
 import { PortalShell, type PortalNotification } from "@/shared/ui/portal";
 import { ClientDashboard } from "@/pages/client/ClientDashboard";
 import { ClientProcessDetailPage } from "@/pages/client/ClientProcessDetailPage";
@@ -21,6 +22,8 @@ export function ClientPortal() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const remote = useRemoteNotifications(currentUser?.id);
+
   if (authStatus === "loading") {
     return <p role="status">Carregando sessão…</p>;
   }
@@ -29,9 +32,11 @@ export function ClientPortal() {
     return <Navigate to="/login" replace />;
   }
 
-  const notifications = state.notifications
-    .filter((item) => item.userId === currentUser.id)
-    .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+  const remoteIds = new Set(remote.notifications.map((item) => item.id));
+  const notifications = [
+    ...state.notifications.filter((item) => item.userId === currentUser.id),
+    ...remote.notifications
+  ].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
   const shellNotifications: PortalNotification[] = notifications.map((item) => ({
     id: item.id,
     title: item.title,
@@ -52,8 +57,17 @@ export function ClientPortal() {
         logout();
         navigate("/login", { replace: true });
       }}
-      onMarkNotification={(notificationId) => markNotificationRead(notificationId, currentUser.id)}
-      onMarkAllNotifications={() => markAllNotificationsRead(currentUser.id)}
+      onMarkNotification={(notificationId) => {
+        if (remoteIds.has(notificationId)) {
+          remote.markRead(notificationId);
+          return;
+        }
+        markNotificationRead(notificationId, currentUser.id);
+      }}
+      onMarkAllNotifications={() => {
+        remote.markAllRead();
+        markAllNotificationsRead(currentUser.id);
+      }}
     >
       <Routes>
         <Route index element={<ClientDashboard />} />
