@@ -247,7 +247,8 @@ export function LoginPage({ pendingServiceName, onLogin, onResetDemo }: LoginPag
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-sm text-cacao/75">Ainda não tem uma conta? 
+            <p className="text-sm text-cacao/75">
+              Ainda não tem uma conta?
               <Link
                 to="/cadastro"
                 className="mx-1 min-h-1 items-center justify-center font-semibold text-espresso outline-none transition-colors hover:text-cacao/75 focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
